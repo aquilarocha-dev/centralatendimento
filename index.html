@@ -117,7 +117,6 @@ tbody tr:last-child td{border-bottom:none;}tbody tr:hover td{background:#f8f9fa;
 .a-err{background:var(--err-c);color:var(--err);border:1px solid #f28b82;}
 .a-ok{background:var(--ok-c);color:var(--ok);border:1px solid #81c995;}
 .a-inf{background:var(--pri-c);color:var(--pri);border:1px solid #aecbfa;}
-/* Disputa fields that appear dynamically */
 .disp-extra{display:none;margin-top:8px;}
 .disp-extra.show{display:grid;}
 .state-box{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px;gap:12px;color:var(--on-sur-v);}
@@ -132,21 +131,22 @@ tbody tr:last-child td{border-bottom:none;}tbody tr:hover td{background:#f8f9fa;
 .bulk-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;gap:10px;flex-wrap:wrap;}
 .bulk-tit{font-family:'Google Sans',sans-serif;font-size:16px;font-weight:500;}
 .bulk-summary{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;}
-.bsc{border:1px solid var(--out);border-radius:18px;padding:3px 10px;font-size:11px;font-family:'Google Sans',sans-serif;font-weight:500;display:flex;align-items:center;gap:4px;}
+/* Status filter chips */
+.bsc{border:1px solid var(--out);border-radius:18px;padding:3px 10px;font-size:11px;font-family:'Google Sans',sans-serif;font-weight:500;display:flex;align-items:center;gap:4px;cursor:pointer;transition:all .2s;}
+.bsc:hover{box-shadow:0 1px 4px rgba(0,0,0,.15);}
 .bsc-n{font-size:13px;font-weight:600;}
-.bsc-ta{color:#b06000;border-color:#f9ab00;background:#fef7e0;}.bsc-tat{color:var(--err);border-color:var(--err);background:var(--err-c);}.bsc-ad{color:var(--pur);border-color:var(--pur);background:var(--pur-c);}.bsc-ae{color:var(--pri);border-color:var(--pri);background:var(--pri-c);}.bsc-pe{color:var(--err);border-color:var(--err);background:var(--err-c);}.bsc-ar{color:var(--ok);border-color:var(--ok);background:var(--ok-c);}
-/* Missing fields bar */
-.miss-bar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;align-items:center;padding:8px 12px;background:var(--err-c);border:1px solid #f28b82;border-radius:8px;}
+.bsc-ta{color:#b06000;border-color:#f9ab00;background:#fef7e0;}.bsc-ta.on{background:#b06000;color:#fff;border-color:#b06000;}
+.bsc-tat{color:var(--err);border-color:var(--err);background:var(--err-c);}.bsc-tat.on{background:var(--err);color:#fff;}
+.bsc-ad{color:var(--pur);border-color:var(--pur);background:var(--pur-c);}.bsc-ad.on{background:var(--pur);color:#fff;}
+.bsc-ae{color:var(--pri);border-color:var(--pri);background:var(--pri-c);}.bsc-ae.on{background:var(--pri);color:#fff;}
+.bsc-pe{color:var(--err);border-color:var(--err);background:var(--err-c);}.bsc-pe.on{background:var(--err);color:#fff;}
+.bsc-ar{color:var(--ok);border-color:var(--ok);background:var(--ok-c);}.bsc-ar.on{background:var(--ok);color:#fff;}
+/* Miss bar */
+.miss-bar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;align-items:center;padding:7px 10px;background:var(--err-c);border:1px solid #f28b82;border-radius:8px;}
 .miss-bar label{font-size:11px;color:var(--err);font-weight:600;}
 .miss-chip{padding:3px 10px;border-radius:14px;border:1px solid var(--err);background:var(--sur);color:var(--err);font-size:11px;font-family:'Google Sans',sans-serif;cursor:pointer;transition:all .2s;font-weight:500;}
 .miss-chip.on{background:var(--err);color:#fff;}
 .miss-counter{font-size:11px;color:var(--err);padding:3px 9px;background:#fff;border-radius:12px;border:1px solid #f28b82;font-weight:600;}
-/* Column controls popup */
-.col-popup{position:absolute;top:100%;left:0;background:var(--sur);border:1px solid var(--out);border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,.15);z-index:50;min-width:160px;padding:6px 0;display:none;}
-.col-popup.open{display:block;}
-.col-popup-item{padding:6px 12px;font-size:12px;cursor:pointer;display:flex;align-items:center;gap:8px;color:var(--on-sur);transition:background .15s;}
-.col-popup-item:hover{background:var(--sur-v);}
-.col-popup-sep{height:1px;background:var(--out-v);margin:4px 0;}
 /* Bulk sheet */
 .bulk-sheet{border:1px solid var(--out);border-radius:10px;overflow:auto;background:var(--sur);position:relative;}
 .bulk-sheet-footer{padding:5px 10px;background:var(--sur-v);border-top:1px solid var(--out);font-size:11px;color:var(--on-sur-v);display:flex;justify-content:space-between;border-radius:0 0 10px 10px;}
@@ -157,25 +157,22 @@ tbody tr:last-child td{border-bottom:none;}tbody tr:hover td{background:#f8f9fa;
 .bt thead th.si{background:#e8f0fe;color:#1a73e8;}
 .bt thead th.st{background:#fef7e0;color:#b06000;}
 .bt thead th.sd{background:var(--pur-c);color:var(--pur);}
-.bt thead th.mod-col{background:#e6f4ea;color:var(--ok);font-weight:700;}
-.bt thead th.req-col .th-inner{position:relative;}
-.bt thead th.req-col .th-inner::after{content:'●';color:var(--err);font-size:8px;position:absolute;top:-2px;right:-10px;}
-.th-inner{display:flex;flex-direction:column;padding:5px 6px;gap:2px;position:relative;}
-.th-top{display:flex;align-items:center;justify-content:space-between;gap:4px;}
+.th-inner{display:flex;flex-direction:column;padding:4px 5px;gap:2px;position:relative;}
+.th-top{display:flex;align-items:center;justify-content:space-between;gap:3px;}
 .th-label{font-size:10px;font-weight:500;flex:1;}
-.th-controls{display:flex;gap:2px;align-items:center;}
+.th-controls{display:flex;gap:2px;}
 .th-btn{background:none;border:none;cursor:pointer;font-size:10px;padding:1px 3px;border-radius:3px;color:var(--on-sur-v);transition:background .15s;line-height:1;}
-.th-btn:hover{background:rgba(0,0,0,.08);}
+.th-btn:hover{background:rgba(0,0,0,.1);}
 .th-filter{width:100%;border:1px solid var(--out-v);border-radius:4px;padding:2px 5px;font-size:10px;font-family:'Roboto',sans-serif;background:var(--sur);color:var(--on-sur);outline:none;}
 .th-filter:focus{border-color:var(--pri);}
-.bt td{padding:3px 4px;border-bottom:1px solid var(--out-v);border-right:1px solid var(--out-v);font-size:11px;vertical-align:middle;min-width:100px;}
+.bt td{padding:0;border-bottom:1px solid var(--out-v);border-right:1px solid var(--out-v);font-size:11px;vertical-align:middle;min-width:100px;position:relative;}
 .bt td.td-id{min-width:140px;background:var(--sur-v);font-family:'Roboto Mono',monospace;font-size:10px;}
-.bt td.td-st{min-width:50px;text-align:center;}
+.bt td.td-st{min-width:50px;text-align:center;padding:3px;}
 .bt td.td-mod{min-width:130px;background:#f0fff4;}
 .bt td.miss-cell{background:#fff5f5;}
-.bulk-inp{width:100%;border:none;background:transparent;font-size:11px;font-family:'Roboto',sans-serif;color:var(--on-sur);padding:3px;outline:none;border-radius:3px;}
+.bulk-inp{width:100%;border:none;background:transparent;font-size:11px;font-family:'Roboto',sans-serif;color:var(--on-sur);padding:4px 5px;outline:none;display:block;box-sizing:border-box;}
 .bulk-inp:focus{background:#e8f0fe;}
-.bulk-sel{width:100%;border:none;background:transparent;font-size:11px;font-family:'Roboto',sans-serif;color:var(--on-sur);padding:2px 3px;outline:none;border-radius:3px;cursor:pointer;}
+.bulk-sel{width:100%;border:none;background:transparent;font-size:11px;font-family:'Roboto',sans-serif;color:var(--on-sur);padding:3px 4px;outline:none;cursor:pointer;display:block;box-sizing:border-box;}
 .bulk-sel:focus{background:#e8f0fe;}
 .bt tr.chg td{background:#fffde7;}
 .bt tr:hover td{background:#f8f9fa;}
@@ -183,15 +180,24 @@ tbody tr:last-child td{border-bottom:none;}tbody tr:hover td{background:#f8f9fa;
 .bt td.cf{background:var(--sur-v);}
 .bt tr.chg td.cf{background:#fff9c4;}
 .bt td.td-mod .bulk-sel{font-weight:600;color:var(--ok);}
+/* Cell selected state */
+.bt td.selected{outline:2px solid var(--pri);outline-offset:-2px;background:#e8f0fe!important;}
+/* Fill handle */
+.fill-handle{position:absolute;width:7px;height:7px;background:var(--pri);border:1px solid #fff;bottom:-3px;right:-3px;cursor:crosshair;z-index:10;display:none;border-radius:1px;}
+.bt td.selected .fill-handle{display:block;}
 /* Fullscreen */
 .fs-overlay{display:none;position:fixed;inset:0;z-index:200;background:#f8f9fa;flex-direction:column;}
 .fs-overlay.open{display:flex;}
-.fs-header{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:var(--sur);border-bottom:1px solid var(--out);gap:10px;flex-wrap:wrap;}
+.fs-header{display:flex;align-items:center;justify-content:space-between;padding:8px 16px;background:var(--sur);border-bottom:1px solid var(--out);gap:10px;flex-wrap:wrap;}
 .fs-title{font-family:'Google Sans',sans-serif;font-size:15px;font-weight:500;}
-.fs-miss-bar{display:flex;gap:6px;align-items:center;flex-wrap:wrap;}
+.fs-status-row{display:flex;gap:5px;align-items:center;flex-wrap:wrap;}
+.fs-miss-row{display:flex;gap:5px;align-items:center;flex-wrap:wrap;}
 .fs-actions{display:flex;gap:6px;align-items:center;}
 .fs-body{flex:1;overflow:auto;}
-.fs-footer{padding:6px 16px;background:var(--sur-v);border-top:1px solid var(--out);display:flex;align-items:center;justify-content:space-between;font-size:11px;color:var(--on-sur-v);}
+.fs-footer{padding:5px 16px;background:var(--sur-v);border-top:1px solid var(--out);display:flex;align-items:center;justify-content:space-between;font-size:11px;color:var(--on-sur-v);}
+/* Drag fill overlay */
+.drag-overlay{position:fixed;inset:0;z-index:400;cursor:crosshair;display:none;}
+.drag-overlay.active{display:block;}
 </style>
 </head>
 <body>
@@ -272,7 +278,10 @@ tbody tr:last-child td{border-bottom:none;}tbody tr:hover td{background:#f8f9fa;
     <button class="flt-btn" id="btnMiss" onclick="toggleMiss()">⚠ Incompletos</button>
   </div>
   <div class="tbl-wrap">
-    <table><thead><tr><th>Status</th><th>ID Venda</th><th>Nome</th><th>Canal</th><th>Modalidade</th><th>SKU</th><th>Data</th><th></th></tr></thead>
+    <table><thead><tr>
+      <th>Modalidade</th><th>ID Venda</th><th>Nome</th><th>Status</th>
+      <th>EMPR.</th><th>Canal</th><th>SKU</th><th>Data</th><th></th>
+    </tr></thead>
     <tbody id="tbody"></tbody></table>
     <div class="pag" id="pag"></div>
   </div>
@@ -287,15 +296,16 @@ tbody tr:last-child td{border-bottom:none;}tbody tr:hover td{background:#f8f9fa;
       <span style="font-size:11px;color:var(--on-sur-v)" id="bulkInfo"></span>
       <button class="btn btn-outlined btn-sm" onclick="bulkReset()">↺ Desfazer</button>
       <button class="btn btn-filled btn-sm" onclick="bulkSave()">💾 Salvar</button>
-      <button class="btn-icon" title="Expandir tela cheia" onclick="openFS()">⛶</button>
+      <button class="btn-icon" title="Tela cheia" onclick="openFS()">⛶</button>
     </div>
   </div>
+  <!-- Status filter chips (clicáveis como botões) -->
   <div class="bulk-summary" id="bulkSummary"></div>
-  <!-- Campos em falta -->
-  <div class="miss-bar" id="missBar">
+  <!-- Missing fields bar -->
+  <div class="miss-bar">
     <label>⚠ Campos em falta:</label>
     <span id="missChips"></span>
-    <span class="miss-counter" id="missCounterBadge">0 registros</span>
+    <span class="miss-counter" id="missCounterBadge">0</span>
     <button class="btn btn-sm" style="background:#fff;border:1px solid var(--err);color:var(--err);border-radius:12px;padding:3px 10px;font-size:11px;cursor:pointer" onclick="clearMissFilter()">✕ Limpar</button>
   </div>
   <div class="bulk-sheet" id="bulkSheet" style="max-height:calc(100vh - 300px)">
@@ -311,12 +321,13 @@ tbody tr:last-child td{border-bottom:none;}tbody tr:hover td{background:#f8f9fa;
 <!-- FULLSCREEN -->
 <div class="fs-overlay" id="fsOverlay">
   <div class="fs-header">
-    <div class="fs-title">Preenchimento em Massa</div>
-    <div class="fs-miss-bar">
-      <label style="font-size:11px;color:var(--err);font-weight:600">⚠ Campos em falta:</label>
+    <div class="fs-title">Preenchimento em Massa — Tela Cheia</div>
+    <div class="fs-status-row" id="fsStatusRow"></div>
+    <div class="fs-miss-row">
+      <label style="font-size:11px;color:var(--err);font-weight:600">⚠</label>
       <span id="fsMissChips"></span>
       <span class="miss-counter" id="fsMissCounter">0</span>
-      <button class="btn btn-sm" style="background:#fff;border:1px solid var(--err);color:var(--err);border-radius:12px;padding:3px 10px;font-size:11px;cursor:pointer" onclick="clearMissFilter()">✕</button>
+      <button class="btn btn-sm" style="background:#fff;border:1px solid var(--err);color:var(--err);border-radius:12px;padding:3px 9px;font-size:11px;cursor:pointer" onclick="clearMissFilter()">✕</button>
     </div>
     <div class="fs-actions">
       <span style="font-size:11px;color:var(--on-sur-v)" id="fsInfo"></span>
@@ -333,6 +344,9 @@ tbody tr:last-child td{border-bottom:none;}tbody tr:hover td{background:#f8f9fa;
     <span>Alteradas: <strong id="fsChg">0</strong></span>
   </div>
 </div>
+
+<!-- Drag overlay to capture mousemove outside table -->
+<div class="drag-overlay" id="dragOverlay"></div>
 
 <!-- DIALOG -->
 <div class="dlg-ov" id="dlgOv">
@@ -365,17 +379,21 @@ let allData=[],filtered=[],curRec=null,missOnly=false,curPage=1;
 let bulkOrig=[],bulkChg={},bulkFiltered=[];
 let dashData=[],dashPeriodDays=0;
 const PG=20;let charts={};
-// Bulk state
-let hiddenCols=new Set();
-let missFilter=null; // null=all, or field key
-let colSortState={}; // key -> 'asc'|'desc'|null
-let colFilters={}; // key -> string
+let hiddenCols=new Set(),missFilter=null,statusFilter=null,colSortState={},colFilters={};
 
-// Column definitions
-const IC=[{k:'EMPR',l:'EMPR.',t:'sel',o:['','JLD','DGL'],req:true},{k:'MODELO',l:'Modelo',t:'sel',o:['','Full','Normal','Flex','Cardex'],req:true},{k:'NEC_NF_DEVOL',l:'Nec. NF Devol?',t:'yn'},{k:'NF',l:'NF',t:'txt'},{k:'NF_DEVOL',l:'NF DEVOL',t:'txt'},{k:'NF_DEVOL_EMISSAO',l:'NF Devol Em.',t:'txt'},{k:'AUTOR',l:'Autor',t:'txt'}];
+// Column defs — INFORMAÇÕES now includes Modalidade, ID_VENDA, Nome, STATUS, EMPR, Canal
+const INFO_FIXED=[
+  {k:'MODALIDADE',l:'Modalidade',t:'sel',o:MODALIDADES},
+  {k:'EMPR',l:'EMPR.',t:'sel',o:['','JLD','DGL'],req:true},
+  {k:'MODELO',l:'Modelo',t:'sel',o:['','Full','Normal','Flex','Cardex'],req:true},
+  {k:'NEC_NF_DEVOL',l:'Nec. NF Devol?',t:'yn'},
+  {k:'NF',l:'NF',t:'txt'},
+  {k:'NF_DEVOL',l:'NF DEVOL',t:'txt'},
+  {k:'NF_DEVOL_EMISSAO',l:'NF Devol Em.',t:'txt'},
+  {k:'AUTOR',l:'Autor',t:'txt'},
+];
 const TC=[{k:'DATA_TRATATIVA',l:'Data Trat.',t:'txt'},{k:'NUM_RECLAM',l:'Nº Recl.',t:'txt'},{k:'MOTIVO',l:'Motivo Recl.',t:'sel',o:MOTIVOS},{k:'DETALHAMENTO',l:'Detalh.',t:'txt'},{k:'OBS_RECLAM',l:'Obs. Recl.',t:'txt'},{k:'OBS_RELEVANTES',l:'Obs. Relev.',t:'txt'},{k:'REPUTACAO',l:'Reput.?',t:'yn'},{k:'REEMBOLSADO',l:'Reemb.?',t:'yn'},{k:'DEVOLUCAO_ABERTA',l:'Devol. Ab.?',t:'yn',req:true},{k:'NEC_PECAS',l:'Nec. Peças?',t:'yn',req:true},{k:'PECAS_ENVIADAS',l:'Peças Env.?',t:'yn'},{k:'OBS_PECAS',l:'Obs. Peças',t:'txt'},{k:'REENVIO_RECEBIDO',l:'Reenv. Rec.?',t:'yn'},{k:'CUSTO_ENVIO',l:'Custo Env.',t:'txt'},{k:'PAGO_PLAT',l:'Pago Plat.',t:'txt'},{k:'CUSTOS_TOTAL',l:'Custos Tot.',t:'txt'},{k:'TRATATIVA_FINALIZADA',l:'Trat. Final?',t:'yn',req:true},{k:'STATUS_FULL',l:'Status Full',t:'txt'},{k:'CHEGOU_CARDEX',l:'Cardex?',t:'yn'}];
 const DC=[{k:'DISPUTA_ABERTA',l:'Disp. Ab.?',t:'yn',req:true},{k:'PLAT_DISPUTA',l:'Plataforma',t:'txt'},{k:'MOTIVO_DISPUTA',l:'Motivo Disp.',t:'txt'},{k:'PROTOCOLO',l:'Protocolo',t:'txt'},{k:'CREDITO',l:'R$ Créd.?',t:'yn'},{k:'ID_TRANSACAO',l:'ID Transação',t:'txt'},{k:'REEMBOLSO_MKT',l:'Reemb. Mkt?',t:'yn'},{k:'DISPUTA_FINALIZADA',l:'Disp. Final?',t:'yn'},{k:'CREDITO_RECEBIDO_VALOR',l:'R$ Créd. Rec.',t:'txt'},{k:'CREDITO_RECEBIDO',l:'Créd. Rec.?',t:'yn'},{k:'OBS_DISPUTA',l:'Obs. Disp.',t:'txt'}];
-const ALL_BULK_COLS=[...IC,...TC,...DC];
 
 window.onload=()=>{['sheetId','sheetName','apiKey','clientId'].forEach(k=>{document.getElementById(k).value=cfg[k]||'';});if(cfg.sheetId&&cfg.apiKey)loadData();else document.getElementById('cfgPanel').classList.add('open');switchPage(1);};
 function toggleCfg(){document.getElementById('cfgPanel').classList.toggle('open');}
@@ -384,7 +402,7 @@ function switchPage(n){[0,1,2].forEach(i=>{document.getElementById(`page${i}`).s
 
 async function loadData(){
   if(!cfg.sheetId||!cfg.apiKey){document.getElementById('cfgPanel').classList.add('open');return;}
-  document.getElementById('tbody').innerHTML='<tr><td colspan="8"><div class="state-box"><div class="spinner"></div><span>Carregando...</span></div></td></tr>';
+  document.getElementById('tbody').innerHTML='<tr><td colspan="9"><div class="state-box"><div class="spinner"></div><span>Carregando...</span></div></td></tr>';
   try{
     const rng=encodeURIComponent(`${cfg.sheetName}!A2:BD`);
     const url=`https://sheets.googleapis.com/v4/spreadsheets/${cfg.sheetId}/values/${rng}?key=${cfg.apiKey}`;
@@ -395,9 +413,8 @@ async function loadData(){
     const ativos=allData.filter(r=>!IGNORADOS.includes(r.STATUS));
     document.getElementById('tab1Count').textContent=ativos.length;
     document.getElementById('tab2Count').textContent=ativos.length;
-    renderSummary();render();
-    snack(`${allData.length} registros carregados`,'success');
-  }catch(e){document.getElementById('tbody').innerHTML=`<tr><td colspan="8"><div class="state-box"><div style="font-size:28px">⚠️</div><div style="color:var(--err)">${e.message}</div></div></td></tr>`;snack(e.message,'error');}
+    renderSummary();render();snack(`${allData.length} registros carregados`,'success');
+  }catch(e){document.getElementById('tbody').innerHTML=`<tr><td colspan="9"><div class="state-box"><div style="font-size:28px">⚠️</div><div style="color:var(--err)">${e.message}</div></div></td></tr>`;snack(e.message,'error');}
 }
 
 // DASHBOARD
@@ -424,7 +441,7 @@ function renderDashboard(){
   mk('chartAtraso','doughnut',['Em atraso','Em dia','Sem data'],[atN,emD,semD],['#d93025','#1e8e3e','#dadce0']);
 }
 
-// PAGE 1
+// PAGE 1 — Modalidade, ID Venda, Nome, Status, EMPR, Canal, SKU, Data
 const SL=[{k:'TRATATIVA ATRASADA',c:'sc-err',l:'ATRASADA'},{k:'TRATATIVA ABERTA',c:'sc-warn',l:'ABERTA'},{k:'ACOMPANHAR DISPUTA',c:'sc-pur',l:'DISPUTA'},{k:'ACOMPANHAR ENVIO',c:'sc-info',l:'ENVIO'},{k:'POSSÍVEL EXTRAVIO',c:'sc-err',l:'EXTRAVIO'},{k:'AGUARDANDO REEMBOLSO',c:'sc-ok2',l:'REEMBOLSO'},{k:'EM ATRASO',c:'sc-err',l:'EM ATRASO'},{k:'A ENVIAR',c:'sc-ok2',l:'A ENVIAR'}];
 function renderSummary(){const ativos=allData.filter(r=>!IGNORADOS.includes(r.STATUS));let h=`<div class="sc sc-total" onclick="clearF()"><div class="sc-lbl">Total Ativos</div><div class="sc-cnt">${ativos.length}</div></div>`;SL.forEach(s=>{const n=ativos.filter(r=>r.STATUS===s.k).length;if(!n)return;h+=`<div class="sc ${s.c}" onclick="setSt('${s.k}')"><div class="sc-lbl">${s.l}</div><div class="sc-cnt">${n}</div></div>`;});document.getElementById('summaryRow').innerHTML=h;}
 function setSt(s){document.getElementById('fStatus').value=s;missOnly=false;document.getElementById('btnMiss').classList.remove('on');curPage=1;render();}
@@ -436,31 +453,37 @@ function render(){
   const s=document.getElementById('srch').value.toLowerCase();const sf=document.getElementById('fStatus').value;const cf=document.getElementById('fCanal').value;
   filtered=allData.filter(r=>{if(IGNORADOS.includes(r.STATUS))return false;if(sf&&r.STATUS!==sf)return false;if(cf&&r.CANAL!==cf)return false;if(missOnly&&getMiss(r).length===0)return false;if(s&&!`${r.ID_VENDA} ${r.NOME} ${r.SKU} ${r.CANAL} ${r.MODALIDADE}`.toLowerCase().includes(s))return false;return true;});
   const tot=filtered.length;const tp=Math.ceil(tot/PG)||1;if(curPage>tp)curPage=1;const st=(curPage-1)*PG;const pg=filtered.slice(st,st+PG);
-  if(!pg.length){document.getElementById('tbody').innerHTML='<tr><td colspan="8"><div class="state-box"><div style="font-size:28px">📭</div><div>Nenhum registro</div></div></td></tr>';document.getElementById('pag').innerHTML='';return;}
-  let h='';pg.forEach(r=>{const m=getMiss(r).length;const cc=CC[r.STATUS]||'chip';const enc=encodeURIComponent(JSON.stringify(r));h+=`<tr><td><span class="${cc}">${r.STATUS||'—'}</span>${m?`<div class="miss-badge">⚠ ${m}</div>`:''}</td><td class="mono">${r.ID_VENDA||'—'}</td><td style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.NOME||'—'}</td><td><span class="chip chip-canal">${r.CANAL||'—'}</span></td><td>${r.MODALIDADE||'—'}</td><td class="mono" style="font-size:10px">${r.SKU||'—'}</td><td style="color:var(--on-sur-v);font-size:11px">${r.DATA_VENDA||'—'}</td><td><button class="btn btn-outlined btn-sm" onclick="openModal(JSON.parse(decodeURIComponent('${enc}')))">✏</button></td></tr>`;});
+  if(!pg.length){document.getElementById('tbody').innerHTML='<tr><td colspan="9"><div class="state-box"><div style="font-size:28px">📭</div><div>Nenhum registro</div></div></td></tr>';document.getElementById('pag').innerHTML='';return;}
+  let h='';
+  pg.forEach(r=>{
+    const m=getMiss(r).length;const cc=CC[r.STATUS]||'chip';const enc=encodeURIComponent(JSON.stringify(r));
+    h+=`<tr>
+      <td>${r.MODALIDADE||'—'}</td>
+      <td class="mono">${r.ID_VENDA||'—'}</td>
+      <td style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.NOME||'—'}</td>
+      <td><span class="${cc}">${r.STATUS||'—'}</span>${m?`<div class="miss-badge">⚠ ${m}</div>`:''}</td>
+      <td>${r.EMPR||'—'}</td>
+      <td><span class="chip chip-canal">${r.CANAL||'—'}</span></td>
+      <td class="mono" style="font-size:10px">${r.SKU||'—'}</td>
+      <td style="color:var(--on-sur-v);font-size:11px">${r.DATA_VENDA||'—'}</td>
+      <td><button class="btn btn-outlined btn-sm" onclick="openModal(JSON.parse(decodeURIComponent('${enc}')))">✏</button></td>
+    </tr>`;
+  });
   document.getElementById('tbody').innerHTML=h;
   let p=`<span class="pg-info">${st+1}–${Math.min(st+PG,tot)} de ${tot}</span>`;p+=`<button class="pgb" onclick="goP(${curPage-1})" ${curPage===1?'disabled':''}>‹</button>`;
   for(let i=1;i<=tp;i++){if(tp<=7||i===1||i===tp||Math.abs(i-curPage)<=1)p+=`<button class="pgb ${i===curPage?'on':''}" onclick="goP(${i})">${i}</button>`;else if(Math.abs(i-curPage)===2)p+=`<button class="pgb" disabled>…</button>`;}
   p+=`<button class="pgb" onclick="goP(${curPage+1})" ${curPage===tp?'disabled':''}>›</button>`;document.getElementById('pag').innerHTML=p;
 }
 function goP(p){const tp=Math.ceil(filtered.length/PG)||1;if(p<1||p>tp)return;curPage=p;render();}
-function getMiss(r){
-  const m=[];OBRIG_KEYS.forEach(f=>{if(!r[f])m.push(f);});
-  if(['Devolução','Mensagem','Reclamação'].includes(r.MODALIDADE)&&!r.MOTIVO)m.push('MOTIVO');
-  if(r.DISPUTA_ABERTA==='SIM'&&!r.DISPUTA_FINALIZADA)m.push('DISPUTA_FINALIZADA');
-  if(r.DISPUTA_FINALIZADA==='SIM'&&!r.REEMBOLSO_MKT)m.push('REEMBOLSO_MKT');
-  if(r.REEMBOLSO_MKT==='SIM'&&!r.CREDITO)m.push('CREDITO');
-  return m;
-}
-const ML={ID_VENDA:'ID Venda',CANAL:'Canal',EMPR:'EMPR.',MODELO:'Modelo',DEVOLUCAO_ABERTA:'Devolução Aberta?',NEC_PECAS:'Nec. Peças?',DISPUTA_ABERTA:'Disputa Aberta?',TRATATIVA_FINALIZADA:'Tratativa Final?',MOTIVO:'Motivo Reclamação',DISPUTA_FINALIZADA:'Disputa Final?',REEMBOLSO_MKT:'Reembolso Mkt?',CREDITO:'R$ Crédito?'};
+function getMiss(r){const m=[];OBRIG_KEYS.forEach(f=>{if(!r[f])m.push(f);});if(['Devolução','Mensagem','Reclamação'].includes(r.MODALIDADE)&&!r.MOTIVO)m.push('MOTIVO');if(r.DISPUTA_ABERTA==='SIM'&&!r.DISPUTA_FINALIZADA)m.push('DISPUTA_FINALIZADA');if(r.DISPUTA_FINALIZADA==='SIM'&&!r.REEMBOLSO_MKT)m.push('REEMBOLSO_MKT');if(r.REEMBOLSO_MKT==='SIM'&&!r.CREDITO)m.push('CREDITO');return m;}
+const ML={ID_VENDA:'ID Venda',CANAL:'Canal',EMPR:'EMPR.',MODELO:'Modelo',DEVOLUCAO_ABERTA:'Devolução Aberta?',NEC_PECAS:'Nec. Peças?',DISPUTA_ABERTA:'Disputa Aberta?',TRATATIVA_FINALIZADA:'Tratativa Final?',MOTIVO:'Motivo Reclamação',DISPUTA_FINALIZADA:'Disputa Final?',REEMBOLSO_MKT:'Reembolso Mkt?',CREDITO:'R$ Crédito?',MODALIDADE:'Modalidade'};
 
-// MODAL — com campo Disputa que abre campos extras dinamicamente
+// MODAL
 function openModal(rec){
   curRec=rec;const isNew=!rec;const r=rec||{};
   document.getElementById('dlgTit').textContent=isNew?'Novo Registro':'Editar Registro';
   document.getElementById('dlgSub').textContent=isNew?'Preencha os campos obrigatórios':`Linha ${r._row||''} — ${r.ID_VENDA||''}`;
-  const miss=rec?getMiss(rec):[];const wMot=['Devolução','Mensagem','Reclamação'].includes(r.MODALIDADE);
-  const dA=r.DISPUTA_ABERTA==='SIM';const dF=r.DISPUTA_FINALIZADA==='SIM';const rS=r.REEMBOLSO_MKT==='SIM';
+  const miss=rec?getMiss(rec):[];const wMot=['Devolução','Mensagem','Reclamação'].includes(r.MODALIDADE);const dA=r.DISPUTA_ABERTA==='SIM';const dF=r.DISPUTA_FINALIZADA==='SIM';const rS=r.REEMBOLSO_MKT==='SIM';
   const isErr=k=>!isNew&&miss.includes(k);
   const mH=miss.length&&!isNew?`<div class="alert-b a-err"><span>⚠</span><span><strong>Campos em falta:</strong> ${miss.map(f=>ML[f]||f).join(' • ')}</span></div>`:'';
   const aH=(r.NOME||r.SKU)?`<div class="alert-b a-ok"><span>✓</span><span>Campos fórmula preenchidos automaticamente.</span></div>`:'';
@@ -484,9 +507,7 @@ function openModal(rec){
 </div>
 <div class="fsec">
   <div class="fsec-tit">⚖️ Disputa</div>
-  <div class="fg3" id="disputaBase">
-    ${fYN('DISPUTA_ABERTA','Disputa Aberta?',r.DISPUTA_ABERTA,true,isErr('DISPUTA_ABERTA'))}
-  </div>
+  <div class="fg3" id="disputaBase">${fYN('DISPUTA_ABERTA','Disputa Aberta?',r.DISPUTA_ABERTA,true,isErr('DISPUTA_ABERTA'))}</div>
   <div class="disp-extra fg3 ${dA?'show':''}" id="disputaExtra1" style="margin-top:8px">
     ${fYN('DISPUTA_FINALIZADA','Disputa Final?',r.DISPUTA_FINALIZADA,true,isErr('DISPUTA_FINALIZADA'))}
     ${fYN('REEMBOLSO_MKT','Reembolso Mkt?',r.REEMBOLSO_MKT,dF,isErr('REEMBOLSO_MKT'))}
@@ -499,210 +520,190 @@ function openModal(rec){
 <div class="fsec"><div class="fsec-tit">🏭 Full/Estoque</div><div class="fg3">${fInp('STATUS_FULL','Status Full',r.STATUS_FULL)}${fYN('CHEGOU_CARDEX','Chegou Cardex?',r.CHEGOU_CARDEX)}</div></div>`;
 
   document.getElementById('dlgOv').classList.add('open');
-
-  // Wire up Disputa Aberta toggle
-  const wireDisputa=()=>{
-    document.querySelectorAll('input[name="f_DISPUTA_ABERTA"]').forEach(radio=>{
-      radio.addEventListener('change',()=>{
-        const sim=document.querySelector('input[name="f_DISPUTA_ABERTA"]:checked')?.value==='SIM';
-        document.getElementById('disputaExtra1')?.classList.toggle('show',sim);
-        document.getElementById('disputaExtra2')?.classList.toggle('show',sim);
-      });
-    });
-    // Also wire DISPUTA_FINALIZADA to show/hide REEMBOLSO
-    document.querySelectorAll('input[name="f_DISPUTA_FINALIZADA"]').forEach(radio=>{
-      radio.addEventListener('change',()=>{
-        const sim=document.querySelector('input[name="f_DISPUTA_FINALIZADA"]:checked')?.value==='SIM';
-        // Update required visual on reembolso
-      });
-    });
-  };
-  wireDisputa();
-
+  // Wire Disputa toggle
+  document.querySelectorAll('input[name="f_DISPUTA_ABERTA"]').forEach(radio=>{radio.addEventListener('change',()=>{const sim=document.querySelector('input[name="f_DISPUTA_ABERTA"]:checked')?.value==='SIM';document.getElementById('disputaExtra1')?.classList.toggle('show',sim);document.getElementById('disputaExtra2')?.classList.toggle('show',sim);});});
   // Autopreenchimento
   if(isNew){
     const idEl=document.getElementById('f_ID_VENDA');
     if(idEl){
-      // Ao sair do campo ID, detecta canal e busca dados
       idEl.addEventListener('blur',async()=>{
         const id=idEl.value.trim();if(!id||id.length<4)return;
-        // Sempre re-detecta o canal baseado no ID atual
-        const canal=detectCanal(id);
-        const cSel=document.getElementById('f_CANAL');
+        // Re-detecta canal sempre
+        const canal=detectCanal(id);const cSel=document.getElementById('f_CANAL');
         if(canal&&cSel){cSel.value=canal;cSel.classList.add('af');}
-        const c=cSel?.value||canal;
-        if(c)await autoFill(id,c);
+        const c=cSel?.value||canal;if(c)await autoFill(id,c);
       });
-      // Quando canal muda manualmente, re-busca com o ID atual
-      document.getElementById('f_CANAL')?.addEventListener('change',async()=>{
-        const id=idEl.value.trim();const c=document.getElementById('f_CANAL').value;
-        if(id&&c)await autoFill(id,c);
-      });
+      document.getElementById('f_CANAL')?.addEventListener('change',async()=>{const id=idEl.value.trim();const c=document.getElementById('f_CANAL').value;if(id&&c)await autoFill(id,c);});
     }
   }
 }
-
-function fInp(id,lbl,val,type='text',req=false,ph='',ro=false,isNew=false){const e=req&&!val&&!isNew?'err':'';return `<div class="fld"><label>${lbl}${req?'<span class="req">●</span>':''}</label><input type="${type}" id="f_${id}" class="mdi ${e}${ro?' af':''}" value="${(val||'').replace(/"/g,'&quot;')}" placeholder="${ph}"${ro?' readonly':''}></div>`;}
+function fInp(id,lbl,val,type='text',req=false,ph='',ro=false,isNew=false){const e=req&&!val&&!isNew?'err':'';return `<div class="fld"><label>${lbl}${req?'<span class="req" style="color:var(--err);font-size:10px">●</span>':''}</label><input type="${type}" id="f_${id}" class="mdi ${e}${ro?' af':''}" value="${(val||'').replace(/"/g,'&quot;')}" placeholder="${ph}"${ro?' readonly':''}></div>`;}
 function fRO(id,lbl,val){return `<div class="fld"><label>${lbl}</label><input type="text" id="f_${id}" class="mdi ${val?'af':''}" value="${(val||'').replace(/"/g,'&quot;')}" readonly></div>`;}
-function fSel(id,lbl,val,opts,req=false,fe=false){const e=(req&&!val)||fe?'err':'';const o=opts.map(v=>`<option value="${v}" ${val===v?'selected':''}>${v||'— Selecione —'}</option>`).join('');return `<div class="fld"><label>${lbl}${req?'<span class="req">●</span>':''}</label><select id="f_${id}" class="mdi ${e}">${o}</select></div>`;}
-function fYN(id,lbl,val,req=false,fe=false){const b=(req&&!val)||fe?'reqb':'';const mk=(v,l)=>`<div class="ro"><input type="radio" name="f_${id}" id="f_${id}_${v}" value="${v}" ${val===v?'checked':''}><label for="f_${id}_${v}">${l}</label></div>`;return `<div class="fld ${b}"><label>${lbl}${req?'<span class="req">●</span>':''}</label><div class="rg">${mk('SIM','SIM')}${mk('NÃO','NÃO')}</div></div>`;}
+function fSel(id,lbl,val,opts,req=false,fe=false){const e=(req&&!val)||fe?'err':'';const o=opts.map(v=>`<option value="${v}" ${val===v?'selected':''}>${v||'— Selecione —'}</option>`).join('');return `<div class="fld"><label>${lbl}${req?'<span class="req" style="color:var(--err);font-size:10px">●</span>':''}</label><select id="f_${id}" class="mdi ${e}">${o}</select></div>`;}
+function fYN(id,lbl,val,req=false,fe=false){const b=(req&&!val)||fe?'reqb':'';const mk=(v,l)=>`<div class="ro"><input type="radio" name="f_${id}" id="f_${id}_${v}" value="${v}" ${val===v?'checked':''}><label for="f_${id}_${v}">${l}</label></div>`;return `<div class="fld ${b}"><label>${lbl}${req?'<span class="req" style="color:var(--err);font-size:10px">●</span>':''}</label><div class="rg">${mk('SIM','SIM')}${mk('NÃO','NÃO')}</div></div>`;}
 function closeDlg(){document.getElementById('dlgOv').classList.remove('open');curRec=null;}
 
 const bancoCache={};
 async function fetchBanco(aba){if(bancoCache[aba])return bancoCache[aba];try{const maxCol={'Mercado Livre':'BQ','Shopee':'BP','Magalu':'AV','Amazon':'AO'}[aba]||'AZ';const url=`https://sheets.googleapis.com/v4/spreadsheets/${BANCO_ID}/values/${encodeURIComponent(aba+'!A:'+maxCol)}?key=${cfg.apiKey}`;const res=await fetch(url);if(!res.ok)return null;const data=await res.json();bancoCache[aba]=data.values||[];return bancoCache[aba];}catch(e){return null;}}
-async function autoFill(idVenda,canal){
-  const m=BANCO_MAP[canal];if(!m)return;
-  snack('Buscando...','');
-  const rows=await fetchBanco(canal);if(!rows){snack('Banco inacessível','error');return;}
-  const found=rows.slice(1).find(r=>(r[m.buscaCol]||'').trim()===idVenda.trim());
-  if(!found){snack('ID não encontrado no banco de dados','error');return;}
-  const g=i=>(found[i]||'');let sku=g(m.SKU);if(canal==='Amazon')sku=sku.replace(/_FBA_PC1/g,'').replace(/_FBA/g,'');
-  const setRO=(id,v)=>{const el=document.getElementById(`f_${id}`);if(el){el.value=v;el.classList.toggle('af',!!v);}};
-  const setSel=(id,v)=>{const el=document.getElementById(`f_${id}`);if(el&&v){el.value=v;el.classList.add('af');}};
-  setRO('NOME',g(m.NOME));setRO('DATA_VENDA',g(m.DATA_VENDA));setRO('SKU',sku);setRO('QT',g(m.QT));setRO('RASTREIO',g(m.RASTREIO));setRO('ID_BLING',g(m.ID_BLING));setRO('DESC_STATUS',g(m.DESC));
-  setSel('EMPR',g(m.EMPR));setSel('MODELO',g(m.MODELO));
-  const mod=detectModal(g(m.DESC));if(mod)setSel('MODALIDADE',mod);
-  const nfd=g(m.NF_DEVOL);if(nfd){const el=document.getElementById('f_NF_DEVOL');if(el&&!el.value)el.value=nfd;}
-  snack(`✓ Preenchido: ${idVenda}`,'success');
-}
+async function autoFill(idVenda,canal){const m=BANCO_MAP[canal];if(!m)return;snack('Buscando...','');const rows=await fetchBanco(canal);if(!rows){snack('Banco inacessível','error');return;}const found=rows.slice(1).find(r=>(r[m.buscaCol]||'').trim()===idVenda.trim());if(!found){snack('ID não encontrado','error');return;}const g=i=>(found[i]||'');let sku=g(m.SKU);if(canal==='Amazon')sku=sku.replace(/_FBA_PC1/g,'').replace(/_FBA/g,'');const setRO=(id,v)=>{const el=document.getElementById(`f_${id}`);if(el){el.value=v;el.classList.toggle('af',!!v);}};const setSel=(id,v)=>{const el=document.getElementById(`f_${id}`);if(el&&v){el.value=v;el.classList.add('af');}};setRO('NOME',g(m.NOME));setRO('DATA_VENDA',g(m.DATA_VENDA));setRO('SKU',sku);setRO('QT',g(m.QT));setRO('RASTREIO',g(m.RASTREIO));setRO('ID_BLING',g(m.ID_BLING));setRO('DESC_STATUS',g(m.DESC));setSel('EMPR',g(m.EMPR));setSel('MODELO',g(m.MODELO));const mod=detectModal(g(m.DESC));if(mod)setSel('MODALIDADE',mod);const nfd=g(m.NF_DEVOL);if(nfd){const el=document.getElementById('f_NF_DEVOL');if(el&&!el.value)el.value=nfd;}snack(`✓ Preenchido: ${idVenda}`,'success');}
 
 async function saveRecord(){
   const get=id=>{const el=document.getElementById(`f_${id}`);if(el)return el.value;for(const r of document.querySelectorAll(`input[name="f_${id}"]`))if(r.checked)return r.value;return'';};
   const novos={};EDIT_COLS.forEach(({key})=>{novos[key]=get(key)||'';});
-  const miss=OBRIG_KEYS.filter(f=>!novos[f]);
-  if(['Devolução','Mensagem','Reclamação'].includes(novos.MODALIDADE)&&!novos.MOTIVO)miss.push('MOTIVO');
-  if(novos.DISPUTA_ABERTA==='SIM'&&!novos.DISPUTA_FINALIZADA)miss.push('DISPUTA_FINALIZADA');
-  if(novos.DISPUTA_FINALIZADA==='SIM'&&!novos.REEMBOLSO_MKT)miss.push('REEMBOLSO_MKT');
-  if(novos.REEMBOLSO_MKT==='SIM'&&!novos.CREDITO)miss.push('CREDITO');
+  const miss=OBRIG_KEYS.filter(f=>!novos[f]);if(['Devolução','Mensagem','Reclamação'].includes(novos.MODALIDADE)&&!novos.MOTIVO)miss.push('MOTIVO');if(novos.DISPUTA_ABERTA==='SIM'&&!novos.DISPUTA_FINALIZADA)miss.push('DISPUTA_FINALIZADA');if(novos.DISPUTA_FINALIZADA==='SIM'&&!novos.REEMBOLSO_MKT)miss.push('REEMBOLSO_MKT');if(novos.REEMBOLSO_MKT==='SIM'&&!novos.CREDITO)miss.push('CREDITO');
   if(miss.length){snack(`Preencha: ${miss.map(f=>ML[f]||f).join(', ')},'error'`);return;}
   const tkn=await getToken();if(!tkn)return;
   const isNew=!curRec;
-  if(isNew){const mx=Math.max(...Object.values(COL))+1;const row=new Array(mx).fill('');EDIT_COLS.forEach(({key,idx})=>{row[idx]=novos[key]||'';});row[COL.STATUS]='';
-    try{const url=`https://sheets.googleapis.com/v4/spreadsheets/${cfg.sheetId}/values/${encodeURIComponent(cfg.sheetName+'!A:BD')}:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`;const res=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${tkn}`},body:JSON.stringify({values:[row]})});if(!res.ok){const e=await res.json();throw new Error(e.error?.message||res.statusText);}snack('Criado!','success');closeDlg();loadData();}catch(e){snack('Erro: '+e.message,'error');}
-  }else{const rowN=curRec._row;const data=[];EDIT_COLS.forEach(({key,idx})=>{const o=curRec[key]||'';const n=novos[key]||'';if(o===n)return;data.push({range:`${cfg.sheetName}!${n2c(idx)}${rowN}`,values:[[n]]});});if(!data.length){snack('Sem alterações','success');closeDlg();return;}
-    try{const url=`https://sheets.googleapis.com/v4/spreadsheets/${cfg.sheetId}/values:batchUpdate`;const res=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${tkn}`},body:JSON.stringify({valueInputOption:'USER_ENTERED',data})});if(!res.ok){const e=await res.json();throw new Error(e.error?.message||res.statusText);}snack(`${data.length} campo(s) salvos!`,'success');closeDlg();loadData();}catch(e){snack('Erro: '+e.message,'error');}
+  if(isNew){const mx=Math.max(...Object.values(COL))+1;const row=new Array(mx).fill('');EDIT_COLS.forEach(({key,idx})=>{row[idx]=novos[key]||'';});row[COL.STATUS]='';try{const url=`https://sheets.googleapis.com/v4/spreadsheets/${cfg.sheetId}/values/${encodeURIComponent(cfg.sheetName+'!A:BD')}:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`;const res=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${tkn}`},body:JSON.stringify({values:[row]})});if(!res.ok){const e=await res.json();throw new Error(e.error?.message||res.statusText);}snack('Criado!','success');closeDlg();loadData();}catch(e){snack('Erro: '+e.message,'error');}
+  }else{const rowN=curRec._row;const data=[];EDIT_COLS.forEach(({key,idx})=>{const o=curRec[key]||'';const n=novos[key]||'';if(o===n)return;data.push({range:`${cfg.sheetName}!${n2c(idx)}${rowN}`,values:[[n]]});});if(!data.length){snack('Sem alterações','success');closeDlg();return;}try{const url=`https://sheets.googleapis.com/v4/spreadsheets/${cfg.sheetId}/values:batchUpdate`;const res=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${tkn}`},body:JSON.stringify({valueInputOption:'USER_ENTERED',data})});if(!res.ok){const e=await res.json();throw new Error(e.error?.message||res.statusText);}snack(`${data.length} campo(s) salvos!`,'success');closeDlg();loadData();}catch(e){snack('Erro: '+e.message,'error');}
   }
 }
 
 // ══ BULK ═══════════════════════════════════════════════════════════════
+const STATUS_MAP=[{k:'TRATATIVA ATRASADA',cs:'bsc-tat',l:'ATRASADA'},{k:'TRATATIVA ABERTA',cs:'bsc-ta',l:'ABERTA'},{k:'ACOMPANHAR DISPUTA',cs:'bsc-ad',l:'DISPUTA'},{k:'ACOMPANHAR ENVIO',cs:'bsc-ae',l:'ENVIO'},{k:'POSSÍVEL EXTRAVIO',cs:'bsc-pe',l:'EXTRAVIO'},{k:'AGUARDANDO REEMBOLSO',cs:'bsc-ar',l:'REEMBOLSO'}];
+
 function buildBulk(){
   const ativos=allData.filter(r=>!IGNORADOS.includes(r.STATUS));
-  bulkOrig=ativos.map(r=>({...r}));bulkChg={};missFilter=null;colSortState={};colFilters={};
+  bulkOrig=ativos.map(r=>({...r}));bulkChg={};missFilter=null;statusFilter=null;colSortState={};colFilters={};
   bulkFiltered=[...Array(ativos.length).keys()];
   document.getElementById('bfTotal').textContent=ativos.length;
   document.getElementById('fsBfTotal').textContent=ativos.length;
-
-  // Summary chips
-  const SM=[{k:'TRATATIVA ATRASADA',cs:'bsc-tat',l:'ATRASADA'},{k:'TRATATIVA ABERTA',cs:'bsc-ta',l:'ABERTA'},{k:'ACOMPANHAR DISPUTA',cs:'bsc-ad',l:'DISPUTA'},{k:'ACOMPANHAR ENVIO',cs:'bsc-ae',l:'ENVIO'},{k:'POSSÍVEL EXTRAVIO',cs:'bsc-pe',l:'EXTRAVIO'},{k:'AGUARDANDO REEMBOLSO',cs:'bsc-ar',l:'REEMBOLSO'}];
-  let sh='';SM.forEach(s=>{const n=ativos.filter(r=>r.STATUS===s.k).length;if(!n)return;sh+=`<div class="bsc ${s.cs}"><span class="bsc-n">${n}</span> ${s.l}</div>`;});
-  document.getElementById('bulkSummary').innerHTML=sh;
-
-  // Campos em falta chips
+  buildStatusChips(ativos);
   buildMissChips();
   buildBulkHead(document.getElementById('bHead'));
+  buildBulkHead(document.getElementById('fsHead'));
   renderBulkRows();updateBulkInfo();
 }
 
-function buildMissChips(){
-  // Conta quantos registros têm cada campo em falta
-  const missMap={};
-  bulkOrig.forEach(r=>{getMiss(r).forEach(k=>{missMap[k]=(missMap[k]||0)+1;});});
-  const totalMiss=bulkOrig.filter(r=>getMiss(r).length>0).length;
-
-  const labels={...ML,MODALIDADE:'Modalidade',ID_VENDA:'ID Venda',CANAL:'Canal',EMPR:'EMPR.',MODELO:'Modelo'};
-  let chips='';
-  Object.entries(missMap).sort((a,b)=>b[1]-a[1]).forEach(([k,n])=>{
-    const active=missFilter===k?'on':'';
-    chips+=`<button class="miss-chip ${active}" onclick="setMissFilter('${k}')">${labels[k]||k} <strong>(${n})</strong></button>`;
+function buildStatusChips(ativos){
+  let sh='';
+  STATUS_MAP.forEach(s=>{
+    const n=(ativos||bulkOrig).filter(r=>r.STATUS===s.k).length;if(!n)return;
+    const on=statusFilter===s.k?'on':'';
+    sh+=`<div class="bsc ${s.cs} ${on}" onclick="toggleStatusFilter('${s.k}',this)"><span class="bsc-n">${n}</span> ${s.l}</div>`;
   });
-  // All missing
-  const allBtn=missFilter==='__all__'?'on':'';
-  chips=`<button class="miss-chip ${allBtn}" onclick="setMissFilter('__all__')">Todos incompletos <strong>(${totalMiss})</strong></button>${chips}`;
+  ['bulkSummary','fsStatusRow'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=sh;});
+}
 
+function toggleStatusFilter(k,btn){
+  if(statusFilter===k){statusFilter=null;}else{statusFilter=k;}
+  // Update button states
+  document.querySelectorAll('.bsc').forEach(b=>{b.classList.remove('on');});
+  if(statusFilter){document.querySelectorAll('.bsc').forEach(b=>{if(b.onclick&&b.onclick.toString().includes(`'${k}'`))b.classList.add('on');});}
+  applyBulkFilters();
+}
+
+function buildMissChips(){
+  const missMap={};bulkOrig.forEach(r=>{getMiss(r).forEach(k=>{missMap[k]=(missMap[k]||0)+1;});});
+  const totalMiss=bulkOrig.filter(r=>getMiss(r).length>0).length;
+  const labels={...ML};
+  let chips=`<button class="miss-chip ${missFilter==='__all__'?'on':''}" onclick="setMissFilter('__all__')">Todos incompletos <strong>(${totalMiss})</strong></button>`;
+  Object.entries(missMap).sort((a,b)=>b[1]-a[1]).forEach(([k,n])=>{chips+=`<button class="miss-chip ${missFilter===k?'on':''}" onclick="setMissFilter('${k}')">${labels[k]||k} <strong>(${n})</strong></button>`;});
   ['missChips','fsMissChips'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=chips;});
-  ['missCounterBadge','fsMissCounter'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=`${totalMiss} registros`;});
+  ['missCounterBadge','fsMissCounter'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=totalMiss;});
 }
 
-function setMissFilter(key){
-  missFilter=key;buildMissChips();applyBulkFilters();
-}
+function setMissFilter(key){missFilter=key;buildMissChips();applyBulkFilters();}
 function clearMissFilter(){missFilter=null;buildMissChips();applyBulkFilters();}
 
 function applyBulkFilters(){
   let idxs=[...Array(bulkOrig.length).keys()];
-  // Miss filter
-  if(missFilter==='__all__'){idxs=idxs.filter(i=>getMiss(bulkOrig[i]).length>0);}
-  else if(missFilter){idxs=idxs.filter(i=>getMiss(bulkOrig[i]).includes(missFilter));}
-  // Col filters
+  if(statusFilter)idxs=idxs.filter(i=>bulkOrig[i].STATUS===statusFilter);
+  if(missFilter==='__all__')idxs=idxs.filter(i=>getMiss(bulkOrig[i]).length>0);
+  else if(missFilter)idxs=idxs.filter(i=>getMiss(bulkOrig[i]).includes(missFilter));
   Object.entries(colFilters).forEach(([k,v])=>{if(!v)return;idxs=idxs.filter(i=>(bulkOrig[i][k]||'').toLowerCase().includes(v.toLowerCase()));});
-  // Col sort
   const sortKey=Object.keys(colSortState).find(k=>colSortState[k]);
   if(sortKey){const dir=colSortState[sortKey];idxs.sort((a,b)=>{const va=(bulkOrig[a][sortKey]||'').toLowerCase();const vb=(bulkOrig[b][sortKey]||'').toLowerCase();return dir==='asc'?va.localeCompare(vb):vb.localeCompare(va);});}
-  bulkFiltered=idxs;
-  renderBulkRows();
+  bulkFiltered=idxs;renderBulkRows();renderBulkRows(document.getElementById('fsBBody'));
+  const cnt=bulkFiltered.length;document.getElementById('bfCount').textContent=cnt;document.getElementById('fsBfCount').textContent=cnt;
 }
 
-// Build header with per-column controls
 function buildBulkHead(thead){
-  const modRq='<span style="color:var(--err);font-size:9px;margin-left:2px">●</span>';
+  if(!thead)return;
+  const rq='<span style="color:var(--err);font-size:8px;margin-left:2px">●</span>';
+  const visInfo=INFO_FIXED.filter(c=>!hiddenCols.has(c.k));
+  const visTrat=TC.filter(c=>!hiddenCols.has(c.k));
+  const visDisp=DC.filter(c=>!hiddenCols.has(c.k));
+
   let h=`<tr>
-    <th class="cf" style="min-width:38px"><div class="th-inner"><div class="th-top"><span class="th-label">Ln</span></div></div></th>
-    <th class="cf" style="min-width:140px;left:38px"><div class="th-inner"><div class="th-top"><span class="th-label">ID Venda</span><div class="th-controls">${thCtrl('ID_VENDA')}</div></div><input class="th-filter" placeholder="Filtrar..." oninput="colFilter('ID_VENDA',this.value)"></div></th>
-    <th><div class="th-inner"><div class="th-top"><span class="th-label">Status</span></div></div></th>
+    <th class="cf" style="min-width:35px"><div class="th-inner"><div class="th-top"><span class="th-label">Ln</span></div></div></th>
+    <th class="cf" style="min-width:135px;left:35px"><div class="th-inner">
+      <div class="th-top"><span class="th-label">ID Venda${rq}</span><div class="th-controls"><button class="th-btn" onclick="toggleSort('ID_VENDA')">${colSortState['ID_VENDA']==='asc'?'↑':colSortState['ID_VENDA']==='desc'?'↓':'⇅'}</button></div></div>
+      <input class="th-filter" placeholder="Filtrar..." value="${colFilters['ID_VENDA']||''}" oninput="colFilter('ID_VENDA',this.value)">
+    </div></th>
+    <th><div class="th-inner"><div class="th-top"><span class="th-label">Status</span><div class="th-controls"><button class="th-btn" onclick="toggleSort('STATUS')">${colSortState['STATUS']==='asc'?'↑':colSortState['STATUS']==='desc'?'↓':'⇅'}</button></div></div><input class="th-filter" placeholder="Filtrar..." value="${colFilters['STATUS']||''}" oninput="colFilter('STATUS',this.value)"></div></th>
     <th><div class="th-inner"><div class="th-top"><span class="th-label">Nome</span></div></div></th>
-    <th><div class="th-inner"><div class="th-top"><span class="th-label">Canal</span></div></div></th>
-    <th class="mod-col"><div class="th-inner"><div class="th-top"><span class="th-label">MODALIDADE${modRq}</span><div class="th-controls">${thCtrl('MODALIDADE')}</div></div><input class="th-filter" placeholder="Filtrar..." oninput="colFilter('MODALIDADE',this.value)"></div></th>
-    <th class="si" colspan="${IC.filter(c=>!hiddenCols.has(c.k)).length}"><div class="th-inner"><div class="th-top"><span class="th-label">📦 Informações</span></div></div></th>
-    <th class="st" colspan="${TC.filter(c=>!hiddenCols.has(c.k)).length}"><div class="th-inner"><div class="th-top"><span class="th-label">🗂 Tratativa</span></div></div></th>
-    <th class="sd" colspan="${DC.filter(c=>!hiddenCols.has(c.k)).length}"><div class="th-inner"><div class="th-top"><span class="th-label">⚖️ Disputa</span></div></div></th>
+    <th><div class="th-inner"><div class="th-top"><span class="th-label">Canal</span><div class="th-controls"><button class="th-btn" onclick="toggleSort('CANAL')">${colSortState['CANAL']==='asc'?'↑':colSortState['CANAL']==='desc'?'↓':'⇅'}</button></div></div><input class="th-filter" placeholder="Filtrar..." value="${colFilters['CANAL']||''}" oninput="colFilter('CANAL',this.value)"></div></th>
+    <th class="si" colspan="${visInfo.length+1}"><div class="th-inner"><div class="th-top"><span class="th-label">📦 Informações</span></div></div></th>
+    <th class="st" colspan="${visTrat.length}"><div class="th-inner"><div class="th-top"><span class="th-label">🗂 Tratativa</span></div></div></th>
+    <th class="sd" colspan="${visDisp.length}"><div class="th-inner"><div class="th-top"><span class="th-label">⚖️ Disputa</span></div></div></th>
   </tr><tr>
-    <th class="cf"></th><th class="cf" style="left:38px"></th><th></th><th></th><th></th><th class="mod-col"></th>`;
-  [...IC,...TC,...DC].forEach(c=>{
-    if(hiddenCols.has(c.k))return;
-    const sec=IC.includes(c)?'si':TC.includes(c)?'st':'sd';
-    const isR=c.req?modRq:'';
-    const sortIcon=colSortState[c.k]==='asc'?'↑':colSortState[c.k]==='desc'?'↓':'';
-    h+=`<th class="${sec}${c.req?' req-col':''}"><div class="th-inner">
-      <div class="th-top">
-        <span class="th-label">${c.l}${isR}</span>
-        <div class="th-controls">
-          <button class="th-btn" title="Ocultar coluna" onclick="hideCol('${c.k}')">✕</button>
-          <button class="th-btn" title="Ordenar" onclick="toggleSort('${c.k}')">${sortIcon||'⇅'}</button>
-        </div>
-      </div>
-      <input class="th-filter" placeholder="Filtrar..." value="${colFilters[c.k]||''}" oninput="colFilter('${c.k}',this.value)">
+    <th class="cf"></th><th class="cf" style="left:35px"></th><th></th><th></th><th></th>
+    <th class="si"><div class="th-inner">
+      <div class="th-top"><span class="th-label">MODALIDADE${rq}</span><div class="th-controls"><button class="th-btn" onclick="toggleSort('MODALIDADE')">${colSortState['MODALIDADE']==='asc'?'↑':colSortState['MODALIDADE']==='desc'?'↓':'⇅'}</button></div></div>
+      <input class="th-filter" placeholder="Filtrar..." value="${colFilters['MODALIDADE']||''}" oninput="colFilter('MODALIDADE',this.value)">
     </div></th>`;
+
+  visInfo.forEach(c=>{
+    const sq=c.req?rq:'';const sv=colSortState[c.k]==='asc'?'↑':colSortState[c.k]==='desc'?'↓':'⇅';
+    h+=`<th class="si"><div class="th-inner"><div class="th-top"><span class="th-label">${c.l}${sq}</span><div class="th-controls"><button class="th-btn" onclick="hideCol('${c.k}')" title="Ocultar">✕</button><button class="th-btn" onclick="toggleSort('${c.k}')">${sv}</button></div></div><input class="th-filter" placeholder="Filtrar..." value="${colFilters[c.k]||''}" oninput="colFilter('${c.k}',this.value)"></div></th>`;
   });
-  h+='</tr>';
-  thead.innerHTML=h;
+  visTrat.forEach(c=>{
+    const sq=c.req?rq:'';const sv=colSortState[c.k]==='asc'?'↑':colSortState[c.k]==='desc'?'↓':'⇅';
+    h+=`<th class="st"><div class="th-inner"><div class="th-top"><span class="th-label">${c.l}${sq}</span><div class="th-controls"><button class="th-btn" onclick="hideCol('${c.k}')" title="Ocultar">✕</button><button class="th-btn" onclick="toggleSort('${c.k}')">${sv}</button></div></div><input class="th-filter" placeholder="Filtrar..." value="${colFilters[c.k]||''}" oninput="colFilter('${c.k}',this.value)"></div></th>`;
+  });
+  visDisp.forEach(c=>{
+    const sq=c.req?rq:'';const sv=colSortState[c.k]==='asc'?'↑':colSortState[c.k]==='desc'?'↓':'⇅';
+    h+=`<th class="sd"><div class="th-inner"><div class="th-top"><span class="th-label">${c.l}${sq}</span><div class="th-controls"><button class="th-btn" onclick="hideCol('${c.k}')" title="Ocultar">✕</button><button class="th-btn" onclick="toggleSort('${c.k}')">${sv}</button></div></div><input class="th-filter" placeholder="Filtrar..." value="${colFilters[c.k]||''}" oninput="colFilter('${c.k}',this.value)"></div></th>`;
+  });
+  h+='</tr>';thead.innerHTML=h;
 }
 
-function thCtrl(k){return `<button class="th-btn" title="Ordenar" onclick="toggleSort('${k}')">${colSortState[k]==='asc'?'↑':colSortState[k]==='desc'?'↓':'⇅'}</button>`;}
-function hideCol(k){hiddenCols.add(k);buildBulkHead(document.getElementById('bHead'));if(document.getElementById('fsOverlay').classList.contains('open'))buildBulkHead(document.getElementById('fsHead'));renderBulkRows();}
-function toggleSort(k){const cur=colSortState[k];Object.keys(colSortState).forEach(kk=>delete colSortState[kk]);colSortState[k]=cur==='asc'?'desc':cur==='desc'?null:'asc';buildBulkHead(document.getElementById('bHead'));if(document.getElementById('fsOverlay').classList.contains('open'))buildBulkHead(document.getElementById('fsHead'));applyBulkFilters();}
+function hideCol(k){hiddenCols.add(k);buildBulkHead(document.getElementById('bHead'));buildBulkHead(document.getElementById('fsHead'));applyBulkFilters();}
+function toggleSort(k){const cur=colSortState[k];Object.keys(colSortState).forEach(kk=>delete colSortState[kk]);colSortState[k]=cur==='asc'?'desc':cur==='desc'?null:'asc';buildBulkHead(document.getElementById('bHead'));buildBulkHead(document.getElementById('fsHead'));applyBulkFilters();}
 function colFilter(k,v){colFilters[k]=v;applyBulkFilters();}
+
+// Selected cell for fill
+let selectedCell=null; // {rowIdx, colKey, el}
+let isDragging=false,dragStartCell=null;
 
 const CS_BULK={'TRATATIVA ABERTA':'chip-ta','TRATATIVA ATRASADA':'chip-tat','ACOMPANHAR DISPUTA':'chip-ad','ACOMPANHAR ENVIO':'chip-ae','POSSÍVEL EXTRAVIO':'chip-pe','AGUARDANDO REEMBOLSO':'chip-ar','EM ATRASO':'chip-ea','A ENVIAR':'chip-av'};
 
 function mkCell(r,i,c){
   if(hiddenCols.has(c.k))return'';
-  const val=r[c.k]||'';const uid=`b_${i}_${c.k}`;
-  const isMissCell=getMiss(r).includes(c.k)?'miss-cell':'';
+  const val=(bulkChg[i]&&bulkChg[i][c.k]!==undefined)?bulkChg[i][c.k]:(r[c.k]||'');
+  const uid=`b_${i}_${c.k}`;
+  const isMiss=getMiss(r).includes(c.k)?'miss-cell':'';
   const chg=`bChg(${i},'${c.k}',this.value)`;
-  if(c.t==='sel'){const o=(c.o||[]).map(v=>`<option value="${v}" ${val===v?'selected':''}>${v||'—'}</option>`).join('');return `<td class="${isMissCell}"><select class="bulk-sel" id="${uid}" onchange="${chg}">${o}</select></td>`;}
-  if(c.t==='yn'){const o=['','SIM','NÃO'].map(v=>`<option value="${v}" ${val===v?'selected':''}>${v||'—'}</option>`).join('');return `<td class="${isMissCell}"><select class="bulk-sel" id="${uid}" onchange="${chg}">${o}</select></td>`;}
-  return `<td class="${isMissCell}"><input class="bulk-inp" id="${uid}" value="${(val||'').replace(/"/g,'&quot;')}" onchange="${chg}"></td>`;
+  let inner='';
+  if(c.t==='sel'){const o=(c.o||[]).map(v=>`<option value="${v}" ${val===v?'selected':''}>${v||'—'}</option>`).join('');inner=`<select class="bulk-sel" id="${uid}" onchange="${chg}">${o}</select>`;}
+  else if(c.t==='yn'){const o=['','SIM','NÃO'].map(v=>`<option value="${v}" ${val===v?'selected':''}>${v||'—'}</option>`).join('');inner=`<select class="bulk-sel" id="${uid}" onchange="${chg}">${o}</select>`;}
+  else{inner=`<input class="bulk-inp" id="${uid}" value="${(val||'').replace(/"/g,'&quot;')}" onchange="${chg}">`;}
+  return `<td class="${isMiss}" data-row="${i}" data-col="${c.k}" onclick="selectCell(${i},'${c.k}',this)">${inner}<div class="fill-handle" onmousedown="startFill(event,${i},'${c.k}')"></div></td>`;
 }
 
 function renderBulkRows(targetBody){
-  const tbody=targetBody||document.getElementById('bBody');
+  const tbody=targetBody||document.getElementById('bBody');if(!tbody)return;
+  const visInfo=INFO_FIXED.filter(c=>!hiddenCols.has(c.k));
+  const visTrat=TC.filter(c=>!hiddenCols.has(c.k));
+  const visDisp=DC.filter(c=>!hiddenCols.has(c.k));
   let h='';
   bulkFiltered.forEach(i=>{
-    const r=bulkOrig[i];const cc=CS_BULK[r.STATUS]||'';const modVal=r.MODALIDADE||'';
+    const r=bulkOrig[i];const cc=CS_BULK[r.STATUS]||'';
+    const modVal=(bulkChg[i]&&bulkChg[i]['MODALIDADE']!==undefined)?bulkChg[i]['MODALIDADE']:(r.MODALIDADE||'');
     const modO=MODALIDADES.map(v=>`<option value="${v}" ${modVal===v?'selected':''}>${v||'—'}</option>`).join('');
-    const missR=getMiss(r).includes('MODALIDADE')?'miss-cell':'';
-    h+=`<tr id="br_${i}" class="${bulkChg[i]?'chg':''}"><td class="td-st cf">${r._row}</td><td class="td-id cf" style="left:38px">${r.ID_VENDA||'—'}</td><td><span class="chip ${cc}" style="font-size:10px;padding:2px 6px">${r.STATUS||'—'}</span></td><td style="font-size:10px;max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.NOME||'—'}</td><td><span class="chip chip-canal" style="font-size:10px">${r.CANAL||'—'}</span></td><td class="td-mod ${missR}"><select class="bulk-sel" id="b_${i}_MODALIDADE" onchange="bChg(${i},'MODALIDADE',this.value)" style="font-weight:600;color:var(--ok)">${modO}</select></td>`;
-    [...IC,...TC,...DC].forEach(c=>{h+=mkCell(r,i,c);});
+    const missM=getMiss(r).includes('MODALIDADE')?'miss-cell':'';
+    h+=`<tr id="br_${i}" class="${bulkChg[i]?'chg':''}">
+      <td class="td-st cf" style="padding:3px">${r._row}</td>
+      <td class="td-id cf" style="left:35px;padding:3px">${r.ID_VENDA||'—'}</td>
+      <td style="padding:3px"><span class="chip ${cc}" style="font-size:10px;padding:2px 6px">${r.STATUS||'—'}</span></td>
+      <td style="font-size:10px;padding:3px;max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.NOME||'—'}</td>
+      <td style="padding:3px"><span class="chip chip-canal" style="font-size:10px">${r.CANAL||'—'}</span></td>
+      <td class="si td-mod ${missM}" data-row="${i}" data-col="MODALIDADE" onclick="selectCell(${i},'MODALIDADE',this)">
+        <select class="bulk-sel" id="b_${i}_MODALIDADE" onchange="bChg(${i},'MODALIDADE',this.value)" style="font-weight:600;color:var(--ok)">${modO}</select>
+        <div class="fill-handle" onmousedown="startFill(event,${i},'MODALIDADE')"></div>
+      </td>`;
+    visInfo.forEach(c=>{h+=mkCell(r,i,c);});visTrat.forEach(c=>{h+=mkCell(r,i,c);});visDisp.forEach(c=>{h+=mkCell(r,i,c);});
     h+='</tr>';
   });
   tbody.innerHTML=h;
@@ -711,16 +712,79 @@ function renderBulkRows(targetBody){
   document.getElementById('fsBfCount').textContent=cnt;
 }
 
+function selectCell(rowIdx,colKey,el){
+  // Remove previous selection
+  document.querySelectorAll('.bt td.selected').forEach(td=>td.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedCell={rowIdx,colKey,el};
+}
+
+// ══ FILL HANDLE (drag to copy) ═══════════════════════════════════════
+let fillSrc=null,fillColKey=null,fillPreview=[];
+
+function startFill(e,rowIdx,colKey){
+  e.preventDefault();e.stopPropagation();
+  fillSrc=rowIdx;fillColKey=colKey;fillPreview=[];
+  // Get source value
+  const srcEl=document.getElementById(`b_${rowIdx}_${colKey}`);
+  const srcVal=srcEl?srcEl.value:(bulkChg[rowIdx]&&bulkChg[rowIdx][colKey]!==undefined?bulkChg[rowIdx][colKey]:bulkOrig[rowIdx][colKey]||'');
+
+  document.getElementById('dragOverlay').classList.add('active');
+
+  function onMove(ev){
+    // Find which row we're over
+    const els=document.elementsFromPoint(ev.clientX,ev.clientY);
+    const targetTd=els.find(el=>el.tagName==='TD'&&el.dataset.col===colKey&&el.dataset.row!==undefined);
+    if(!targetTd)return;
+    const targetRow=parseInt(targetTd.dataset.row);
+    // Determine range
+    const startFIdx=bulkFiltered.indexOf(fillSrc);
+    const endFIdx=bulkFiltered.indexOf(targetRow);
+    if(startFIdx<0||endFIdx<0)return;
+    const from=Math.min(startFIdx,endFIdx);const to=Math.max(startFIdx,endFIdx);
+    // Highlight range
+    document.querySelectorAll('.bt td').forEach(td=>{td.style.background='';});
+    for(let fi=from;fi<=to;fi++){
+      const ri=bulkFiltered[fi];const td=document.querySelector(`td[data-row="${ri}"][data-col="${colKey}"]`);
+      if(td)td.style.background='#bbdefb';
+    }
+    fillPreview={from,to,value:srcVal};
+  }
+
+  function onUp(ev){
+    document.getElementById('dragOverlay').classList.remove('active');
+    document.removeEventListener('mousemove',onMove);
+    document.removeEventListener('mouseup',onUp);
+    // Apply fill
+    if(fillPreview&&fillPreview.from!==undefined){
+      const{from,to,value}=fillPreview;
+      for(let fi=from;fi<=to;fi++){
+        const ri=bulkFiltered[fi];
+        if(ri===fillSrc)continue; // skip source
+        bChg(ri,colKey,value);
+        const el=document.getElementById(`b_${ri}_${colKey}`);
+        if(el)el.value=value;
+      }
+    }
+    // Remove highlight
+    document.querySelectorAll('.bt td').forEach(td=>{td.style.background='';});
+    fillSrc=null;fillColKey=null;fillPreview=null;
+  }
+
+  document.addEventListener('mousemove',onMove);
+  document.addEventListener('mouseup',onUp);
+}
+
 function bChg(i,key,val){
   if(!bulkChg[i])bulkChg[i]={};
   const orig=bulkOrig[i][key]||'';
   if(val===orig){delete bulkChg[i][key];if(!Object.keys(bulkChg[i]).length)delete bulkChg[i];}
   else bulkChg[i][key]=val;
-  [`br_${i}`].forEach(id=>{const row=document.getElementById(id);if(row)row.className=bulkChg[i]?'chg':'';});
+  const row=document.getElementById(`br_${i}`);if(row)row.className=bulkChg[i]?'chg':'';
   updateBulkInfo();
 }
 function updateBulkInfo(){const n=Object.keys(bulkChg).length;['bulkInfo','fsInfo'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=n?`${n} linha(s) alteradas`:'';});['bfChg','fsChg'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=n;});}
-function bulkReset(){bulkChg={};hiddenCols.clear();colSortState={};colFilters={};buildBulk();snack('Desfeito');}
+function bulkReset(){bulkChg={};hiddenCols.clear();colSortState={};colFilters={};statusFilter=null;missFilter=null;buildBulk();snack('Desfeito');}
 async function bulkSave(){
   const keys=Object.keys(bulkChg);if(!keys.length){snack('Nenhuma alteração');return;}
   const tkn=await getToken();if(!tkn)return;
@@ -732,12 +796,11 @@ async function bulkSave(){
 function openFS(){
   buildBulkHead(document.getElementById('fsHead'));
   renderBulkRows(document.getElementById('fsBBody'));
-  document.getElementById('fsBfTotal').textContent=bulkOrig.length;
+  buildStatusChips();
   document.getElementById('fsOverlay').classList.add('open');
 }
 function closeFS(){document.getElementById('fsOverlay').classList.remove('open');}
 
-// UTILS
 function n2c(n){let s='';n++;while(n>0){n--;s=String.fromCharCode(65+(n%26))+s;n=Math.floor(n/26);}return s;}
 async function getToken(){const st=sessionStorage.getItem('gToken');if(st)return st;if(!cfg.clientId){snack('Configure o Client ID OAuth','error');return null;}return new Promise(resolve=>{const uri=window.location.origin+window.location.pathname;const url=`https://accounts.google.com/o/oauth2/v2/auth?client_id=${cfg.clientId}&redirect_uri=${encodeURIComponent(uri)}&response_type=token&scope=${encodeURIComponent('https://www.googleapis.com/auth/spreadsheets')}`;const pop=window.open(url,'oauth','width=500,height=600');const iv=setInterval(()=>{try{const h=pop?.location?.hash;if(h?.includes('access_token')){const t=new URLSearchParams(h.replace('#','?')).get('access_token');sessionStorage.setItem('gToken',t);pop.close();clearInterval(iv);resolve(t);}}catch(e){}if(pop?.closed){clearInterval(iv);resolve(null);}},500);});}
 function snack(msg,type=''){const t=document.getElementById('snack');t.textContent=msg;t.className=`snack ${type} show`;setTimeout(()=>t.classList.remove('show'),3500);}
