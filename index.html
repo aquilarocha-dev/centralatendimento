@@ -623,7 +623,7 @@ function renderDashboard(){
   document.getElementById('skuTotalBadge').textContent=skuArr.length+' SKUs';
   document.getElementById('skuTableBody').innerHTML=skuArr.slice(0,30).map(([sku,d])=>{
     const pct=Math.round((d.total/maxSku)*100);
-    return '<tr><td style="font-family:'Roboto Mono',monospace;font-size:11px">'+sku+'</td><td><strong>'+d.total+'</strong><div class="dash-bar-wrap"><div class="dash-bar-fill" style="width:'+pct+'%"></div></div></td><td><span style="color:'+(d.reclam>0?'var(--err)':'var(--on-sur-v)')+'">'+d.reclam+'</span></td></tr>';
+    return '<tr><td style="font-family:Roboto Mono,monospace;font-size:11px">'+sku+'</td><td><strong>'+d.total+'</strong><div class="dash-bar-wrap"><div class="dash-bar-fill" style="width:'+pct+'%"></div></div></td><td><span style="color:'+(d.reclam>0?'var(--err)':'var(--on-sur-v)')+'">'+d.reclam+'</span></td></tr>';
   }).join('');
 
   // ── SKU + MOTIVO TABLE ────────────────────────────────────────────────────
@@ -635,7 +635,7 @@ function renderDashboard(){
   });
   const skuMotivoArr=Object.values(skuMotivoMap).sort((a,b)=>b.n-a.n);
   document.getElementById('skuMotivoBody').innerHTML=skuMotivoArr.slice(0,30).map(d=>{
-    return '<tr><td style="font-family:'Roboto Mono',monospace;font-size:10px">'+d.sku+'</td><td style="font-size:11px">'+d.motivo+'</td><td><strong style="color:var(--err)">'+d.n+'</strong></td></tr>';
+    return '<tr><td style="font-family:Roboto Mono,monospace;font-size:10px">'+d.sku+'</td><td style="font-size:11px">'+d.motivo+'</td><td><strong style="color:var(--err)">'+d.n+'</strong></td></tr>';
   }).join('') || '<tr><td colspan="3" style="text-align:center;color:var(--on-sur-v);padding:20px">Sem reclamações com motivo</td></tr>';
 
   // ── REGISTROS POR MÊS ─────────────────────────────────────────────────────
@@ -703,7 +703,7 @@ function openModal(rec){
 '<div class="fsec"><div class="fsec-tit">🗂 Modalidade</div><div class="fg3">'+fSel('MODALIDADE','Modalidade',r.MODALIDADE,MODALIDADES,false,isErr('MODALIDADE'))+'</div></div>'+
 '<div class="fsec"><div class="fsec-tit">📦 Identificação</div><div class="fg">'+fInp('ID_VENDA','ID Venda',r.ID_VENDA,'text',true,isNew?'Digite o ID...':'',false,isNew)+fSel('CANAL','Canal',r.CANAL,['','Mercado Livre','Shopee','Amazon','Magalu','Cardex'],true,isErr('CANAL'))+fSel('EMPR','EMPR.',r.EMPR,['','JLD','DGL'],true,isErr('EMPR'))+fSel('MODELO','Modelo',r.MODELO,['','Full','Normal','Flex','Cardex'],true,isErr('MODELO'))+'</div><div class="fg4" style="margin-top:8px">'+fRO('NOME','Nome (f)',r.NOME)+fRO('DATA_VENDA','Data (f)',r.DATA_VENDA)+fRO('SKU','SKU (f)',r.SKU)+fRO('QT','QT (f)',r.QT)+'</div><div class="fg3" style="margin-top:8px">'+fRO('RASTREIO','Rastreio (f)',r.RASTREIO)+fRO('ID_BLING','ID Bling (f)',r.ID_BLING)+fRO('DESC_STATUS','Desc. Status (f)',r.DESC_STATUS)+'</div><div class="fg" style="margin-top:8px">'+fInp('AUTOR','Autor',r.AUTOR)+fInp('NEC_NF_DEVOL','Nec. NF Devol?',r.NEC_NF_DEVOL)+fInp('NF','NF',r.NF)+fInp('NF_DEVOL','NF DEVOL',r.NF_DEVOL)+fInp('NF_DEVOL_EMISSAO','NF DEVOL Em.',r.NF_DEVOL_EMISSAO)+'</div></div>'+
 '<div class="fsec"><div class="fsec-tit">🗂 Atendimento</div><div class="fg">'+fInp('DATA_TRATATIVA','DATA Tratativa',r.DATA_TRATATIVA,'text',false,'DD/MM/AAAA')+fInp('NUM_RECLAM','Nº Reclamação',r.NUM_RECLAM)+fSel('MOTIVO','Motivo Reclamação',r.MOTIVO,MOTIVOS,wMot,isErr('MOTIVO'))+fSel('DETALHAMENTO','Detalhamento',r.DETALHAMENTO,DETALHAMENTOS)+fInp('OBS_RECLAM','Obs. Reclamação',r.OBS_RECLAM)+fInp('OBS_RELEVANTES','Obs. Relevantes',r.OBS_RELEVANTES)+'</div><div class="fg3" style="margin-top:8px">'+fYN('REPUTACAO','Impacto Reputação?',r.REPUTACAO)+fYN('REEMBOLSADO','Cliente Reembolsado?',r.REEMBOLSADO)+fYN('DEVOLUCAO_ABERTA','Devolução Aberta?',r.DEVOLUCAO_ABERTA,true,isErr('DEVOLUCAO_ABERTA'))+fYN('TRATATIVA_FINALIZADA','Tratativa Final?',r.TRATATIVA_FINALIZADA,true,isErr('TRATATIVA_FINALIZADA'))+'</div></div>'+
-'<div class="fsec"><div class="fsec-tit">📬 Peças</div><div class="fg3">'+fYN('NEC_PECAS','Nec. Peças?',r.NEC_PECAS,true,isErr('NEC_PECAS'))+fYN('PECAS_ENVIADAS','Peças Enviadas?',r.PECAS_ENVIADAS)+fYN('REENVIO_RECEBIDO','Reenvio Recebido?',r.REENVIO_RECEBIDO)+'</div><div class="fg" style="margin-top:8px">'+fInp('OBS_PECAS','Obs. Peças',r.OBS_PECAS)+fInp('CUSTO_ENVIO','Custo Envio',r.CUSTO_ENVIO)+fInp('PAGO_PLAT','Pago Plat/Cliente',r.PAGO_PLAT)+fInp('VALOR_PAGO','Valor Pago',r.VALOR_PAGO)+fInp('CUSTOS_TOTAL','Custos Total',r.CUSTOS_TOTAL)+'</div></div>'+
+'<div class="fsec"><div class="fsec-tit">📬 Tratativa</div><div class="fg3">'+fYN('NEC_PECAS','Nec. Peças?',r.NEC_PECAS,true,isErr('NEC_PECAS'))+fYN('PECAS_ENVIADAS','Peças Enviadas?',r.PECAS_ENVIADAS)+fYN('REENVIO_RECEBIDO','Reenvio Recebido?',r.REENVIO_RECEBIDO)+'</div><div class="fg" style="margin-top:8px">'+fInp('OBS_PECAS','Obs. Peças',r.OBS_PECAS)+fInp('CUSTO_ENVIO','Custo Envio',r.CUSTO_ENVIO)+fInp('PAGO_PLAT','Pago Plat/Cliente',r.PAGO_PLAT)+fInp('VALOR_PAGO','Valor Pago',r.VALOR_PAGO)+fInp('CUSTOS_TOTAL','Custos Total',r.CUSTOS_TOTAL)+'</div></div>'+
 '<div class="fsec"><div class="fsec-tit">⚖️ Disputa</div><div class="fg3" id="dBase">'+fYN('DISPUTA_ABERTA','Disputa Aberta?',r.DISPUTA_ABERTA,true,isErr('DISPUTA_ABERTA'))+'</div><div class="disp-extra fg3 '+(dA?'show':'')+'" id="dX1" style="margin-top:8px">'+fYN('DISPUTA_FINALIZADA','Disputa Final?',r.DISPUTA_FINALIZADA,true,isErr('DISPUTA_FINALIZADA'))+fYN('REEMBOLSO_MKT','Reembolso Mkt?',r.REEMBOLSO_MKT,dF,isErr('REEMBOLSO_MKT'))+fYN('CREDITO','R$ Crédito?',r.CREDITO,rS,isErr('CREDITO'))+'</div><div class="disp-extra fg '+(dA?'show':'')+'" id="dX2" style="margin-top:8px">'+fInp('PLAT_DISPUTA','Plataforma',r.PLAT_DISPUTA)+fInp('MOTIVO_DISPUTA','Motivo Disputa',r.MOTIVO_DISPUTA)+fInp('PROTOCOLO','Protocolo',r.PROTOCOLO)+fInp('ID_TRANSACAO','ID Transação',r.ID_TRANSACAO)+fInp('CREDITO_RECEBIDO_VALOR','R$ Créd. Rec.',r.CREDITO_RECEBIDO_VALOR)+fYN('CREDITO_RECEBIDO','Crédito Rec.?',r.CREDITO_RECEBIDO)+fInp('OBS_DISPUTA','Obs. Disputa',r.OBS_DISPUTA)+'</div></div>'+
 '<div class="fsec"><div class="fsec-tit">🏭 Full/Estoque</div><div class="fg3">'+fInp('STATUS_FULL','Status Full',r.STATUS_FULL)+fYN('CHEGOU_CARDEX','Chegou Cardex?',r.CHEGOU_CARDEX)+'</div></div>';
   document.getElementById('dlgOv').classList.add('open');
@@ -757,15 +757,12 @@ function buildBulk(){
   updateBulkInfo();
 }
 
-function buildStatusChips(ativos){
-  const arr=ativos||bulkOrig;let sh='';
-  STATUS_CHIPS.forEach(s=>{const n=arr.filter(r=>r.STATUS===s.k).length;if(!n)return;const on=statusFilter===s.k?'on':'';sh+='<div class="bsc '+s.cs+' '+on+'" onclick="toggleSF(\''+s.k+'\')"><span class="bsc-n">'+n+'</span> '+s.l+'</div>';});
-  ['bulkSummary','fsStatusRow'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=sh;});
-}
-function toggleSF(k){statusFilter=statusFilter===k?null:k;buildStatusChips();applyBF();}
 
-function buildMissChips(){
-  const mm={};bulkOrig.forEach(r=>{getMiss(r).forEach(k=>{mm[k]=(mm[k]||0)+1;});});const tot=bulkOrig.filter(r=>getMiss(r).length>0).length;
+
+function buildMissChips(filteredIdxs){
+  // Use filtered subset when provided (so chips reflect current filter context)
+  const rows=filteredIdxs?filteredIdxs.map(i=>bulkOrig[i]):bulkOrig;
+  const mm={};rows.forEach(r=>{getMiss(r).forEach(k=>{mm[k]=(mm[k]||0)+1;});});const tot=rows.filter(r=>getMiss(r).length>0).length;
   let chips='<button class="miss-chip '+(missFilter==='__all__'?'on':'')+'" onclick="setMF(\'__all__\')">Todos incompletos <strong>('+tot+')</strong></button>';
   Object.entries(mm).sort((a,b)=>b[1]-a[1]).forEach(([k,n])=>{chips+='<button class="miss-chip '+(missFilter===k?'on':'')+'" onclick="setMF(\''+k+'\')">'+( ML[k]||k)+' <strong>('+n+')</strong></button>';});
   ['missChips','fsMissChips'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=chips;});
@@ -970,7 +967,6 @@ async function bulkSave(){
 function openFS(){
   buildBulkHead(document.getElementById('fsHead'));
   renderBulkRows(document.getElementById('fsBBody'));
-  buildStatusChips();
   document.getElementById('fsBfTotal').textContent=bulkOrig.length;
   document.getElementById('fsOverlay').classList.add('open');
 }
@@ -978,6 +974,7 @@ function closeFS(){document.getElementById('fsOverlay').classList.remove('open')
 
 function n2c(n){let s='';n++;while(n>0){n--;s=String.fromCharCode(65+(n%26))+s;n=Math.floor(n/26);}return s;}
 async function getToken(){const st=sessionStorage.getItem('gToken');if(st)return st;if(!cfg.clientId){snack('Configure o Client ID OAuth','error');return null;}return new Promise(resolve=>{const uri=window.location.origin+window.location.pathname;const url='https://accounts.google.com/o/oauth2/v2/auth?client_id='+cfg.clientId+'&redirect_uri='+encodeURIComponent(uri)+'&response_type=token&scope='+encodeURIComponent('https://www.googleapis.com/auth/spreadsheets');const pop=window.open(url,'oauth','width=500,height=600');const iv=setInterval(()=>{try{const h=pop?.location?.hash;if(h?.includes('access_token')){const t=new URLSearchParams(h.replace('#','?')).get('access_token');sessionStorage.setItem('gToken',t);pop.close();clearInterval(iv);resolve(t);}}catch(e){}if(pop?.closed){clearInterval(iv);resolve(null);}},500);});}
+function toggleSF(k){statusFilter=statusFilter===k?null:k;applyBF();}
 function syncFSFilters(){
   const map=[['fsBfStatus','bfStatus'],['fsBfCanal','bfCanal'],['fsBfModal','bfModal']];
   map.forEach(([fs,m])=>{const fe=document.getElementById(fs);const me=document.getElementById(m);if(fe&&me)me.value=fe.value;});
