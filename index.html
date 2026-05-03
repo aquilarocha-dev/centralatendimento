@@ -196,10 +196,30 @@ tbody tr:last-child td{border-bottom:none;}tbody tr:hover td{background:#f8f9fa;
   padding:3px 4px;
   z-index:2;
 }
+.bt .col-id-venda{
+  position:sticky;
+  left:164px;
+  width:150px;
+  min-width:150px;
+  background:#f3f4f6;
+  border-right:2px solid var(--out);
+  font-family:Roboto Mono,monospace;
+  font-size:10px;
+  padding:3px 5px;
+  z-index:3;
+}
+.bt thead .col-id-venda{
+  position:sticky;
+  left:164px;
+  top:0;
+  z-index:20;
+  background:#4b5563;
+  color:#fff;
+}
 
 /* ── Elevação de z-index nos headers (thead sticky) ──────────── */
 .bt thead .col-ln{
-  z-index:12;
+  z-index:20;
   position:sticky;
   left:0;
   top:0;
@@ -207,7 +227,7 @@ tbody tr:last-child td{border-bottom:none;}tbody tr:hover td{background:#f8f9fa;
   color:#fff;
 }
 .bt thead .col-status{
-  z-index:12;
+  z-index:20;
   position:sticky;
   left:36px;
   top:0;
@@ -217,9 +237,13 @@ tbody tr:last-child td{border-bottom:none;}tbody tr:hover td{background:#f8f9fa;
 
 /* ── thead rows — dois rows sticky ──────────────────────────── */
 /* Row 0: section headers — fica no top:0 */
-.bt thead tr.sec-row{position:sticky;top:0;z-index:5;}
 .bt thead tr.sec-row th{
+  /* sticky aplicado no TH, não no TR — única forma confiável cross-browser */
+  position:sticky;
+  top:0;
+  z-index:5;
   padding:5px 10px;
+  height:30px;
   font-size:11px;
   font-weight:700;
   color:#fff;
@@ -228,14 +252,22 @@ tbody tr:last-child td{border-bottom:none;}tbody tr:hover td{background:#f8f9fa;
   border-bottom:1px solid rgba(255,255,255,.25);
   border-right:2px solid rgba(255,255,255,.25);
 }
-/* Row 1: column headers — fica no top:32px (abaixo da row 0) */
-.bt thead tr.col-row{position:sticky;top:32px;z-index:5;}
+/* Row 1: TH sticky logo abaixo da row 0 (top = altura exata da sec-row = 30px) */
+/* Garantir que colunas normais do thead tenham z-index MENOR que as fixas */
+.bt thead tr.sec-row th:not(.col-ln):not(.col-status):not(.col-id-venda){z-index:5;}
+.bt thead tr.col-row th:not(.col-ln):not(.col-status):not(.col-id-venda){z-index:5;}
+
 .bt thead tr.col-row th{
+  /* sticky no TH para manter cabeçalho colado ao fazer scroll vertical */
+  position:sticky;
+  top:30px;
+  z-index:5;
   padding:0;
   border-bottom:2px solid var(--out);
   border-right:1px solid rgba(0,0,0,.08);
   min-width:90px;
-  position:relative;
+  /* NÃO usar position:relative aqui — quebraria o sticky */
+  /* O .col-resizer usa position:absolute e funciona dentro de position:sticky */
 }
 
 /* ── Cores das seções ────────────────────────────────────────── */
@@ -627,7 +659,6 @@ let hiddenSections=new Set(); // 'id','trat','disp'
 // IDENTIFICAÇÃO: Status(ro), Modalidade, Nome(ro), Canal(ro), EMPR, Modelo,
 //                NF, NF_DEVOL, NF_DEVOL_EMISSAO, NEC_NF_DEVOL, AUTOR
 const ID_COLS=[
-  {k:'ID_VENDA',    l:'ID Venda',      t:'ro',  req:false},
   {k:'MODALIDADE',  l:'Modalidade',    t:'sel', o:MODALIDADES, req:false},
   {k:'NOME',        l:'Nome',          t:'ro',  req:false},
   {k:'CANAL',       l:'Canal',         t:'ro',  req:false},
@@ -957,7 +988,7 @@ function buildBulkHead(thead){
     const fv=colFilters[c.k]||'';
     const canHide=c.t!=='ro';
     const cw=colWidths[c.k]?('width:'+colWidths[c.k]+'px;'):'';
-    return '<th class="'+secCls+'" style="'+cw+'position:relative">'
+    return '<th class="'+secCls+'" data-colkey="'+c.k+'" style="'+cw+'position:sticky;top:30px;z-index:5;">'
       +'<div class="th-inner">'
         +'<div class="th-top">'
           +'<span class="'+lCls+'" title="'+c.l+'">'+c.l+'</span>'
@@ -994,6 +1025,7 @@ function buildBulkHead(thead){
   let r0='<tr class="sec-row">';
   r0+='<th class="col-ln" rowspan="2" style="vertical-align:middle;left:0">Ln</th>';
   r0+=mkFixedTh('STATUS','Status',36,'col-status');
+  r0+=mkFixedTh('ID_VENDA','ID Venda',164,'col-id-venda');
   r0+='<th class="sec-id" colspan="'+visID.length+'">'
       +'📦 Identificação'
       +'<button class="sec-hide-btn" onclick="hideSection(\'id\')" title="Ocultar seção">✕</button>'
@@ -1041,7 +1073,6 @@ function mkIDCell(r,ri,c){
   if(c.t==='ro'){
     let disp=r[c.k]||'—';
     if(c.k==='CANAL')disp='<span class="chip chip-canal" style="font-size:10px">'+r[c.k]+'</span>';
-    else if(c.k==='ID_VENDA')disp='<span style="font-family:Roboto Mono,monospace;font-size:10px">'+r[c.k]+'</span>';
     else if(c.k==='NOME')disp='<div style="max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px">'+disp+'</div>';
     const mc=getMiss(r).includes(c.k)?'miss-cell':'';
     return '<td class="sec-id td-id-sec '+mc+'" style="padding:3px 5px">'+disp+'</td>';
@@ -1071,7 +1102,7 @@ function renderBulkRows(tbody){
     const r=bulkOrig[i];
     parts.push('<tr id="br_'+i+'" class="'+(bulkChg[i]?'chg':'')+'">'
       +'<td class="col-ln">'+r._row+'</td>'
-      +'<td class="col-status"><span class="chip '+(_stChipMap[r.STATUS]||'')+'" style="font-size:10px;padding:2px 5px">'+(r.STATUS||'—')+'</span></td>');
+      +'<td class="col-status"><span class="chip '+(_stChipMap[r.STATUS]||'')+'" style="font-size:10px;padding:2px 5px">'+(r.STATUS||'—')+'</span></td>'+'<td class="col-id-venda">'+(r.ID_VENDA||'—')+'</td>');
     visID.forEach(c=>{parts.push(mkIDCell(r,i,c));});
     visTR.forEach(c=>{parts.push(mkEditCell(r,i,c,'sec-trat'));});
     visDI.forEach(c=>{parts.push(mkEditCell(r,i,c,'sec-disp'));});
