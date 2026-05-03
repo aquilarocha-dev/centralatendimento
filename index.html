@@ -41,6 +41,7 @@ body{font-family:'Roboto',sans-serif;background:#f8f9fa;color:var(--on-sur);font
 .cfg-f input:focus{border-color:var(--pri);}
 /* DASHBOARD */
 #page0{display:none;}
+#page1{display:none;}
 .dash-wrap{padding:16px 20px;}
 .dash-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:10px;}
 .dash-title{font-family:'Google Sans',sans-serif;font-size:17px;font-weight:500;}
@@ -393,7 +394,36 @@ tbody tr:last-child td{border-bottom:none;}tbody tr:hover td{background:#f8f9fa;
 .dash-bar-fill{height:100%;border-radius:3px;background:var(--pri);}
 .month-chart-card{background:var(--sur);border:1px solid var(--out);border-radius:10px;padding:12px 14px;margin-top:12px;}
 .month-chart-wrap{position:relative;height:200px;}
-</style>
+
+/* ── Colunas fixas no thead — sec-row (top:0) e col-row (top:30px) ── */
+/* Sem rowspan: cada row tem seu próprio TH sticky com top diferente */
+.bt thead .col-ln.fix-sec,
+.bt thead .col-status.fix-sec,
+.bt thead .col-id-venda.fix-sec{
+  position:sticky;
+  top:0;
+  z-index:20;
+  background:#4b5563;
+  color:#fff;
+  font-weight:600;
+  font-size:11px;
+  text-align:left;
+  padding:6px 6px;
+  border-bottom:1px solid rgba(255,255,255,.2);
+}
+.bt thead .col-ln.fix-col,
+.bt thead .col-status.fix-col,
+.bt thead .col-id-venda.fix-col{
+  position:sticky;
+  top:30px;    /* igual à altura da sec-row */
+  z-index:20;
+  background:#374151;
+  color:#fff;
+}
+/* left values (devem ser iguais às TDs de corpo) */
+.bt thead .col-ln.fix-sec,.bt thead .col-ln.fix-col{left:0;}
+.bt thead .col-status.fix-sec,.bt thead .col-status.fix-col{left:36px;}
+.bt thead .col-id-venda.fix-sec,.bt thead .col-id-venda.fix-col{left:164px;}</style>
 </head>
 <body>
 
@@ -486,7 +516,7 @@ tbody tr:last-child td{border-bottom:none;}tbody tr:hover td{background:#f8f9fa;
 </div>
 
 <!-- PAGE 1 -->
-<div id="page1">
+<div id="page1" style="display:none">
   <div class="summary-row" id="summaryRow"></div>
   <div class="toolbar">
     <div class="search-field"><span style="color:var(--on-sur-v)">🔍</span><input id="srch" placeholder="Buscar ID, nome, SKU..." oninput="render()"></div>
@@ -516,7 +546,7 @@ tbody tr:last-child td{border-bottom:none;}tbody tr:hover td{background:#f8f9fa;
 </div>
 
 <!-- PAGE 2: BULK -->
-<div id="page2">
+<div id="page2" style="display:none">
 <div class="bulk-wrap">
   <div class="bulk-hdr">
     <div class="bulk-tit">Preenchimento em Massa</div>
@@ -624,7 +654,6 @@ tbody tr:last-child td{border-bottom:none;}tbody tr:hover td{background:#f8f9fa;
   </div>
 </div>
 <div class="snack" id="snack"></div>
-
 <script>
 const COL={STATUS:0,MODALIDADE:1,ID_VENDA:2,NOME:3,CANAL:4,EMPR:5,MODELO:6,DATA_VENDA:7,SKU:8,QT:9,RASTREIO:10,ID_BLING:11,DESC_STATUS:12,NEC_NF_DEVOL:13,NF:14,NF_DEVOL:15,NF_DEVOL_EMISSAO:16,AUTOR:17,MOTIVO:18,DETALHAMENTO:19,OBS_RECLAM:20,DATA_TRATATIVA:21,NUM_RECLAM:22,REPUTACAO:23,REEMBOLSADO:24,DEVOLUCAO_ABERTA:25,NEC_PECAS:26,PECAS_ENVIADAS:27,OBS_PECAS:28,REENVIO_RECEBIDO:29,CUSTO_ENVIO:30,PAGO_PLAT:31,VALOR_PAGO:32,CUSTOS_TOTAL:33,TRATATIVA_FINALIZADA:34,OBS_RELEVANTES:35,STATUS_FULL:36,CHEGOU_CARDEX:37,DISPUTA_ABERTA:38,PLAT_DISPUTA:39,MOTIVO_DISPUTA:40,PROTOCOLO:41,CREDITO:42,ID_TRANSACAO:43,REEMBOLSO_MKT:44,DISPUTA_FINALIZADA:45,CREDITO_RECEBIDO_VALOR:46,CREDITO_RECEBIDO:47,OBS_DISPUTA:48};
 const FORMULA_COLS=new Set([0,3,7,8,9,10,11,12]);
@@ -974,82 +1003,70 @@ function applyBF(){
   ['bulkFilterCount','fsBulkFilterCount'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=cnt+' registros';});
 }
 
+
+
+
+
 function buildBulkHead(thead){
   if(!thead)return;
   const visID=ID_COLS.filter(c=>!hiddenCols.has(c.k));
   const visTR=TC.filter(c=>!hiddenCols.has(c.k));
   const visDI=DC.filter(c=>!hiddenCols.has(c.k));
 
-  // Helper: th for a section column with resize handle
-  function mkTh(c,secCls,bgColor){
-    const isRq=c.req;
-    const lCls='th-label'+(isRq?' req-lbl':'');
+  function mkTh(c,secCls){
+    const lCls='th-label'+(c.req?' req-lbl':'');
     const sv=colSortState[c.k]==='asc'?'↑':colSortState[c.k]==='desc'?'↓':'⇅';
-    const fv=colFilters[c.k]||'';
-    const canHide=c.t!=='ro';
     const cw=colWidths[c.k]?('width:'+colWidths[c.k]+'px;'):'';
-    return '<th class="'+secCls+'" data-colkey="'+c.k+'" style="'+cw+'position:sticky;top:30px;z-index:5;">'
-      +'<div class="th-inner">'
-        +'<div class="th-top">'
-          +'<span class="'+lCls+'" title="'+c.l+'">'+c.l+'</span>'
-          +'<div class="th-controls">'
-            +(canHide?'<button class="th-btn" onclick="hideCol(\''+c.k+'\')" title="Ocultar coluna">✕</button>':'')
-            +'<button class="th-btn" onclick="setSortDir(\''+c.k+'\',\'asc\')" title="Crescente">↑</button>'
-            +'<button class="th-btn" onclick="setSortDir(\''+c.k+'\',\'desc\')" title="Decrescente">↓</button>'
-          +'</div>'
-        +'</div>'
-        +'<input class="th-filter" placeholder="Filtrar..." value="'+fv+'" oninput="colFilter(\''+c.k+'\',this.value)">'
+    return '<th class="'+secCls+'" data-colkey="'+c.k+'" style="'+cw+'">'
+      +'<div class="th-inner"><div class="th-top">'
+        +'<span class="'+lCls+'" title="'+c.l+'">'+c.l+'</span>'
+        +'<div class="th-controls">'
+          +(c.t!=='ro'?'<button class="th-btn" onclick="hideCol(\''+c.k+'\')" title="Ocultar">✕</button>':'')
+          +'<button class="th-btn" onclick="setSortDir(\''+c.k+'\',\'asc\')">↑</button>'
+          +'<button class="th-btn" onclick="setSortDir(\''+c.k+'\',\'desc\')">↓</button>'
+        +'</div></div>'
+        +'<input class="th-filter" placeholder="Filtrar..." value="'+(colFilters[c.k]||'')+'" oninput="colFilter(\''+c.k+'\',this.value)">'
       +'</div>'
       +'<div class="col-resizer" onmousedown="startResize(event,\''+c.k+'\')" title="Redimensionar"></div>'
       +'</th>';
   }
-
-  // Fixed col header helper
-  function mkFixedTh(key, label, leftPx, cssClass){
+  // Colunas fixas: duas rows, sem rowspan
+  // sec-row: só label (top:0)    col-row: filtros e sort (top:30px)
+  function mkFixedSec(cssClass,label){
+    return '<th class="'+cssClass+' fix-sec">'+label+'</th>';
+  }
+  function mkFixedCol(key,label,cssClass){
     const sv=colSortState[key]==='asc'?'↑':colSortState[key]==='desc'?'↓':'⇅';
     const fv=colFilters[key]||'';
-    return '<th class="'+cssClass+'" rowspan="2" style="vertical-align:top;left:'+leftPx+'px">'
-      +'<div class="th-inner">'
-        +'<div class="th-top"><span class="th-label">'+label+'</span>'
-          +'<div class="th-controls">'
-            +'<button class="th-btn" onclick="setSortDir(\''+key+'\',\'asc\')" title="Crescente">↑</button>'
-            +'<button class="th-btn" onclick="setSortDir(\''+key+'\',\'desc\')" title="Decrescente">↓</button>'
-          +'</div>'
-        +'</div>'
+    return '<th class="'+cssClass+' fix-col">'
+      +'<div class="th-inner"><div class="th-top"><span class="th-label">'+label+'</span>'
+        +'<div class="th-controls">'
+          +'<button class="th-btn" onclick="setSortDir(\''+key+'\',\'asc\')">↑</button>'
+          +'<button class="th-btn" onclick="setSortDir(\''+key+'\',\'desc\')">↓</button>'
+        +'</div></div>'
         +'<input class="th-filter" placeholder="Filtrar..." value="'+fv+'" oninput="colFilter(\''+key+'\',this.value)">'
-      +'</div>'
-      +'</th>';
+      +'</div></th>';
   }
-
-  // ROW 0: section headers with X to hide entire section
+  // ROW 0: section labels
   let r0='<tr class="sec-row">';
-  r0+='<th class="col-ln" rowspan="2" style="vertical-align:middle;left:0">Ln</th>';
-  r0+=mkFixedTh('STATUS','Status',36,'col-status');
-  r0+=mkFixedTh('ID_VENDA','ID Venda',164,'col-id-venda');
-  r0+='<th class="sec-id" colspan="'+visID.length+'">'
-      +'📦 Identificação'
-      +'<button class="sec-hide-btn" onclick="hideSection(\'id\')" title="Ocultar seção">✕</button>'
-      +'</th>';
-  r0+='<th class="sec-trat" colspan="'+visTR.length+'">'
-      +'🗂 Tratativa'
-      +'<button class="sec-hide-btn" onclick="hideSection(\'trat\')" title="Ocultar seção">✕</button>'
-      +'</th>';
-  r0+='<th class="sec-disp" colspan="'+visDI.length+'">'
-      +'⚖️ Disputa'
-      +'<button class="sec-hide-btn" onclick="hideSection(\'disp\')" title="Ocultar seção">✕</button>'
-      +'</th>';
+  r0+=mkFixedSec('col-ln','#');
+  r0+=mkFixedSec('col-status','Status');
+  r0+=mkFixedSec('col-id-venda','ID Venda');
+  r0+='<th class="sec-id" colspan="'+visID.length+'">📦 Identificação<button class="sec-hide-btn" onclick="hideSection(\'id\')">✕</button></th>';
+  r0+='<th class="sec-trat" colspan="'+visTR.length+'">🗂 Tratativa<button class="sec-hide-btn" onclick="hideSection(\'trat\')">✕</button></th>';
+  r0+='<th class="sec-disp" colspan="'+visDI.length+'">⚖️ Disputa<button class="sec-hide-btn" onclick="hideSection(\'disp\')">✕</button></th>';
   r0+='</tr>';
-
   // ROW 1: column headers
   let r1='<tr class="col-row">';
+  r1+='<th class="col-ln fix-col"><div class="th-inner"><span class="th-label" style="padding:2px 4px">#</span></div></th>';
+  r1+=mkFixedCol('STATUS','Status','col-status');
+  r1+=mkFixedCol('ID_VENDA','ID Venda','col-id-venda');
   visID.forEach(c=>{r1+=mkTh(c,'sec-id');});
   visTR.forEach(c=>{r1+=mkTh(c,'sec-trat');});
   visDI.forEach(c=>{r1+=mkTh(c,'sec-disp');});
   r1+='</tr>';
-
   thead.innerHTML=r0+r1;
 }
-
 
 function hideCol(k){hiddenCols.add(k);buildBulkHead(document.getElementById('bHead'));buildBulkHead(document.getElementById('fsHead'));applyBF();}
 function setSortDir(k,dir){
@@ -1089,20 +1106,91 @@ function mkEditCell(r,ri,c,secCls){
   return '<td class="'+secCls+' '+isMiss+'" data-row="'+ri+'" data-col="'+c.k+'" onclick="selCell(this)">'+inner+'<div class="fill-handle" onmousedown="startFill(event,'+ri+',\''+c.k+'\')"></div></td>';
 }
 
-// Status chip map (cache outside render for perf)
-const _stChipMap={'TRATATIVA ABERTA':'chip-ta','TRATATIVA ATRASADA':'chip-tat','ACOMPANHAR DISPUTA':'chip-ad','ACOMPANHAR ENVIO':'chip-ae','POSSÍVEL EXTRAVIO':'chip-pe','AGUARDANDO REEMBOLSO':'chip-ar','EM ATRASO':'chip-ea','A ENVIAR':'chip-av'};
+// ── VIRTUAL RENDERING ────────────────────────────────────────────────
+// Renderiza só as linhas visíveis + margem. Drasticamente mais rápido.
+const VIRTUAL_ROW_H = 28; // altura estimada de cada linha em px
+const VIRTUAL_BUFFER = 15; // linhas extra acima e abaixo do viewport
+
+let _lastVStart=-1,_lastVEnd=-1,_lastVTarget=null;
+
 function renderBulkRows(tbody){
   if(!tbody)return;
+  // Para tabelas pequenas, renderiza tudo normalmente
+  if(bulkFiltered.length<=200){
+    _renderAllRows(tbody);
+    return;
+  }
+  // Virtual render: detectar scroll container
+  const sheet=tbody.closest('.bulk-sheet,.fs-body');
+  if(!sheet){_renderAllRows(tbody);return;}
+  _setupVirtualScroll(tbody,sheet);
+  _renderVirtual(tbody,sheet);
+}
+
+function _setupVirtualScroll(tbody,sheet){
+  if(sheet._vScrollBound)return;
+  sheet._vScrollBound=true;
+  sheet.addEventListener('scroll',()=>{
+    const tb=sheet.querySelector('tbody');
+    if(tb)_renderVirtual(tb,sheet);
+  },{passive:true});
+}
+
+function _renderVirtual(tbody,sheet){
+  const scrollTop=sheet.scrollTop;
+  const viewH=sheet.clientHeight||600;
+  // Calcular range de linhas visíveis
+  let vStart=Math.max(0,Math.floor(scrollTop/VIRTUAL_ROW_H)-VIRTUAL_BUFFER);
+  let vEnd=Math.min(bulkFiltered.length,Math.ceil((scrollTop+viewH)/VIRTUAL_ROW_H)+VIRTUAL_BUFFER);
+  // Evitar re-render desnecessário
+  if(tbody===_lastVTarget&&vStart===_lastVStart&&vEnd===_lastVEnd)return;
+  _lastVStart=vStart;_lastVEnd=vEnd;_lastVTarget=tbody;
+
   const visID=ID_COLS.filter(c=>!hiddenCols.has(c.k));
   const visTR=TC.filter(c=>!hiddenCols.has(c.k));
   const visDI=DC.filter(c=>!hiddenCols.has(c.k));
-  // Build HTML in chunks to avoid large string concatenation
+  const colCount=3+visID.length+visTR.length+visDI.length;
+
+  const parts=[];
+  // Spacer superior
+  if(vStart>0){
+    parts.push('<tr class="v-spacer" style="height:'+(vStart*VIRTUAL_ROW_H)+'px">');
+    parts.push('<td colspan="'+colCount+'" style="padding:0;border:none"></td></tr>');
+  }
+  // Linhas visíveis
+  for(let vi=vStart;vi<vEnd;vi++){
+    const i=bulkFiltered[vi];
+    if(i===undefined)continue;
+    const r=bulkOrig[i];
+    parts.push('<tr id="br_'+i+'" class="'+(bulkChg[i]?'chg':'')+'">'
+      +'<td class="col-ln">'+r._row+'</td>'
+      +'<td class="col-status"><span class="chip '+(_stChipMap[r.STATUS]||'')+'" style="font-size:10px;padding:2px 5px">'+(r.STATUS||'—')+'</span></td>'
+      +'<td class="col-id-venda">'+(r.ID_VENDA||'—')+'</td>');
+    visID.forEach(c=>{parts.push(mkIDCell(r,i,c));});
+    visTR.forEach(c=>{parts.push(mkEditCell(r,i,c,'sec-trat'));});
+    visDI.forEach(c=>{parts.push(mkEditCell(r,i,c,'sec-disp'));});
+    parts.push('</tr>');
+  }
+  // Spacer inferior
+  const remaining=bulkFiltered.length-vEnd;
+  if(remaining>0){
+    parts.push('<tr class="v-spacer" style="height:'+(remaining*VIRTUAL_ROW_H)+'px">');
+    parts.push('<td colspan="'+colCount+'" style="padding:0;border:none"></td></tr>');
+  }
+  tbody.innerHTML=parts.join('');
+}
+
+function _renderAllRows(tbody){
+  const visID=ID_COLS.filter(c=>!hiddenCols.has(c.k));
+  const visTR=TC.filter(c=>!hiddenCols.has(c.k));
+  const visDI=DC.filter(c=>!hiddenCols.has(c.k));
   const parts=[];
   bulkFiltered.forEach(i=>{
     const r=bulkOrig[i];
     parts.push('<tr id="br_'+i+'" class="'+(bulkChg[i]?'chg':'')+'">'
       +'<td class="col-ln">'+r._row+'</td>'
-      +'<td class="col-status"><span class="chip '+(_stChipMap[r.STATUS]||'')+'" style="font-size:10px;padding:2px 5px">'+(r.STATUS||'—')+'</span></td>'+'<td class="col-id-venda">'+(r.ID_VENDA||'—')+'</td>');
+      +'<td class="col-status"><span class="chip '+(_stChipMap[r.STATUS]||'')+'" style="font-size:10px;padding:2px 5px">'+(r.STATUS||'—')+'</span></td>'
+      +'<td class="col-id-venda">'+(r.ID_VENDA||'—')+'</td>');
     visID.forEach(c=>{parts.push(mkIDCell(r,i,c));});
     visTR.forEach(c=>{parts.push(mkEditCell(r,i,c,'sec-trat'));});
     visDI.forEach(c=>{parts.push(mkEditCell(r,i,c,'sec-disp'));});
@@ -1285,130 +1373,22 @@ function showKbdToast(msg){
   clearTimeout(_kbdToast);_kbdToast=setTimeout(()=>t.classList.remove('show'),1800);
 }
 document.addEventListener('keydown',e=>{
-  // Only active when bulk table is visible
+  if(!e.ctrlKey)return;
   if(document.getElementById('page2').style.display==='none'&&!document.getElementById('fsOverlay').classList.contains('open'))return;
   const sel=document.querySelector('.bt td.sel');
   if(!sel)return;
   const ri=parseInt(sel.dataset.row);const key=sel.dataset.col;
   if(isNaN(ri)||!key)return;
-  // Ctrl+C: copy cell value
-  // Ctrl+Shift+End: select from current to last row (same col)
-  if(e.ctrlKey&&e.shiftKey&&e.key==='End'){
-    const curFI=bulkFiltered.indexOf(ri);
-    if(curFI>=0){
-      document.querySelectorAll('.bt td.sel-range').forEach(t=>t.classList.remove('sel-range'));
-      for(let fi=curFI;fi<bulkFiltered.length;fi++){
-        const rri=bulkFiltered[fi];
-        const td=document.querySelector('td[data-row="'+rri+'"][data-col="'+key+'"]');
-        if(td){td.classList.add('sel-range');_rangeEnd=rri;_rangeKey=key;}
-      }
-      showKbdToast('Range: '+( bulkFiltered.length-curFI)+' células');
-    }
-    e.preventDefault();
-  }
-  // Shift+ArrowDown: extend range selection
-  if(e.shiftKey&&!e.ctrlKey&&e.key==='ArrowDown'){
-    const curFI=bulkFiltered.indexOf(ri);
-    const anchorFI=bulkFiltered.indexOf(_rangeAnchor!==null?_rangeAnchor:ri);
-    const newEnd=Math.min(bulkFiltered.length-1,curFI+1);
-    document.querySelectorAll('.bt td.sel-range').forEach(t=>t.classList.remove('sel-range'));
-    const from=Math.min(anchorFI,newEnd);const to=Math.max(anchorFI,newEnd);
-    for(let fi=from;fi<=to;fi++){const rri=bulkFiltered[fi];const td=document.querySelector('td[data-row="'+rri+'"][data-col="'+key+'"]');if(td)td.classList.add('sel-range');}
-    _rangeEnd=bulkFiltered[newEnd];_rangeKey=key;
-    // Move main selection
-    sel.classList.remove('sel');
-    const nextTd=document.querySelector('td[data-row="'+bulkFiltered[curFI+1<bulkFiltered.length?curFI+1:curFI]+'"][data-col="'+key+'"]');
-    if(nextTd){nextTd.classList.add('sel');nextTd.scrollIntoView({block:'nearest'});}
-    e.preventDefault();
-  }
-  // Ctrl+Shift+V: paste to all range-selected cells
-  if(e.ctrlKey&&e.shiftKey&&e.key==='V'){
-    if(_copyVal!==null&&_rangeKey){
-      const rangeTds=document.querySelectorAll('.bt td.sel-range[data-col="'+_rangeKey+'"]');
-      rangeTds.forEach(td=>{
-        const rri=parseInt(td.dataset.row);
-        bChg(rri,_rangeKey,_copyVal);
-        const el=document.getElementById('b_'+rri+'_'+_rangeKey);if(el)el.value=_copyVal;
-      });
-      showKbdToast('Colado em '+rangeTds.length+' células');
-    }
-    e.preventDefault();
-  }
-  if(e.ctrlKey&&e.key==='c'){
-    _copyVal=getCellVal(ri,key);_copyKey=key;
-    showKbdToast('Copiado: '+(_copyVal||'(vazio)'));
-    e.preventDefault();
-  }
-  // Ctrl+V: paste to selected cell
-  if(e.ctrlKey&&e.key==='v'){
+  if(e.key==='c'){_copyVal=getCellVal(ri,key);_copyKey=key;showKbdToast('Copiado: '+(_copyVal||'(vazio)'));e.preventDefault();}
+  if(e.key==='v'){
     if(_copyVal!==null){
-      bChg(ri,key,_copyVal);
-      const el=document.getElementById('b_'+ri+'_'+key);if(el)el.value=_copyVal;
-      showKbdToast('Colado: '+(_copyVal||'(vazio)'));
+      const rt=document.querySelectorAll('.bt td.sel-range');
+      if(rt.length>0){rt.forEach(td=>{const rri=parseInt(td.dataset.row);const k=td.dataset.col;if(k){bChg(rri,k,_copyVal);const el=document.getElementById('b_'+rri+'_'+k);if(el)el.value=_copyVal;}});showKbdToast('Colado em '+rt.length+' células');}
+      else{bChg(ri,key,_copyVal);const el=document.getElementById('b_'+ri+'_'+key);if(el)el.value=_copyVal;showKbdToast('Colado');}
     }
     e.preventDefault();
   }
-  // Ctrl+D: fill down — copy selected cell value to next visible row same column
-  if(e.ctrlKey&&e.key==='d'){
-    const curFI=bulkFiltered.indexOf(ri);
-    if(curFI>=0&&curFI<bulkFiltered.length-1){
-      const nextRI=bulkFiltered[curFI+1];
-      const val=getCellVal(ri,key);
-      bChg(nextRI,key,val);
-      const el=document.getElementById('b_'+nextRI+'_'+key);if(el)el.value=val;
-      // Move selection to next row
-      sel.classList.remove('sel');
-      const nextTd=document.querySelector('td[data-row="'+nextRI+'"][data-col="'+key+'"]');
-      if(nextTd){nextTd.classList.add('sel');nextTd.scrollIntoView({block:'nearest'});}
-      showKbdToast('Ctrl+D: preenchido para baixo');
-    }
-    e.preventDefault();
-  }
-  // Arrow keys: navigate cells
-  if(e.key==='ArrowDown'||e.key==='ArrowUp'){
-    const curFI=bulkFiltered.indexOf(ri);
-    const nextFI=e.key==='ArrowDown'?curFI+1:curFI-1;
-    if(nextFI>=0&&nextFI<bulkFiltered.length){
-      const nextRI=bulkFiltered[nextFI];
-      sel.classList.remove('sel');
-      const nextTd=document.querySelector('td[data-row="'+nextRI+'"][data-col="'+key+'"]');
-      if(nextTd){nextTd.classList.add('sel');nextTd.scrollIntoView({block:'nearest'});}
-    }
-    e.preventDefault();
-  }
-  // Tab: move right
-  if(e.key==='Tab'&&!e.shiftKey){
-    const allCols=[...ID_COLS,...TC,...DC].filter(c=>!hiddenCols.has(c.k)&&c.t!=='ro');
-    const ci=allCols.findIndex(c=>c.k===key);
-    if(ci<allCols.length-1){
-      const nextKey=allCols[ci+1].k;
-      sel.classList.remove('sel');
-      const nextTd=document.querySelector('td[data-row="'+ri+'"][data-col="'+nextKey+'"]');
-      if(nextTd){nextTd.classList.add('sel');nextTd.scrollIntoView({block:'nearest',inline:'nearest'});}
-    }
-    e.preventDefault();
-  }
-  // Shift+Tab: move left
-  if(e.key==='Tab'&&e.shiftKey){
-    const allCols=[...ID_COLS,...TC,...DC].filter(c=>!hiddenCols.has(c.k)&&c.t!=='ro');
-    const ci=allCols.findIndex(c=>c.k===key);
-    if(ci>0){
-      const prevKey=allCols[ci-1].k;
-      sel.classList.remove('sel');
-      const prevTd=document.querySelector('td[data-row="'+ri+'"][data-col="'+prevKey+'"]');
-      if(prevTd){prevTd.classList.add('sel');prevTd.scrollIntoView({block:'nearest',inline:'nearest'});}
-    }
-    e.preventDefault();
-  }
-  // Escape: deselect
-  if(e.key==='Escape'){sel.classList.remove('sel');e.preventDefault();}
-  // Ctrl+S: save
-  if(e.ctrlKey&&e.key==='s'){bulkSave();e.preventDefault();}
-  // Delete/Backspace: clear cell
-  if((e.key==='Delete'||e.key==='Backspace')&&!e.ctrlKey){
-    const el=document.getElementById('b_'+ri+'_'+key);
-    if(el&&document.activeElement!==el){bChg(ri,key,'');el.value='';e.preventDefault();}
-  }
+  if(e.key==='s'){bulkSave();e.preventDefault();}
 });
 function snack(msg,type){type=type||'';const t=document.getElementById('snack');t.textContent=msg;t.className='snack '+type+' show';setTimeout(()=>t.classList.remove('show'),3500);}
 </script>
