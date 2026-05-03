@@ -6,7 +6,8 @@
 <title>KIDSY — Central de Atendimento</title>
 <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;600&family=Roboto:wght@300;400;500&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
-<style>
+<style>/* Todas as páginas iniciam ocultas — JS revela a correta */
+
 :root{--pri:#1a73e8;--pri-c:#d2e3fc;--sur:#fff;--sur-v:#f1f3f4;--on-sur:#202124;--on-sur-v:#5f6368;--out:#dadce0;--out-v:#e8eaed;--err:#d93025;--err-c:#fce8e6;--warn:#f9ab00;--ok:#1e8e3e;--ok-c:#e6f4ea;--pur:#7627bb;--pur-c:#f3e8fd;}
 *{margin:0;padding:0;box-sizing:border-box;}
 body{font-family:'Roboto',sans-serif;background:#f8f9fa;color:var(--on-sur);font-size:14px;line-height:1.5;}
@@ -40,8 +41,6 @@ body{font-family:'Roboto',sans-serif;background:#f8f9fa;color:var(--on-sur);font
 .cfg-f input{background:var(--sur);border:1px solid var(--out);color:var(--on-sur);border-radius:7px;padding:6px 10px;font-size:12px;font-family:'Roboto Mono',monospace;width:260px;outline:none;}
 .cfg-f input:focus{border-color:var(--pri);}
 /* DASHBOARD */
-#page0{display:none;}
-#page1{display:none;}
 .dash-wrap{padding:16px 20px;}
 .dash-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:10px;}
 .dash-title{font-family:'Google Sans',sans-serif;font-size:17px;font-weight:500;}
@@ -129,7 +128,6 @@ tbody tr:last-child td{border-bottom:none;}tbody tr:hover td{background:#f8f9fa;
 .snack.show{transform:translateX(-50%) translateY(0);opacity:1;}
 .snack.error{background:var(--err);}.snack.success{background:var(--ok);}
 /* BULK */
-#page2{display:none;}
 .bulk-wrap{padding:12px 20px;}
 .bulk-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;gap:10px;flex-wrap:wrap;}
 .bulk-tit{font-family:'Google Sans',sans-serif;font-size:16px;font-weight:500;}
@@ -153,234 +151,168 @@ tbody tr:last-child td{border-bottom:none;}tbody tr:hover td{background:#f8f9fa;
 .bulk-sheet{border:1px solid var(--out);border-radius:10px;overflow:auto;background:var(--sur);}
 .bulk-sheet-footer{padding:5px 10px;background:var(--sur-v);border-top:1px solid var(--out);font-size:11px;color:var(--on-sur-v);display:flex;justify-content:space-between;border-radius:0 0 10px 10px;}
 
-/* ════════════════════════════════════════════════════════════════
-   BULK TABLE — CSS limpo e definitivo
-   Estrutura de colunas:
-     col-ln   (sticky, left:0,   width:36px)
-     col-status (sticky, left:36px, width:120px)
-     seção Identificação (normal)
-     seção Tratativa (normal)
-     seção Disputa (normal)
-   ════════════════════════════════════════════════════════════════ */
 
-/* ── Tabela base ─────────────────────────────────────────────── */
-.bt{border-collapse:collapse;min-width:100%;table-layout:auto;}
+/* ═══════════════════════════════════════════════════════════════════
+   BULK TABLE CSS — versão definitiva limpa
+   ═══════════════════════════════════════════════════════════════════ */
 
-/* ── Células base ────────────────────────────────────────────── */
-.bt td,.bt thead th{border-right:1px solid var(--out-v);border-bottom:1px solid var(--out-v);padding:0;font-size:11px;vertical-align:middle;box-sizing:border-box;}
-.bt tr:hover td{background:#f8f9fa;}
-.bt tr.chg td{background:#fffde7;}
-.bt tr.chg:hover td{background:#fff9c4;}
+/* ── Base da tabela ─────────────────────────────────────────────── */
+/* ═════════════════════════════════════════════════════════════════
+   BULK TABLE — UMA ÚNICA ROW DE HEADER, ZERO GAP
+   ═════════════════════════════════════════════════════════════════ */
+.bt{border-collapse:collapse;border-spacing:0;min-width:100%;table-layout:auto;}
 
-/* ── Coluna Ln ───────────────────────────────────────────────── */
-.bt .col-ln{
-  position:sticky;
-  left:0;
-  width:36px;
-  min-width:36px;
-  text-align:center;
-  background:#f3f4f6;
-  border-right:1px solid var(--out);
-  font-size:10px;
-  padding:3px 2px;
-  z-index:2;
+/* Reset todas as células */
+.bt th,.bt td{padding:0;margin:0;box-sizing:border-box;font-size:11px;vertical-align:top;}
+
+/* Células de dados */
+.bt td{
+  border-right:1px solid var(--out-v);
+  border-bottom:1px solid var(--out-v);
+  vertical-align:middle;
 }
 
-/* ── Coluna STATUS ───────────────────────────────────────────── */
+/* ── COLUNAS FIXAS ───────────────────────────────────────────────── */
+.bt .col-ln{
+  position:sticky;left:0;z-index:3;
+  width:36px;min-width:36px;
+  background:#f3f4f6;text-align:center;font-size:10px;
+  border-right:1px solid var(--out);border-bottom:1px solid var(--out-v);
+}
 .bt .col-status{
-  position:sticky;
-  left:36px;
-  width:128px;
-  min-width:128px;
+  position:sticky;left:36px;z-index:3;
+  width:128px;min-width:128px;
   background:#f3f4f6;
-  border-right:2px solid var(--out);
-  padding:3px 4px;
-  z-index:2;
+  border-right:1px solid var(--out);border-bottom:1px solid var(--out-v);
 }
 .bt .col-id-venda{
-  position:sticky;
-  left:164px;
-  width:150px;
-  min-width:150px;
+  position:sticky;left:164px;z-index:3;
+  width:150px;min-width:150px;
   background:#f3f4f6;
-  border-right:2px solid var(--out);
-  font-family:Roboto Mono,monospace;
-  font-size:10px;
-  padding:3px 5px;
-  z-index:3;
-}
-.bt thead .col-id-venda{
-  position:sticky;
-  left:164px;
-  top:0;
-  z-index:20;
-  background:#4b5563;
-  color:#fff;
+  font-family:Roboto Mono,monospace;font-size:10px;
+  border-right:2px solid var(--out);border-bottom:1px solid var(--out-v);
 }
 
-/* ── Elevação de z-index nos headers (thead sticky) ──────────── */
-.bt thead .col-ln{
-  z-index:20;
-  position:sticky;
-  left:0;
-  top:0;
-  background:#4b5563;
-  color:#fff;
+/* ── THEAD — UMA ÚNICA ROW ───────────────────────────────────────── */
+.bt thead th{
+  position:sticky;top:0;z-index:5;
+  border-right:1px solid rgba(255,255,255,.2);
+  border-bottom:2px solid rgba(0,0,0,.15);
 }
-.bt thead .col-status{
-  z-index:20;
-  position:sticky;
-  left:36px;
-  top:0;
-  background:#4b5563;
-  color:#fff;
+/* Colunas fixas no thead têm z-index maior */
+.bt thead .col-ln,.bt thead .col-status,.bt thead .col-id-venda{
+  z-index:10;
+}
+.bt thead .col-ln   {left:0;   background:#374151;}
+.bt thead .col-status{left:36px; background:#374151;}
+.bt thead .col-id-venda{left:164px;background:#374151;}
+
+/* ── th-sec: tarja superior colorida dentro do TH ───────────────── */
+.th-sec{
+  height:26px;line-height:26px;
+  padding:0 8px;
+  font-size:11px;font-weight:700;color:#fff;
+  text-align:center;white-space:nowrap;
+  display:flex;align-items:center;justify-content:center;gap:4px;
+}
+/* Cores por seção */
+.bt thead th.sec-id   .th-sec{background:#374151;}
+.bt thead th.sec-trat .th-sec{background:#2563eb;}
+.bt thead th.sec-disp .th-sec{background:#ea580c;}
+/* Colunas fixas: th-sec fica escuro e vazio (só mantém altura) */
+.bt thead .col-ln .th-sec,
+.bt thead .col-status .th-sec,
+.bt thead .col-id-venda .th-sec{
+  background:#374151;height:26px;padding:0;
 }
 
-/* ── thead rows — dois rows sticky ──────────────────────────── */
-/* Row 0: section headers — fica no top:0 */
-.bt thead tr.sec-row th{
-  /* sticky aplicado no TH, não no TR — única forma confiável cross-browser */
-  position:sticky;
-  top:0;
-  z-index:5;
-  padding:5px 10px;
-  height:30px;
-  font-size:11px;
-  font-weight:700;
-  color:#fff;
-  text-align:center;
-  white-space:nowrap;
-  border-bottom:1px solid rgba(255,255,255,.25);
-  border-right:2px solid rgba(255,255,255,.25);
+/* ── th-col: área inferior com label + filtro ───────────────────── */
+.th-col{
+  padding:3px 4px;
+  border-top:1px solid rgba(0,0,0,.08);
 }
-/* Row 1: TH sticky logo abaixo da row 0 (top = altura exata da sec-row = 30px) */
-/* Garantir que colunas normais do thead tenham z-index MENOR que as fixas */
-.bt thead tr.sec-row th:not(.col-ln):not(.col-status):not(.col-id-venda){z-index:5;}
-.bt thead tr.col-row th:not(.col-ln):not(.col-status):not(.col-id-venda){z-index:5;}
-
-.bt thead tr.col-row th{
-  /* sticky no TH para manter cabeçalho colado ao fazer scroll vertical */
-  position:sticky;
-  top:30px;
-  z-index:5;
-  padding:0;
-  border-bottom:2px solid var(--out);
-  border-right:1px solid rgba(0,0,0,.08);
-  min-width:90px;
-  /* NÃO usar position:relative aqui — quebraria o sticky */
-  /* O .col-resizer usa position:absolute e funciona dentro de position:sticky */
+/* Cores por seção */
+.bt thead th.sec-id   .th-col{background:#e5e7eb;color:#111827;}
+.bt thead th.sec-trat .th-col{background:#bfdbfe;color:#1e3a8a;}
+.bt thead th.sec-disp .th-col{background:#fed7aa;color:#7c2d12;}
+/* Colunas fixas: th-col escuro */
+.bt thead .col-ln .th-col,
+.bt thead .col-status .th-col,
+.bt thead .col-id-venda .th-col{
+  background:#374151;color:#fff;
+  border-top:1px solid rgba(255,255,255,.1);
 }
 
-/* ── Cores das seções ────────────────────────────────────────── */
-/* sec-row (header superior) */
-.bt thead tr.sec-row th.sec-id  {background:#374151;}  /* Cinza escuro */
-.bt thead tr.sec-row th.sec-trat{background:#2563eb;}  /* Azul */
-.bt thead tr.sec-row th.sec-disp{background:#ea580c;}  /* Laranja */
-/* col-row (header inferior) */
-.bt thead tr.col-row th.sec-id  {background:#e5e7eb;color:#111827;}
-.bt thead tr.col-row th.sec-trat{background:#bfdbfe;color:#1e3a8a;}
-.bt thead tr.col-row th.sec-disp{background:#fed7aa;color:#7c2d12;}
-/* cells */
+/* ── th-top (linha de label + botões) ──────────────────────────── */
+.th-top{display:flex;align-items:center;gap:2px;}
+.th-label{font-size:10px;font-weight:600;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.req-lbl{font-weight:700;text-decoration:underline dotted;}
+.bt thead th.sec-id   .req-lbl{color:#dc2626;}
+.bt thead th.sec-trat .req-lbl{color:#1e40af;}
+.bt thead th.sec-disp .req-lbl{color:#9a3412;}
+.th-controls{display:flex;gap:1px;flex-shrink:0;}
+.th-btn{background:none;border:none;cursor:pointer;font-size:10px;padding:1px 3px;border-radius:3px;line-height:1;opacity:.75;color:inherit;transition:opacity .15s;}
+.th-btn:hover{opacity:1;background:rgba(0,0,0,.1);}
+.bt thead .col-status .th-btn,
+.bt thead .col-id-venda .th-btn{color:#fff;}
+
+/* Filter input */
+.th-filter{width:100%;border:none;border-radius:3px;padding:2px 4px;font-size:10px;margin-top:2px;outline:none;}
+.bt thead th.sec-id   .th-filter{background:rgba(0,0,0,.08);color:#111827;}
+.bt thead th.sec-trat .th-filter{background:rgba(37,99,235,.15);color:#1e3a8a;}
+.bt thead th.sec-disp .th-filter{background:rgba(234,88,12,.15);color:#7c2d12;}
+.bt thead .col-status .th-filter,
+.bt thead .col-id-venda .th-filter{background:rgba(255,255,255,.12);color:#fff;}
+.bt thead .col-status .th-filter::placeholder,
+.bt thead .col-id-venda .th-filter::placeholder{color:rgba(255,255,255,.5);}
+
+/* Col resizer */
+.col-resizer{position:absolute;right:-3px;top:0;width:6px;height:100%;cursor:col-resize;z-index:10;background:transparent;}
+.col-resizer:hover{background:rgba(0,0,0,.2);}
+
+/* Section hide button */
+.sec-hide-btn{font-size:10px;padding:1px 5px;border-radius:10px;border:1px solid rgba(255,255,255,.5);background:rgba(255,255,255,.15);color:#fff;cursor:pointer;margin-left:4px;transition:background .15s;}
+.sec-hide-btn:hover{background:rgba(255,255,255,.3);}
+
+/* Data rows */
 .bt td.sec-id  {background:#f9fafb;}
 .bt td.sec-trat{background:#eff6ff;}
 .bt td.sec-disp{background:#fff7ed;}
-.bt tr.chg td.sec-id,.bt tr.chg td.sec-trat,.bt tr.chg td.sec-disp{background:#fffde7!important;}
-
-/* fixed col header colours in sec-row (rowspan=2, appears in sec-row) */
-.bt thead tr.sec-row .col-ln,
-.bt thead tr.sec-row .col-status{background:#4b5563!important;color:#fff!important;text-align:left;}
-
-/* ── th-inner (cabeçalho de coluna) ─────────────────────────── */
-.th-inner{display:flex;flex-direction:column;padding:3px 4px;gap:2px;}
-.th-top{display:flex;align-items:center;gap:2px;}
-.th-label{font-size:10px;font-weight:600;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-/* Required label */
-.bt thead tr.col-row th.sec-id   .req-lbl{color:#dc2626;}
-.bt thead tr.col-row th.sec-trat .req-lbl{color:#1e40af;}
-.bt thead tr.col-row th.sec-disp .req-lbl{color:#9a3412;}
-/* Filter input */
-.th-filter{
-  width:100%;border:none;border-radius:3px;
-  padding:2px 4px;font-size:10px;margin-top:1px;outline:none;
-}
-.bt thead tr.col-row th.sec-id   .th-filter{background:rgba(0,0,0,.08);color:#111827;}
-.bt thead tr.col-row th.sec-trat .th-filter{background:rgba(37,99,235,.15);color:#1e3a8a;}
-.bt thead tr.col-row th.sec-disp .th-filter{background:rgba(234,88,12,.15);color:#7c2d12;}
-/* Fixed col filter */
-.bt thead .col-ln .th-filter,
-.bt thead .col-status .th-filter{background:rgba(255,255,255,.15);color:#fff;}
-.bt thead .col-ln .th-filter::placeholder,
-.bt thead .col-status .th-filter::placeholder{color:rgba(255,255,255,.6);}
-/* th buttons */
-.th-controls{display:flex;gap:1px;flex-shrink:0;}
-.th-btn{background:none;border:none;cursor:pointer;font-size:10px;padding:1px 3px;border-radius:3px;line-height:1;opacity:.75;transition:opacity .15s;color:inherit;}
-.th-btn:hover{opacity:1;background:rgba(0,0,0,.1);}
-.bt thead tr.sec-row .th-btn,.bt thead .col-status .th-btn,.bt thead .col-ln .th-btn{color:#fff;}
-
-/* ── Miss cell ───────────────────────────────────────────────── */
+.bt tr:hover td{background:#f0f4ff;}
+.bt tr.chg td{background:#fffde7;}
+.bt tr.chg:hover td{background:#fff9c4;}
+.bt tr.chg .col-ln,.bt tr.chg .col-status,.bt tr.chg .col-id-venda{background:#fff9c4;}
 .bt td.miss-cell{background:#fef2f2!important;}
-
-/* ── Col resizer ─────────────────────────────────────────────── */
-.col-resizer{
-  position:absolute;right:-3px;top:0;width:6px;height:100%;
-  cursor:col-resize;z-index:10;background:transparent;
-}
-.col-resizer:hover{background:rgba(0,0,0,.2);}
-
-/* ── Section hide button ─────────────────────────────────────── */
-.sec-hide-btn{
-  font-size:10px;padding:1px 6px;border-radius:10px;
-  border:1px solid rgba(255,255,255,.5);background:rgba(255,255,255,.15);
-  color:#fff;cursor:pointer;margin-left:6px;transition:background .15s;
-}
-.sec-hide-btn:hover{background:rgba(255,255,255,.35);}
-
-/* ── Cell inputs ─────────────────────────────────────────────── */
-.bulk-inp{
-  width:100%;border:none;background:transparent;
-  font-size:11px;padding:4px 5px;outline:none;display:block;box-sizing:border-box;color:var(--on-sur);
-}
-.bulk-inp:focus{background:#dbeafe;}
-.bulk-sel{
-  width:100%;border:none;background:transparent;
-  font-size:11px;padding:3px 4px;outline:none;cursor:pointer;display:block;box-sizing:border-box;color:var(--on-sur);
-}
-.bulk-sel:focus{background:#dbeafe;}
-
-/* ── Selected cell ───────────────────────────────────────────── */
 .bt td.sel{outline:2px solid var(--pri);outline-offset:-2px;z-index:1;position:relative;background:#dbeafe!important;}
 .bt td.sel-range{background:#e0f2fe!important;outline:1px solid #93c5fd;outline-offset:-1px;}
-
-/* ── Fill handle ─────────────────────────────────────────────── */
-.fill-handle{
-  position:absolute;width:8px;height:8px;
-  background:var(--pri);border:1.5px solid #fff;
-  bottom:-4px;right:-4px;cursor:crosshair;z-index:10;border-radius:1px;display:none;
-}
 .bt td.sel .fill-handle{display:block;}
 
-/* ── Kbd toast ───────────────────────────────────────────────── */
-.kbd-toast{
-  position:fixed;bottom:60px;left:50%;transform:translateX(-50%);
-  background:#323232;color:#fff;border-radius:6px;padding:7px 14px;
-  font-size:12px;z-index:999;opacity:0;transition:opacity .3s;pointer-events:none;
-  white-space:nowrap;
-}
+/* Fill handle */
+.fill-handle{position:absolute;width:8px;height:8px;background:var(--pri);border:1.5px solid #fff;bottom:-4px;right:-4px;cursor:crosshair;z-index:10;border-radius:1px;display:none;}
+
+/* Cell inputs */
+.bulk-inp{width:100%;border:none;background:transparent;font-size:11px;padding:4px 5px;outline:none;display:block;box-sizing:border-box;color:var(--on-sur);}
+.bulk-inp:focus{background:#dbeafe;}
+.bulk-sel{width:100%;border:none;background:transparent;font-size:11px;padding:3px 4px;outline:none;cursor:pointer;display:block;box-sizing:border-box;color:var(--on-sur);}
+.bulk-sel:focus{background:#dbeafe;}
+
+/* Kbd toast */
+.kbd-toast{position:fixed;bottom:60px;left:50%;transform:translateX(-50%);background:#323232;color:#fff;border-radius:6px;padding:7px 14px;font-size:12px;z-index:999;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap;}
 .kbd-toast.show{opacity:1;}
 
-/* ── Bulk filter row ─────────────────────────────────────────── */
+/* Bulk filters */
 .bulk-filters-row,.fs-filters-row{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:8px;align-items:center;}
-.bulk-filter-sel{background:var(--sur);border:1px solid var(--out);border-radius:18px;padding:5px 12px;font-size:12px;color:var(--on-sur);cursor:pointer;outline:none;transition:border-color .2s;}
+.bulk-filter-sel{background:var(--sur);border:1px solid var(--out);border-radius:18px;padding:5px 12px;font-size:12px;color:var(--on-sur);cursor:pointer;outline:none;}
 .bulk-filter-sel:focus{border-color:var(--pri);}
 .bulk-filter-sel.active{background:var(--pri-c);border-color:var(--pri);color:var(--pri);}
-.bulk-filter-inp{background:var(--sur);border:1px solid var(--out);border-radius:18px;padding:5px 12px;font-size:12px;color:var(--on-sur);outline:none;width:130px;transition:border-color .2s;}
+.bulk-filter-inp{background:var(--sur);border:1px solid var(--out);border-radius:18px;padding:5px 12px;font-size:12px;color:var(--on-sur);outline:none;width:130px;}
 .bulk-filter-inp:focus{border-color:var(--pri);}
 .bulk-filter-inp.active{border-color:var(--pri);background:var(--pri-c);}
-.bulk-filter-clear{padding:5px 12px;border-radius:18px;border:1px solid var(--out);background:var(--sur);color:var(--on-sur-v);font-size:12px;cursor:pointer;transition:all .2s;}
+.bulk-filter-clear{padding:5px 12px;border-radius:18px;border:1px solid var(--out);background:var(--sur);color:var(--on-sur-v);font-size:12px;cursor:pointer;}
 .bulk-filter-clear:hover{background:var(--err-c);border-color:var(--err);color:var(--err);}
 .bulk-filter-count{font-size:12px;color:var(--on-sur-v);padding:4px 10px;background:var(--sur-v);border-radius:12px;border:1px solid var(--out-v);font-weight:500;}
 
-/* ── Dashboard extras ────────────────────────────────────────── */
+/* Dashboard extras */
 .dash-bottom-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px;}
 .dash-table-card{background:var(--sur);border:1px solid var(--out);border-radius:10px;overflow:hidden;}
 .dash-card-title{padding:10px 14px;font-family:'Google Sans',sans-serif;font-size:13px;font-weight:500;border-bottom:1px solid var(--out-v);display:flex;align-items:center;justify-content:space-between;}
@@ -394,36 +326,7 @@ tbody tr:last-child td{border-bottom:none;}tbody tr:hover td{background:#f8f9fa;
 .dash-bar-fill{height:100%;border-radius:3px;background:var(--pri);}
 .month-chart-card{background:var(--sur);border:1px solid var(--out);border-radius:10px;padding:12px 14px;margin-top:12px;}
 .month-chart-wrap{position:relative;height:200px;}
-
-/* ── Colunas fixas no thead — sec-row (top:0) e col-row (top:30px) ── */
-/* Sem rowspan: cada row tem seu próprio TH sticky com top diferente */
-.bt thead .col-ln.fix-sec,
-.bt thead .col-status.fix-sec,
-.bt thead .col-id-venda.fix-sec{
-  position:sticky;
-  top:0;
-  z-index:20;
-  background:#4b5563;
-  color:#fff;
-  font-weight:600;
-  font-size:11px;
-  text-align:left;
-  padding:6px 6px;
-  border-bottom:1px solid rgba(255,255,255,.2);
-}
-.bt thead .col-ln.fix-col,
-.bt thead .col-status.fix-col,
-.bt thead .col-id-venda.fix-col{
-  position:sticky;
-  top:30px;    /* igual à altura da sec-row */
-  z-index:20;
-  background:#374151;
-  color:#fff;
-}
-/* left values (devem ser iguais às TDs de corpo) */
-.bt thead .col-ln.fix-sec,.bt thead .col-ln.fix-col{left:0;}
-.bt thead .col-status.fix-sec,.bt thead .col-status.fix-col{left:36px;}
-.bt thead .col-id-venda.fix-sec,.bt thead .col-id-venda.fix-col{left:164px;}</style>
+</style>
 </head>
 <body>
 
@@ -453,7 +356,7 @@ tbody tr:last-child td{border-bottom:none;}tbody tr:hover td{background:#f8f9fa;
 </div>
 
 <!-- DASHBOARD -->
-<div id="page0">
+<div id="page0" style="display:none">
 <div class="dash-wrap">
   <div class="dash-top">
     <div class="dash-title">Dashboard de Atendimento</div>
@@ -597,7 +500,7 @@ tbody tr:last-child td{border-bottom:none;}tbody tr:hover td{background:#f8f9fa;
 </div>
 
 <!-- FULLSCREEN -->
-<div class="fs-overlay" id="fsOverlay">
+<div class="fs-overlay" id="fsOverlay" style="display:none">
   <div class="fs-header">
     <div class="fs-title">Preenchimento em Massa</div>
     <div class="fs-filters-row">
@@ -1013,60 +916,70 @@ function buildBulkHead(thead){
   const visTR=TC.filter(c=>!hiddenCols.has(c.k));
   const visDI=DC.filter(c=>!hiddenCols.has(c.k));
 
-  function mkTh(c,secCls){
+  // th-sec: tarja superior (nome da seção)
+  // th-col: área inferior (label + sort + filtro)
+  // Tudo dentro de UM ÚNICO <th> → zero gap garantido
+
+  function mkTh(c, secCls, secLabel){
+    // secLabel: passado só na 1ª coluna de cada seção
     const lCls='th-label'+(c.req?' req-lbl':'');
     const sv=colSortState[c.k]==='asc'?'↑':colSortState[c.k]==='desc'?'↓':'⇅';
+    const fv=colFilters[c.k]||'';
     const cw=colWidths[c.k]?('width:'+colWidths[c.k]+'px;'):'';
-    return '<th class="'+secCls+'" data-colkey="'+c.k+'" style="'+cw+'">'
-      +'<div class="th-inner"><div class="th-top">'
-        +'<span class="'+lCls+'" title="'+c.l+'">'+c.l+'</span>'
-        +'<div class="th-controls">'
-          +(c.t!=='ro'?'<button class="th-btn" onclick="hideCol(\''+c.k+'\')" title="Ocultar">✕</button>':'')
-          +'<button class="th-btn" onclick="setSortDir(\''+c.k+'\',\'asc\')">↑</button>'
-          +'<button class="th-btn" onclick="setSortDir(\''+c.k+'\',\'desc\')">↓</button>'
-        +'</div></div>'
-        +'<input class="th-filter" placeholder="Filtrar..." value="'+(colFilters[c.k]||'')+'" oninput="colFilter(\''+c.k+'\',this.value)">'
+    const hideBtn=c.t!=='ro'?'<button class="th-btn" onclick="hideCol(\''+c.k+'\')" title="Ocultar">✕</button>':'';
+    const secDiv=secLabel
+      ?'<div class="th-sec">'+secLabel+'<button class="sec-hide-btn" onclick="hideSection(\''+secLabel.trim().replace(/[^a-z]/gi,'').toLowerCase().replace('identificao','id').replace('tratativa','trat').replace('disputa','disp')+'\')" title="Ocultar seção">✕</button></div>'
+      :'<div class="th-sec" style="visibility:hidden"></div>';
+    return '<th class="'+secCls+'" data-colkey="'+c.k+'" style="'+cw+'position:relative">'
+      +secDiv
+      +'<div class="th-col">'
+        +'<div class="th-top">'
+          +'<span class="'+lCls+'" title="'+c.l+'">'+c.l+'</span>'
+          +'<div class="th-controls">'
+            +hideBtn
+            +'<button class="th-btn" onclick="setSortDir(\''+c.k+'\',\'asc\')">↑</button>'
+            +'<button class="th-btn" onclick="setSortDir(\''+c.k+'\',\'desc\')">↓</button>'
+          +'</div>'
+        +'</div>'
+        +'<input class="th-filter" placeholder="Filtrar..." value="'+fv+'" oninput="colFilter(\''+c.k+'\',this.value)">'
       +'</div>'
       +'<div class="col-resizer" onmousedown="startResize(event,\''+c.k+'\')" title="Redimensionar"></div>'
       +'</th>';
   }
-  // Colunas fixas: duas rows, sem rowspan
-  // sec-row: só label (top:0)    col-row: filtros e sort (top:30px)
-  function mkFixedSec(cssClass,label){
-    return '<th class="'+cssClass+' fix-sec">'+label+'</th>';
-  }
-  function mkFixedCol(key,label,cssClass){
+
+  // Colunas fixas: th-sec vazio (fundo escuro) + th-col com label
+  function mkFixed(key, label, cssClass){
     const sv=colSortState[key]==='asc'?'↑':colSortState[key]==='desc'?'↓':'⇅';
     const fv=colFilters[key]||'';
-    return '<th class="'+cssClass+' fix-col">'
-      +'<div class="th-inner"><div class="th-top"><span class="th-label">'+label+'</span>'
-        +'<div class="th-controls">'
-          +'<button class="th-btn" onclick="setSortDir(\''+key+'\',\'asc\')">↑</button>'
-          +'<button class="th-btn" onclick="setSortDir(\''+key+'\',\'desc\')">↓</button>'
-        +'</div></div>'
+    return '<th class="'+cssClass+'">'
+      +'<div class="th-sec"></div>'
+      +'<div class="th-col">'
+        +'<div class="th-top"><span class="th-label">'+label+'</span>'
+          +'<div class="th-controls">'
+            +'<button class="th-btn" onclick="setSortDir(\''+key+'\',\'asc\')">↑</button>'
+            +'<button class="th-btn" onclick="setSortDir(\''+key+'\',\'desc\')">↓</button>'
+          +'</div>'
+        +'</div>'
         +'<input class="th-filter" placeholder="Filtrar..." value="'+fv+'" oninput="colFilter(\''+key+'\',this.value)">'
-      +'</div></th>';
+      +'</div>'
+      +'</th>';
   }
-  // ROW 0: section labels
-  let r0='<tr class="sec-row">';
-  r0+=mkFixedSec('col-ln','#');
-  r0+=mkFixedSec('col-status','Status');
-  r0+=mkFixedSec('col-id-venda','ID Venda');
-  r0+='<th class="sec-id" colspan="'+visID.length+'">📦 Identificação<button class="sec-hide-btn" onclick="hideSection(\'id\')">✕</button></th>';
-  r0+='<th class="sec-trat" colspan="'+visTR.length+'">🗂 Tratativa<button class="sec-hide-btn" onclick="hideSection(\'trat\')">✕</button></th>';
-  r0+='<th class="sec-disp" colspan="'+visDI.length+'">⚖️ Disputa<button class="sec-hide-btn" onclick="hideSection(\'disp\')">✕</button></th>';
+
+  // UMA ÚNICA ROW
+  let r0='<tr>';
+  // Colunas fixas
+  r0+=mkFixed('_LN','#','col-ln');
+  r0+=mkFixed('STATUS','Status','col-status');
+  r0+=mkFixed('ID_VENDA','ID Venda','col-id-venda');
+  // Colunas de seção — 1ª coluna recebe o th-sec com nome da seção
+  visID.forEach((c,i)=>{r0+=mkTh(c,'sec-id',i===0?'📦 Identificação':null);});
+  visTR.forEach((c,i)=>{r0+=mkTh(c,'sec-trat',i===0?'🗂 Tratativa':null);});
+  visDI.forEach((c,i)=>{r0+=mkTh(c,'sec-disp',i===0?'⚖️ Disputa':null);});
   r0+='</tr>';
-  // ROW 1: column headers
-  let r1='<tr class="col-row">';
-  r1+='<th class="col-ln fix-col"><div class="th-inner"><span class="th-label" style="padding:2px 4px">#</span></div></th>';
-  r1+=mkFixedCol('STATUS','Status','col-status');
-  r1+=mkFixedCol('ID_VENDA','ID Venda','col-id-venda');
-  visID.forEach(c=>{r1+=mkTh(c,'sec-id');});
-  visTR.forEach(c=>{r1+=mkTh(c,'sec-trat');});
-  visDI.forEach(c=>{r1+=mkTh(c,'sec-disp');});
-  r1+='</tr>';
-  thead.innerHTML=r0+r1;
+
+  thead.innerHTML=r0;
 }
+
 
 function hideCol(k){hiddenCols.add(k);buildBulkHead(document.getElementById('bHead'));buildBulkHead(document.getElementById('fsHead'));applyBF();}
 function setSortDir(k,dir){
