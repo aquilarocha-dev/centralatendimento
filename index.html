@@ -158,7 +158,7 @@ tbody tr:last-child td{border-bottom:none;}tbody tr:hover td{background:#f8f9fa;
 .bt thead tr.sec-row th.col-status{z-index:6;background:var(--sur-v);}
 .bt thead tr.col-row th.col-status{z-index:6;background:var(--sur-v);}
 .bt tr.chg td.col-status{background:#fff9c4;}
-.col-id{position:sticky;left:38px;z-index:2;min-width:140px;background:var(--sur-v);font-family:'Roboto Mono',monospace;font-size:10px;}
+.col-id{background:var(--sur-v);}
 .bt thead th.col-ln,.bt thead th.col-id{z-index:5;}
 /* Section header (span row) */
 .bt thead tr.sec-row th{padding:5px 10px;font-size:11px;font-weight:700;text-align:center;border-bottom:1px solid rgba(255,255,255,.25);border-right:2px solid rgba(255,255,255,.3);white-space:nowrap;}
@@ -254,6 +254,67 @@ tbody tr:last-child td{border-bottom:none;}tbody tr:hover td{background:#f8f9fa;
 /* Month chart card */
 .month-chart-card{background:var(--sur);border:1px solid var(--out);border-radius:10px;padding:12px 14px;margin-top:12px;}
 .month-chart-wrap{position:relative;height:200px;}
+
+/* ── BULK TABLE LAYOUT ─────────────────────────────────────────────────── */
+/* Fixed sticky cols */
+.col-ln{position:sticky;left:0;z-index:3;min-width:36px;width:36px;text-align:center;background:#f1f3f4;border-right:1px solid var(--out-v);}
+.col-status{position:sticky;left:36px;z-index:3;min-width:120px;background:#f1f3f4;padding:3px 5px;border-right:2px solid var(--out);}
+/* thead sticky */
+.bt thead tr.sec-row th.col-ln,
+.bt thead tr.col-row th.col-ln{z-index:7;left:0;}
+.bt thead tr.sec-row th.col-status,
+.bt thead tr.col-row th.col-status{z-index:7;left:36px;}
+/* Section colours: Cinza=Identificação, Azul Claro=Tratativa, Laranja Claro=Disputa */
+.bt thead tr.sec-row th.sec-id{background:#6b7280;color:#fff;}
+.bt thead tr.sec-row th.sec-trat{background:#60a5fa;color:#1e3a5f;}
+.bt thead tr.sec-row th.sec-disp{background:#fb923c;color:#7c2d00;}
+.bt thead tr.col-row th.sec-id{background:#e5e7eb;color:#374151;}
+.bt thead tr.col-row th.sec-trat{background:#dbeafe;color:#1e40af;}
+.bt thead tr.col-row th.sec-disp{background:#ffedd5;color:#9a3412;}
+/* Cells bg by section */
+.bt td.sec-id{background:#f9fafb;}
+.bt td.sec-trat{background:#eff6ff;}
+.bt td.sec-disp{background:#fff7ed;}
+.bt tr.chg td.sec-id{background:#fffde7 !important;}
+.bt tr.chg td.sec-trat{background:#fffde7 !important;}
+.bt tr.chg td.sec-disp{background:#fffde7 !important;}
+.bt tr.chg td.col-ln,.bt tr.chg td.col-status{background:#fff9c4 !important;}
+/* miss cell overrides */
+.bt td.miss-cell{background:#fef2f2 !important;}
+/* col resizer */
+.col-resizer{position:absolute;right:-3px;top:0;width:6px;height:100%;cursor:col-resize;z-index:10;background:transparent;}
+.col-resizer:hover,.col-resizer.resizing{background:var(--pri);opacity:.5;}
+/* th inner (shared between all section th) */
+.bt thead tr.col-row th .th-inner{padding:3px 4px;}
+.bt thead tr.col-row th .th-top{display:flex;align-items:center;gap:2px;}
+.bt thead tr.col-row th .th-label{font-size:10px;font-weight:600;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.bt thead tr.col-row th.sec-trat .th-label.req-lbl{color:#1d4ed8;text-decoration:underline dotted;}
+.bt thead tr.col-row th.sec-id .th-label.req-lbl{color:var(--err);}
+.bt thead tr.col-row th.sec-disp .th-label.req-lbl{color:#9a3412;}
+.th-controls{display:flex;gap:1px;flex-shrink:0;}
+.th-btn{background:none;border:none;cursor:pointer;font-size:10px;padding:1px 3px;border-radius:3px;line-height:1;opacity:.75;transition:opacity .15s;}
+.th-btn:hover{opacity:1;}
+/* th-filter inside col-row */
+.bt thead tr.col-row th .th-filter{width:100%;border:none;border-radius:3px;padding:2px 4px;font-size:10px;margin-top:2px;outline:none;}
+.bt thead tr.col-row th.sec-id .th-filter{background:rgba(0,0,0,.06);color:#374151;}
+.bt thead tr.col-row th.sec-trat .th-filter{background:rgba(96,165,250,.2);color:#1e3a5f;}
+.bt thead tr.col-row th.sec-disp .th-filter{background:rgba(251,146,60,.2);color:#7c2d00;}
+.bt thead tr.col-row th.col-status .th-filter,
+.bt thead tr.col-row th.col-ln .th-filter{background:rgba(0,0,0,.06);color:var(--on-sur);}
+/* Fixed col headers */
+.bt thead tr.sec-row th.col-ln,
+.bt thead tr.sec-row th.col-status{background:#6b7280;color:#fff;}
+/* Section hide button */
+.sec-hide-btn{font-size:10px;padding:1px 6px;border-radius:10px;border:1px solid rgba(255,255,255,.4);background:rgba(255,255,255,.15);color:#fff;cursor:pointer;margin-left:4px;transition:background .15s;}
+.sec-hide-btn:hover{background:rgba(255,255,255,.35);}
+/* Selected cell */
+.bt td.sel{outline:2px solid var(--pri);outline-offset:-2px;z-index:1;position:relative;}
+/* Fill handle */
+.fill-handle{position:absolute;width:8px;height:8px;background:var(--pri);border:1.5px solid #fff;bottom:-4px;right:-4px;cursor:crosshair;z-index:10;border-radius:1px;display:none;}
+.bt td.sel .fill-handle{display:block;}
+/* Kbd shortcut toast */
+.kbd-toast{position:fixed;bottom:60px;left:50%;transform:translateX(-50%);background:#323232;color:#fff;border-radius:6px;padding:7px 14px;font-size:12px;z-index:999;opacity:0;transition:opacity .3s;pointer-events:none;}
+.kbd-toast.show{opacity:1;}
 </style>
 </head>
 <body>
@@ -512,6 +573,9 @@ let allData=[],filtered=[],curRec=null,missOnly=false,curPage=1;
 let bulkOrig=[],bulkChg={},bulkFiltered=[];
 let dashData=[];const PG=20;let charts={};
 let hiddenCols=new Set(),missFilter=null,statusFilter=null,colSortState={},colFilters={};
+let colWidths={}; // {key: widthPx}
+// Section visibility
+let hiddenSections=new Set(); // 'id','trat','disp'
 
 // ── SECTION COLUMN DEFINITIONS ────────────────────────────────────────────────
 // IDENTIFICAÇÃO: Status(ro), Modalidade, Nome(ro), Canal(ro), EMPR, Modelo,
@@ -764,7 +828,7 @@ async function saveRecord(){
 
 function buildBulk(){
   const ativos=allData.filter(r=>!IGNORADOS.includes(r.STATUS));
-  bulkOrig=ativos.map(r=>({...r}));bulkChg={};missFilter=null;statusFilter=null;colSortState={};colFilters={};
+  bulkOrig=ativos.map(r=>({...r}));bulkChg={};missFilter=null;statusFilter=null;colSortState={};colFilters={};colWidths={};
   bulkFiltered=[...Array(ativos.length).keys()];
   document.getElementById('bfTotal').textContent=ativos.length;document.getElementById('fsBfTotal').textContent=ativos.length;
   // Reset filter selects
@@ -838,33 +902,89 @@ function buildBulkHead(thead){
   const visID=ID_COLS.filter(c=>!hiddenCols.has(c.k));
   const visTR=TC.filter(c=>!hiddenCols.has(c.k));
   const visDI=DC.filter(c=>!hiddenCols.has(c.k));
-  // ROW 0: section headers
+
+  // Helper: th for a section column with resize handle
+  function mkTh(c,secCls,bgColor){
+    const isRq=c.req;
+    const lCls='th-label'+(isRq?' req-lbl':'');
+    const sv=colSortState[c.k]==='asc'?'↑':colSortState[c.k]==='desc'?'↓':'⇅';
+    const fv=colFilters[c.k]||'';
+    const canHide=c.t!=='ro';
+    const cw=colWidths[c.k]?('width:'+colWidths[c.k]+'px;'):'';
+    return '<th class="'+secCls+'" style="'+cw+'position:relative">'
+      +'<div class="th-inner">'
+        +'<div class="th-top">'
+          +'<span class="'+lCls+'" title="'+c.l+'">'+c.l+'</span>'
+          +'<div class="th-controls">'
+            +(canHide?'<button class="th-btn" onclick="hideCol(\''+c.k+'\')" title="Ocultar coluna">✕</button>':'')
+            +'<button class="th-btn" onclick="setSortDir(\''+c.k+'\',\'asc\')" title="Crescente">↑</button>'
+            +'<button class="th-btn" onclick="setSortDir(\''+c.k+'\',\'desc\')" title="Decrescente">↓</button>'
+          +'</div>'
+        +'</div>'
+        +'<input class="th-filter" placeholder="Filtrar..." value="'+fv+'" oninput="colFilter(\''+c.k+'\',this.value)">'
+      +'</div>'
+      +'<div class="col-resizer" onmousedown="startResize(event,\''+c.k+'\')" title="Redimensionar"></div>'
+      +'</th>';
+  }
+
+  // Fixed col header helper
+  function mkFixedTh(key, label, leftPx, cssClass){
+    const sv=colSortState[key]==='asc'?'↑':colSortState[key]==='desc'?'↓':'⇅';
+    const fv=colFilters[key]||'';
+    return '<th class="'+cssClass+'" rowspan="2" style="vertical-align:top;left:'+leftPx+'px">'
+      +'<div class="th-inner">'
+        +'<div class="th-top"><span class="th-label">'+label+'</span>'
+          +'<div class="th-controls">'
+            +'<button class="th-btn" onclick="setSortDir(\''+key+'\',\'asc\')" title="Crescente">↑</button>'
+            +'<button class="th-btn" onclick="setSortDir(\''+key+'\',\'desc\')" title="Decrescente">↓</button>'
+          +'</div>'
+        +'</div>'
+        +'<input class="th-filter" placeholder="Filtrar..." value="'+fv+'" oninput="colFilter(\''+key+'\',this.value)">'
+      +'</div>'
+      +'</th>';
+  }
+
+  // ROW 0: section headers with X to hide entire section
   let r0='<tr class="sec-row">';
-  // Ln spans 2 rows
-  r0+='<th class="col-ln" rowspan="2" style="vertical-align:middle;font-size:10px;color:var(--on-sur-v)">Ln</th>';
-  // STATUS: sticky col outside sections (rowspan 2)
-  const stSv=colSortState['STATUS']==='asc'?'↑':colSortState['STATUS']==='desc'?'↓':'⇅';
-  r0+='<th class="col-status" rowspan="2" style="vertical-align:top"><div class="th-inner"><div class="th-top"><span class="th-label" style="color:var(--on-sur-v)">Status</span><div class="th-controls"><button class="th-btn" style="color:var(--on-sur-v)" onclick="toggleSort(\'STATUS\')">'+stSv+'</button></div></div><input class="th-filter" style="border-color:var(--out-v);background:var(--sur);color:var(--on-sur)" placeholder="Filtrar..." value="'+(colFilters['STATUS']||'')+'" oninput="colFilter(\'STATUS\',this.value)"></div></th>';
-  r0+='<th class="sec-id" colspan="'+visID.length+'">📦 Identificação</th>';
-  r0+='<th class="sec-trat" colspan="'+visTR.length+'">🗂 Tratativa</th>';
-  r0+='<th class="sec-disp" colspan="'+visDI.length+'">⚖️ Disputa</th>';
+  r0+='<th class="col-ln" rowspan="2" style="vertical-align:middle;left:0">Ln</th>';
+  r0+=mkFixedTh('STATUS','Status',36,'col-status');
+  r0+='<th class="sec-id" colspan="'+visID.length+'">'
+      +'📦 Identificação'
+      +'<button class="sec-hide-btn" onclick="hideSection(\'id\')" title="Ocultar seção">✕</button>'
+      +'</th>';
+  r0+='<th class="sec-trat" colspan="'+visTR.length+'">'
+      +'🗂 Tratativa'
+      +'<button class="sec-hide-btn" onclick="hideSection(\'trat\')" title="Ocultar seção">✕</button>'
+      +'</th>';
+  r0+='<th class="sec-disp" colspan="'+visDI.length+'">'
+      +'⚖️ Disputa'
+      +'<button class="sec-hide-btn" onclick="hideSection(\'disp\')" title="Ocultar seção">✕</button>'
+      +'</th>';
   r0+='</tr>';
+
   // ROW 1: column headers
   let r1='<tr class="col-row">';
-  function mkTh(c, secCls){
-    const isRq=c.req;const lCls='th-label'+(isRq?' req-lbl':'');const sv=colSortState[c.k]==='asc'?'↑':colSortState[c.k]==='desc'?'↓':'⇅';const fv=colFilters[c.k]||'';
-    const canHide=c.t!=='ro';const isRO=c.t==='ro';
-    return '<th class="'+secCls+'"><div class="th-inner"><div class="th-top"><span class="'+lCls+'">'+c.l+'</span><div class="th-controls">'+(canHide?'<button class="th-btn" onclick="hideCol(\''+c.k+'\')" title="Ocultar">✕</button>':'')+'<button class="th-btn" onclick="toggleSort(\''+c.k+'\')">'+sv+'</button></div></div><input class="th-filter" placeholder="Filtrar..." value="'+fv+'" oninput="colFilter(\''+c.k+'\',this.value)"'+(isRO?' readonly':'')+' ></div></th>';
-  }
-  visID.forEach(c=>r1+=mkTh(c,'sec-id'));
-  visTR.forEach(c=>r1+=mkTh(c,'sec-trat'));
-  visDI.forEach(c=>r1+=mkTh(c,'sec-disp'));
+  visID.forEach(c=>{r1+=mkTh(c,'sec-id');});
+  visTR.forEach(c=>{r1+=mkTh(c,'sec-trat');});
+  visDI.forEach(c=>{r1+=mkTh(c,'sec-disp');});
   r1+='</tr>';
+
   thead.innerHTML=r0+r1;
 }
 
+
 function hideCol(k){hiddenCols.add(k);buildBulkHead(document.getElementById('bHead'));buildBulkHead(document.getElementById('fsHead'));applyBF();}
-function toggleSort(k){const cur=colSortState[k];Object.keys(colSortState).forEach(kk=>delete colSortState[kk]);colSortState[k]=cur==='asc'?'desc':cur==='desc'?null:'asc';buildBulkHead(document.getElementById('bHead'));buildBulkHead(document.getElementById('fsHead'));applyBF();}
+function setSortDir(k,dir){
+  Object.keys(colSortState).forEach(kk=>delete colSortState[kk]);
+  colSortState[k]=dir;
+  buildBulkHead(document.getElementById('bHead'));
+  buildBulkHead(document.getElementById('fsHead'));
+  applyBF();
+}
+function toggleSort(k){
+  const cur=colSortState[k];
+  setSortDir(k,cur==='asc'?'desc':cur==='desc'?null:'asc');
+}
 function colFilter(k,v){colFilters[k]=v;applyBF();}
 
 const CS_BULK={'TRATATIVA ABERTA':'chip-ta','TRATATIVA ATRASADA':'chip-tat','ACOMPANHAR DISPUTA':'chip-ad','ACOMPANHAR ENVIO':'chip-ae','POSSÍVEL EXTRAVIO':'chip-pe','AGUARDANDO REEMBOLSO':'chip-ar','EM ATRASO':'chip-ea','A ENVIAR':'chip-av'};
@@ -978,13 +1098,35 @@ function bChg(i,key,val){
   updateBulkInfo();
 }
 function updateBulkInfo(){const n=Object.keys(bulkChg).length;['bulkInfo','fsInfo'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=n?n+' linha(s) alteradas':'';});['bfChg','fsChg'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=n;});}
-function bulkReset(){bulkChg={};hiddenCols.clear();colSortState={};colFilters={};statusFilter=null;missFilter=null;buildBulk();snack('Desfeito');}
+function bulkReset(){bulkChg={};hiddenCols.clear();colSortState={};colFilters={};colWidths={};statusFilter=null;missFilter=null;buildBulk();snack('Desfeito');}
 async function bulkSave(){
   const keys=Object.keys(bulkChg);if(!keys.length){snack('Nenhuma alteração');return;}
   const tkn=await getToken();if(!tkn)return;
   const data=[];keys.forEach(i=>{const r=bulkOrig[i];Object.entries(bulkChg[i]).forEach(([key,val])=>{const idx=COL[key];if(idx===undefined||FORMULA_COLS.has(idx))return;data.push({range:cfg.sheetName+'!'+n2c(idx)+r._row,values:[[val]]});});});
   if(!data.length){snack('Nenhum campo editável');return;}
-  try{const res=await fetch('https://sheets.googleapis.com/v4/spreadsheets/'+cfg.sheetId+'/values:batchUpdate',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+tkn},body:JSON.stringify({valueInputOption:'USER_ENTERED',data})});if(!res.ok){const e=await res.json();throw new Error(e.error?.message||res.statusText);}snack(data.length+' célula(s) salvas!','success');bulkChg={};await loadData();buildBulk();}catch(e){snack('Erro: '+e.message,'error');}
+  try{const res=await fetch('https://sheets.googleapis.com/v4/spreadsheets/'+cfg.sheetId+'/values:batchUpdate',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+tkn},body:JSON.stringify({valueInputOption:'USER_ENTERED',data})});if(!res.ok){const e=await res.json();throw new Error(e.error?.message||res.statusText);}snack(data.length+' célula(s) salvas!','success');
+      // Save current filters before reload
+      const savedSF=document.getElementById('bfStatus')?.value||'';
+      const savedCF=document.getElementById('bfCanal')?.value||'';
+      const savedMF=document.getElementById('bfModal')?.value||'';
+      const savedSku=document.getElementById('bfSku')?.value||'';
+      const savedMiss=missFilter;
+      const savedColFilters={...colFilters};
+      const savedColSort={...colSortState};
+      bulkChg={};
+      await loadData();
+      buildBulk();
+      // Restore filters after rebuild
+      if(savedSF){const el=document.getElementById('bfStatus');if(el){el.value=savedSF;el.classList.add('active');}}
+      if(savedCF){const el=document.getElementById('bfCanal');if(el){el.value=savedCF;el.classList.add('active');}}
+      if(savedMF){const el=document.getElementById('bfModal');if(el){el.value=savedMF;el.classList.add('active');}}
+      if(savedSku){const el=document.getElementById('bfSku');if(el){el.value=savedSku;el.classList.add('active');}}
+      missFilter=savedMiss;
+      colFilters=savedColFilters;
+      colSortState=savedColSort;
+      if(savedSF||savedCF||savedMF||savedSku||savedMiss||Object.keys(savedColFilters).length)applyBF();
+      else buildMissChips();
+    }catch(e){snack('Erro: '+e.message,'error');}
 }
 
 function openFS(){
@@ -1009,6 +1151,139 @@ function clearBulkFilters(){
   ['bfSku','fsBfSku'].forEach(id=>{const el=document.getElementById(id);if(el){el.value='';el.classList.remove('active');}});
   missFilter=null;buildMissChips();applyBF();
 }
+
+// ── HIDE SECTION ──────────────────────────────────────────────────────────
+function hideSection(sec){
+  // sec = 'id' | 'trat' | 'disp'
+  const secCols={'id':ID_COLS,'trat':TC,'disp':DC};
+  const cols=secCols[sec];if(!cols)return;
+  cols.forEach(c=>{if(c.t!=='ro')hiddenCols.add(c.k);});
+  buildBulkHead(document.getElementById('bHead'));
+  buildBulkHead(document.getElementById('fsHead'));
+  applyBF();
+  snack('Seção ocultada — clique ↺ Desfazer para restaurar');
+}
+
+// ── COLUMN RESIZE ─────────────────────────────────────────────────────────
+let _resizeKey=null,_resizeStartX=0,_resizeStartW=0;
+function startResize(e,key){
+  e.preventDefault();e.stopPropagation();
+  _resizeKey=key;_resizeStartX=e.clientX;
+  _resizeStartW=colWidths[key]||100;
+  document.body.style.cursor='col-resize';
+  document.body.style.userSelect='none';
+  function onMove(ev){
+    const delta=ev.clientX-_resizeStartX;
+    colWidths[_resizeKey]=Math.max(50,_resizeStartW+delta);
+    // Update all TH widths live
+    const ths=document.querySelectorAll('th[data-colkey="'+_resizeKey+'"]');
+    ths.forEach(th=>{th.style.width=colWidths[_resizeKey]+'px';});
+  }
+  function onUp(){
+    document.body.style.cursor='';document.body.style.userSelect='';
+    document.removeEventListener('mousemove',onMove);
+    document.removeEventListener('mouseup',onUp);
+    buildBulkHead(document.getElementById('bHead'));
+    buildBulkHead(document.getElementById('fsHead'));
+    _resizeKey=null;
+  }
+  document.addEventListener('mousemove',onMove);
+  document.addEventListener('mouseup',onUp);
+}
+
+// ── KEYBOARD SHORTCUTS ────────────────────────────────────────────────────
+let _copyVal=null,_copyKey=null;
+let _kbdToast=null;
+function showKbdToast(msg){
+  let t=document.getElementById('kbdToast');
+  if(!t){t=document.createElement('div');t.id='kbdToast';t.className='kbd-toast';document.body.appendChild(t);}
+  t.textContent=msg;t.classList.add('show');
+  clearTimeout(_kbdToast);_kbdToast=setTimeout(()=>t.classList.remove('show'),1800);
+}
+document.addEventListener('keydown',e=>{
+  // Only active when bulk table is visible
+  if(document.getElementById('page2').style.display==='none'&&!document.getElementById('fsOverlay').classList.contains('open'))return;
+  const sel=document.querySelector('.bt td.sel');
+  if(!sel)return;
+  const ri=parseInt(sel.dataset.row);const key=sel.dataset.col;
+  if(isNaN(ri)||!key)return;
+  // Ctrl+C: copy cell value
+  if(e.ctrlKey&&e.key==='c'){
+    _copyVal=getCellVal(ri,key);_copyKey=key;
+    showKbdToast('Copiado: '+(_copyVal||'(vazio)'));
+    e.preventDefault();
+  }
+  // Ctrl+V: paste to selected cell
+  if(e.ctrlKey&&e.key==='v'){
+    if(_copyVal!==null){
+      bChg(ri,key,_copyVal);
+      const el=document.getElementById('b_'+ri+'_'+key);if(el)el.value=_copyVal;
+      showKbdToast('Colado: '+(_copyVal||'(vazio)'));
+    }
+    e.preventDefault();
+  }
+  // Ctrl+D: fill down — copy selected cell value to next visible row same column
+  if(e.ctrlKey&&e.key==='d'){
+    const curFI=bulkFiltered.indexOf(ri);
+    if(curFI>=0&&curFI<bulkFiltered.length-1){
+      const nextRI=bulkFiltered[curFI+1];
+      const val=getCellVal(ri,key);
+      bChg(nextRI,key,val);
+      const el=document.getElementById('b_'+nextRI+'_'+key);if(el)el.value=val;
+      // Move selection to next row
+      sel.classList.remove('sel');
+      const nextTd=document.querySelector('td[data-row="'+nextRI+'"][data-col="'+key+'"]');
+      if(nextTd){nextTd.classList.add('sel');nextTd.scrollIntoView({block:'nearest'});}
+      showKbdToast('Ctrl+D: preenchido para baixo');
+    }
+    e.preventDefault();
+  }
+  // Arrow keys: navigate cells
+  if(e.key==='ArrowDown'||e.key==='ArrowUp'){
+    const curFI=bulkFiltered.indexOf(ri);
+    const nextFI=e.key==='ArrowDown'?curFI+1:curFI-1;
+    if(nextFI>=0&&nextFI<bulkFiltered.length){
+      const nextRI=bulkFiltered[nextFI];
+      sel.classList.remove('sel');
+      const nextTd=document.querySelector('td[data-row="'+nextRI+'"][data-col="'+key+'"]');
+      if(nextTd){nextTd.classList.add('sel');nextTd.scrollIntoView({block:'nearest'});}
+    }
+    e.preventDefault();
+  }
+  // Tab: move right
+  if(e.key==='Tab'&&!e.shiftKey){
+    const allCols=[...ID_COLS,...TC,...DC].filter(c=>!hiddenCols.has(c.k)&&c.t!=='ro');
+    const ci=allCols.findIndex(c=>c.k===key);
+    if(ci<allCols.length-1){
+      const nextKey=allCols[ci+1].k;
+      sel.classList.remove('sel');
+      const nextTd=document.querySelector('td[data-row="'+ri+'"][data-col="'+nextKey+'"]');
+      if(nextTd){nextTd.classList.add('sel');nextTd.scrollIntoView({block:'nearest',inline:'nearest'});}
+    }
+    e.preventDefault();
+  }
+  // Shift+Tab: move left
+  if(e.key==='Tab'&&e.shiftKey){
+    const allCols=[...ID_COLS,...TC,...DC].filter(c=>!hiddenCols.has(c.k)&&c.t!=='ro');
+    const ci=allCols.findIndex(c=>c.k===key);
+    if(ci>0){
+      const prevKey=allCols[ci-1].k;
+      sel.classList.remove('sel');
+      const prevTd=document.querySelector('td[data-row="'+ri+'"][data-col="'+prevKey+'"]');
+      if(prevTd){prevTd.classList.add('sel');prevTd.scrollIntoView({block:'nearest',inline:'nearest'});}
+    }
+    e.preventDefault();
+  }
+  // Escape: deselect
+  if(e.key==='Escape'){sel.classList.remove('sel');e.preventDefault();}
+  // Ctrl+S: save
+  if(e.ctrlKey&&e.key==='s'){bulkSave();e.preventDefault();}
+  // Delete/Backspace: clear cell
+  if((e.key==='Delete'||e.key==='Backspace')&&!e.ctrlKey){
+    const el=document.getElementById('b_'+ri+'_'+key);
+    if(el&&document.activeElement!==el){bChg(ri,key,'');el.value='';e.preventDefault();}
+  }
+});
 function snack(msg,type){type=type||'';const t=document.getElementById('snack');t.textContent=msg;t.className='snack '+type+' show';setTimeout(()=>t.classList.remove('show'),3500);}
 </script>
 </body>
