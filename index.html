@@ -151,93 +151,203 @@ tbody tr:last-child td{border-bottom:none;}tbody tr:hover td{background:#f8f9fa;
 /* Bulk table */
 .bulk-sheet{border:1px solid var(--out);border-radius:10px;overflow:auto;background:var(--sur);}
 .bulk-sheet-footer{padding:5px 10px;background:var(--sur-v);border-top:1px solid var(--out);font-size:11px;color:var(--on-sur-v);display:flex;justify-content:space-between;border-radius:0 0 10px 10px;}
-.bt{border-collapse:collapse;min-width:100%;table-layout:auto;}
-/* Sticky fixed cols */
-.col-ln{position:sticky;left:0;z-index:2;min-width:38px;width:38px;text-align:center;background:var(--sur-v);}
-.col-status{position:sticky;left:38px;z-index:2;min-width:130px;background:var(--sur-v);padding:3px 5px;}
-.bt thead tr.sec-row th.col-status{z-index:6;background:var(--sur-v);}
-.bt thead tr.col-row th.col-status{z-index:6;background:var(--sur-v);}
-.bt tr.chg td.col-status{background:#fff9c4;}
-.col-id{background:var(--sur-v);}
-.bt thead th.col-ln,.bt thead th.col-id{z-index:5;}
-/* Section header (span row) */
-.bt thead tr.sec-row th{padding:5px 10px;font-size:11px;font-weight:700;text-align:center;border-bottom:1px solid rgba(255,255,255,.25);border-right:2px solid rgba(255,255,255,.3);white-space:nowrap;}
-.bt thead tr.sec-row th.sec-id{background:#1565c0;color:#fff;}
-.bt thead tr.sec-row th.sec-trat{background:#795548;color:#fff;}
-.bt thead tr.sec-row th.sec-disp{background:#6a1b9a;color:#fff;}
-.bt thead tr.sec-row th.col-ln,.bt thead tr.sec-row th.col-id{background:var(--sur-v);color:var(--on-sur-v);}
-/* Column header row */
-.bt thead tr.col-row th{padding:0;border-bottom:2px solid var(--out);border-right:1px solid rgba(255,255,255,.2);font-size:10px;}
-.bt thead tr.col-row th.col-ln,.bt thead tr.col-row th.col-id{background:#f1f3f4;border-right:1px solid var(--out-v);}
-/* stick to top */
-.bt thead tr{position:sticky;z-index:3;}
-.bt thead tr.sec-row{top:0;}
-.bt thead tr.col-row{top:32px;}
-.bt thead tr.sec-row th.col-ln,.bt thead tr.col-row th.col-ln{z-index:6;}
-.bt thead tr.sec-row th.col-id,.bt thead tr.col-row th.col-id{z-index:6;}
-/* th-inner */
-.th-inner{display:flex;flex-direction:column;padding:4px 5px;gap:2px;}
-.th-top{display:flex;align-items:center;justify-content:space-between;gap:3px;}
-.th-label{font-size:10px;font-weight:500;flex:1;white-space:nowrap;}
-/* Required labels → red text */
-.th-label.req-lbl{color:#ff8a80;font-weight:700;}
-.bt thead tr.col-row th.col-ln .th-label,
-.bt thead tr.col-row th.col-id .th-label{color:var(--on-sur-v);}
-.th-controls{display:flex;gap:2px;flex-shrink:0;}
-.th-btn{background:none;border:none;cursor:pointer;font-size:10px;padding:1px 3px;border-radius:3px;color:rgba(255,255,255,.8);line-height:1;transition:opacity .15s;}
-.th-btn:hover{opacity:1;background:rgba(255,255,255,.15);}
-.th-filter{width:100%;border:1px solid rgba(255,255,255,.3);border-radius:4px;padding:2px 5px;font-size:10px;background:rgba(255,255,255,.12);color:#fff;outline:none;}
-.th-filter::placeholder{color:rgba(255,255,255,.5);}
-.th-filter:focus{border-color:rgba(255,255,255,.7);background:rgba(255,255,255,.22);}
-/* fixed col filters */
-.bt thead tr.col-row th.col-ln .th-filter,
-.bt thead tr.col-row th.col-id .th-filter{border-color:var(--out-v);background:var(--sur);color:var(--on-sur);font-size:10px;}
-.bt thead tr.col-row th.col-ln .th-filter::placeholder,
-.bt thead tr.col-row th.col-id .th-filter::placeholder{color:var(--on-sur-v);}
-.bt thead tr.col-row th.col-ln .th-btn,
-.bt thead tr.col-row th.col-id .th-btn{color:var(--on-sur-v);}
-/* Cells */
-.bt td{padding:0;border-bottom:1px solid var(--out-v);border-right:1px solid var(--out-v);font-size:11px;vertical-align:middle;min-width:100px;position:relative;}
-.bt td.col-ln{padding:3px;min-width:38px;width:38px;}
-.bt td.col-id{padding:3px 5px;min-width:140px;}
-.bt td.td-id-sec{min-width:85px;}
-.bt td.miss-cell{background:#fff5f5 !important;}
-.bulk-inp{width:100%;border:none;background:transparent;font-size:11px;padding:4px 5px;outline:none;display:block;box-sizing:border-box;color:var(--on-sur);}
-.bulk-inp:focus{background:#e8f0fe;}
-.bulk-sel{width:100%;border:none;background:transparent;font-size:11px;padding:3px 4px;outline:none;cursor:pointer;display:block;box-sizing:border-box;color:var(--on-sur);}
-.bulk-sel:focus{background:#e8f0fe;}
-.bt tr.chg td{background:#fffde7;}
-.bt tr:hover td{background:#f8f9fa;}
-.bt tr.chg:hover td{background:#fff9c4;}
-.bt td.col-ln,.bt td.col-id{background:#f1f3f4;}
-.bt tr.chg td.col-ln,.bt tr.chg td.col-id{background:#fff9c4;}
-/* Selected cell + fill handle */
-.bt td.sel{outline:2px solid var(--pri);outline-offset:-2px;background:#e8f0fe !important;}
-.fill-handle{position:absolute;width:8px;height:8px;background:var(--pri);border:1.5px solid #fff;bottom:-4px;right:-4px;cursor:crosshair;z-index:10;border-radius:1px;display:none;}
-.bt td.sel .fill-handle{display:block;}
-/* Fullscreen */
-.fs-overlay{display:none;position:fixed;inset:0;z-index:200;background:#f8f9fa;flex-direction:column;}
-.fs-overlay.open{display:flex;}
-.fs-header{background:var(--sur);border-bottom:1px solid var(--out);padding:8px 16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
-.fs-title{font-family:'Google Sans',sans-serif;font-size:15px;font-weight:500;white-space:nowrap;}
-.fs-status-row{display:flex;gap:5px;flex-wrap:wrap;flex:1;}
-.fs-miss-row{display:flex;gap:5px;align-items:center;flex-wrap:wrap;}
-.fs-actions{display:flex;gap:6px;align-items:center;flex-shrink:0;}
-.fs-body{flex:1;overflow:auto;position:relative;}
-.fs-footer{padding:5px 16px;background:var(--sur-v);border-top:1px solid var(--out);display:flex;align-items:center;justify-content:space-between;font-size:11px;color:var(--on-sur-v);}
 
-/* BULK FILTER ROW */
+/* ════════════════════════════════════════════════════════════════
+   BULK TABLE — CSS limpo e definitivo
+   Estrutura de colunas:
+     col-ln   (sticky, left:0,   width:36px)
+     col-status (sticky, left:36px, width:120px)
+     seção Identificação (normal)
+     seção Tratativa (normal)
+     seção Disputa (normal)
+   ════════════════════════════════════════════════════════════════ */
+
+/* ── Tabela base ─────────────────────────────────────────────── */
+.bt{border-collapse:collapse;min-width:100%;table-layout:auto;}
+
+/* ── Células base ────────────────────────────────────────────── */
+.bt td,.bt thead th{border-right:1px solid var(--out-v);border-bottom:1px solid var(--out-v);padding:0;font-size:11px;vertical-align:middle;box-sizing:border-box;}
+.bt tr:hover td{background:#f8f9fa;}
+.bt tr.chg td{background:#fffde7;}
+.bt tr.chg:hover td{background:#fff9c4;}
+
+/* ── Coluna Ln ───────────────────────────────────────────────── */
+.bt .col-ln{
+  position:sticky;
+  left:0;
+  width:36px;
+  min-width:36px;
+  text-align:center;
+  background:#f3f4f6;
+  border-right:1px solid var(--out);
+  font-size:10px;
+  padding:3px 2px;
+  z-index:2;
+}
+
+/* ── Coluna STATUS ───────────────────────────────────────────── */
+.bt .col-status{
+  position:sticky;
+  left:36px;
+  width:128px;
+  min-width:128px;
+  background:#f3f4f6;
+  border-right:2px solid var(--out);
+  padding:3px 4px;
+  z-index:2;
+}
+
+/* ── Elevação de z-index nos headers (thead sticky) ──────────── */
+.bt thead .col-ln{
+  z-index:12;
+  position:sticky;
+  left:0;
+  top:0;
+  background:#4b5563;
+  color:#fff;
+}
+.bt thead .col-status{
+  z-index:12;
+  position:sticky;
+  left:36px;
+  top:0;
+  background:#4b5563;
+  color:#fff;
+}
+
+/* ── thead rows — dois rows sticky ──────────────────────────── */
+/* Row 0: section headers — fica no top:0 */
+.bt thead tr.sec-row{position:sticky;top:0;z-index:5;}
+.bt thead tr.sec-row th{
+  padding:5px 10px;
+  font-size:11px;
+  font-weight:700;
+  color:#fff;
+  text-align:center;
+  white-space:nowrap;
+  border-bottom:1px solid rgba(255,255,255,.25);
+  border-right:2px solid rgba(255,255,255,.25);
+}
+/* Row 1: column headers — fica no top:32px (abaixo da row 0) */
+.bt thead tr.col-row{position:sticky;top:32px;z-index:5;}
+.bt thead tr.col-row th{
+  padding:0;
+  border-bottom:2px solid var(--out);
+  border-right:1px solid rgba(0,0,0,.08);
+  min-width:90px;
+  position:relative;
+}
+
+/* ── Cores das seções ────────────────────────────────────────── */
+/* sec-row (header superior) */
+.bt thead tr.sec-row th.sec-id  {background:#374151;}  /* Cinza escuro */
+.bt thead tr.sec-row th.sec-trat{background:#2563eb;}  /* Azul */
+.bt thead tr.sec-row th.sec-disp{background:#ea580c;}  /* Laranja */
+/* col-row (header inferior) */
+.bt thead tr.col-row th.sec-id  {background:#e5e7eb;color:#111827;}
+.bt thead tr.col-row th.sec-trat{background:#bfdbfe;color:#1e3a8a;}
+.bt thead tr.col-row th.sec-disp{background:#fed7aa;color:#7c2d12;}
+/* cells */
+.bt td.sec-id  {background:#f9fafb;}
+.bt td.sec-trat{background:#eff6ff;}
+.bt td.sec-disp{background:#fff7ed;}
+.bt tr.chg td.sec-id,.bt tr.chg td.sec-trat,.bt tr.chg td.sec-disp{background:#fffde7!important;}
+
+/* fixed col header colours in sec-row (rowspan=2, appears in sec-row) */
+.bt thead tr.sec-row .col-ln,
+.bt thead tr.sec-row .col-status{background:#4b5563!important;color:#fff!important;text-align:left;}
+
+/* ── th-inner (cabeçalho de coluna) ─────────────────────────── */
+.th-inner{display:flex;flex-direction:column;padding:3px 4px;gap:2px;}
+.th-top{display:flex;align-items:center;gap:2px;}
+.th-label{font-size:10px;font-weight:600;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+/* Required label */
+.bt thead tr.col-row th.sec-id   .req-lbl{color:#dc2626;}
+.bt thead tr.col-row th.sec-trat .req-lbl{color:#1e40af;}
+.bt thead tr.col-row th.sec-disp .req-lbl{color:#9a3412;}
+/* Filter input */
+.th-filter{
+  width:100%;border:none;border-radius:3px;
+  padding:2px 4px;font-size:10px;margin-top:1px;outline:none;
+}
+.bt thead tr.col-row th.sec-id   .th-filter{background:rgba(0,0,0,.08);color:#111827;}
+.bt thead tr.col-row th.sec-trat .th-filter{background:rgba(37,99,235,.15);color:#1e3a8a;}
+.bt thead tr.col-row th.sec-disp .th-filter{background:rgba(234,88,12,.15);color:#7c2d12;}
+/* Fixed col filter */
+.bt thead .col-ln .th-filter,
+.bt thead .col-status .th-filter{background:rgba(255,255,255,.15);color:#fff;}
+.bt thead .col-ln .th-filter::placeholder,
+.bt thead .col-status .th-filter::placeholder{color:rgba(255,255,255,.6);}
+/* th buttons */
+.th-controls{display:flex;gap:1px;flex-shrink:0;}
+.th-btn{background:none;border:none;cursor:pointer;font-size:10px;padding:1px 3px;border-radius:3px;line-height:1;opacity:.75;transition:opacity .15s;color:inherit;}
+.th-btn:hover{opacity:1;background:rgba(0,0,0,.1);}
+.bt thead tr.sec-row .th-btn,.bt thead .col-status .th-btn,.bt thead .col-ln .th-btn{color:#fff;}
+
+/* ── Miss cell ───────────────────────────────────────────────── */
+.bt td.miss-cell{background:#fef2f2!important;}
+
+/* ── Col resizer ─────────────────────────────────────────────── */
+.col-resizer{
+  position:absolute;right:-3px;top:0;width:6px;height:100%;
+  cursor:col-resize;z-index:10;background:transparent;
+}
+.col-resizer:hover{background:rgba(0,0,0,.2);}
+
+/* ── Section hide button ─────────────────────────────────────── */
+.sec-hide-btn{
+  font-size:10px;padding:1px 6px;border-radius:10px;
+  border:1px solid rgba(255,255,255,.5);background:rgba(255,255,255,.15);
+  color:#fff;cursor:pointer;margin-left:6px;transition:background .15s;
+}
+.sec-hide-btn:hover{background:rgba(255,255,255,.35);}
+
+/* ── Cell inputs ─────────────────────────────────────────────── */
+.bulk-inp{
+  width:100%;border:none;background:transparent;
+  font-size:11px;padding:4px 5px;outline:none;display:block;box-sizing:border-box;color:var(--on-sur);
+}
+.bulk-inp:focus{background:#dbeafe;}
+.bulk-sel{
+  width:100%;border:none;background:transparent;
+  font-size:11px;padding:3px 4px;outline:none;cursor:pointer;display:block;box-sizing:border-box;color:var(--on-sur);
+}
+.bulk-sel:focus{background:#dbeafe;}
+
+/* ── Selected cell ───────────────────────────────────────────── */
+.bt td.sel{outline:2px solid var(--pri);outline-offset:-2px;z-index:1;position:relative;background:#dbeafe!important;}
+.bt td.sel-range{background:#e0f2fe!important;outline:1px solid #93c5fd;outline-offset:-1px;}
+
+/* ── Fill handle ─────────────────────────────────────────────── */
+.fill-handle{
+  position:absolute;width:8px;height:8px;
+  background:var(--pri);border:1.5px solid #fff;
+  bottom:-4px;right:-4px;cursor:crosshair;z-index:10;border-radius:1px;display:none;
+}
+.bt td.sel .fill-handle{display:block;}
+
+/* ── Kbd toast ───────────────────────────────────────────────── */
+.kbd-toast{
+  position:fixed;bottom:60px;left:50%;transform:translateX(-50%);
+  background:#323232;color:#fff;border-radius:6px;padding:7px 14px;
+  font-size:12px;z-index:999;opacity:0;transition:opacity .3s;pointer-events:none;
+  white-space:nowrap;
+}
+.kbd-toast.show{opacity:1;}
+
+/* ── Bulk filter row ─────────────────────────────────────────── */
 .bulk-filters-row,.fs-filters-row{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:8px;align-items:center;}
-.bulk-filter-sel{background:var(--sur);border:1px solid var(--out);border-radius:18px;padding:5px 12px;font-size:12px;font-family:'Google Sans',sans-serif;color:var(--on-sur);cursor:pointer;outline:none;transition:border-color .2s;}
+.bulk-filter-sel{background:var(--sur);border:1px solid var(--out);border-radius:18px;padding:5px 12px;font-size:12px;color:var(--on-sur);cursor:pointer;outline:none;transition:border-color .2s;}
 .bulk-filter-sel:focus{border-color:var(--pri);}
 .bulk-filter-sel.active{background:var(--pri-c);border-color:var(--pri);color:var(--pri);}
-.bulk-filter-inp{background:var(--sur);border:1px solid var(--out);border-radius:18px;padding:5px 12px;font-size:12px;font-family:'Roboto',sans-serif;color:var(--on-sur);outline:none;width:130px;transition:border-color .2s;}
+.bulk-filter-inp{background:var(--sur);border:1px solid var(--out);border-radius:18px;padding:5px 12px;font-size:12px;color:var(--on-sur);outline:none;width:130px;transition:border-color .2s;}
 .bulk-filter-inp:focus{border-color:var(--pri);}
 .bulk-filter-inp.active{border-color:var(--pri);background:var(--pri-c);}
-.bulk-filter-clear{padding:5px 12px;border-radius:18px;border:1px solid var(--out);background:var(--sur);color:var(--on-sur-v);font-size:12px;font-family:'Google Sans',sans-serif;cursor:pointer;transition:all .2s;}
+.bulk-filter-clear{padding:5px 12px;border-radius:18px;border:1px solid var(--out);background:var(--sur);color:var(--on-sur-v);font-size:12px;cursor:pointer;transition:all .2s;}
 .bulk-filter-clear:hover{background:var(--err-c);border-color:var(--err);color:var(--err);}
 .bulk-filter-count{font-size:12px;color:var(--on-sur-v);padding:4px 10px;background:var(--sur-v);border-radius:12px;border:1px solid var(--out-v);font-weight:500;}
-/* DASHBOARD NEW PANELS */
+
+/* ── Dashboard extras ────────────────────────────────────────── */
 .dash-bottom-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px;}
 .dash-table-card{background:var(--sur);border:1px solid var(--out);border-radius:10px;overflow:hidden;}
 .dash-card-title{padding:10px 14px;font-family:'Google Sans',sans-serif;font-size:13px;font-weight:500;border-bottom:1px solid var(--out-v);display:flex;align-items:center;justify-content:space-between;}
@@ -247,74 +357,10 @@ tbody tr:last-child td{border-bottom:none;}tbody tr:hover td{background:#f8f9fa;
 .dash-mini-table td{padding:7px 12px;border-bottom:1px solid var(--out-v);font-size:12px;vertical-align:middle;}
 .dash-mini-table tr:last-child td{border-bottom:none;}
 .dash-mini-table tr:hover td{background:#f8f9fa;}
-.dash-bar-wrap{height:8px;background:var(--out-v);border-radius:4px;margin-top:3px;}
-.dash-bar-fill{height:100%;border-radius:4px;background:var(--pri);}
-.dash-bar-fill.warn{background:var(--warn);}
-.dash-bar-fill.err{background:var(--err);}
-/* Month chart card */
+.dash-bar-wrap{height:6px;background:var(--out-v);border-radius:3px;margin-top:2px;}
+.dash-bar-fill{height:100%;border-radius:3px;background:var(--pri);}
 .month-chart-card{background:var(--sur);border:1px solid var(--out);border-radius:10px;padding:12px 14px;margin-top:12px;}
 .month-chart-wrap{position:relative;height:200px;}
-
-/* ── BULK TABLE LAYOUT ─────────────────────────────────────────────────── */
-/* Fixed sticky cols */
-.col-ln{position:sticky;left:0;z-index:3;min-width:36px;width:36px;text-align:center;background:#f1f3f4;border-right:1px solid var(--out-v);}
-.col-status{position:sticky;left:36px;z-index:3;min-width:120px;background:#f1f3f4;padding:3px 5px;border-right:2px solid var(--out);}
-/* thead sticky */
-.bt thead tr.sec-row th.col-ln,
-.bt thead tr.col-row th.col-ln{z-index:7;left:0;}
-.bt thead tr.sec-row th.col-status,
-.bt thead tr.col-row th.col-status{z-index:7;left:36px;}
-/* Section colours: Cinza=Identificação, Azul Claro=Tratativa, Laranja Claro=Disputa */
-.bt thead tr.sec-row th.sec-id{background:#6b7280;color:#fff;}
-.bt thead tr.sec-row th.sec-trat{background:#60a5fa;color:#1e3a5f;}
-.bt thead tr.sec-row th.sec-disp{background:#fb923c;color:#7c2d00;}
-.bt thead tr.col-row th.sec-id{background:#e5e7eb;color:#374151;}
-.bt thead tr.col-row th.sec-trat{background:#dbeafe;color:#1e40af;}
-.bt thead tr.col-row th.sec-disp{background:#ffedd5;color:#9a3412;}
-/* Cells bg by section */
-.bt td.sec-id{background:#f9fafb;}
-.bt td.sec-trat{background:#eff6ff;}
-.bt td.sec-disp{background:#fff7ed;}
-.bt tr.chg td.sec-id{background:#fffde7 !important;}
-.bt tr.chg td.sec-trat{background:#fffde7 !important;}
-.bt tr.chg td.sec-disp{background:#fffde7 !important;}
-.bt tr.chg td.col-ln,.bt tr.chg td.col-status{background:#fff9c4 !important;}
-/* miss cell overrides */
-.bt td.miss-cell{background:#fef2f2 !important;}
-/* col resizer */
-.col-resizer{position:absolute;right:-3px;top:0;width:6px;height:100%;cursor:col-resize;z-index:10;background:transparent;}
-.col-resizer:hover,.col-resizer.resizing{background:var(--pri);opacity:.5;}
-/* th inner (shared between all section th) */
-.bt thead tr.col-row th .th-inner{padding:3px 4px;}
-.bt thead tr.col-row th .th-top{display:flex;align-items:center;gap:2px;}
-.bt thead tr.col-row th .th-label{font-size:10px;font-weight:600;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.bt thead tr.col-row th.sec-trat .th-label.req-lbl{color:#1d4ed8;text-decoration:underline dotted;}
-.bt thead tr.col-row th.sec-id .th-label.req-lbl{color:var(--err);}
-.bt thead tr.col-row th.sec-disp .th-label.req-lbl{color:#9a3412;}
-.th-controls{display:flex;gap:1px;flex-shrink:0;}
-.th-btn{background:none;border:none;cursor:pointer;font-size:10px;padding:1px 3px;border-radius:3px;line-height:1;opacity:.75;transition:opacity .15s;}
-.th-btn:hover{opacity:1;}
-/* th-filter inside col-row */
-.bt thead tr.col-row th .th-filter{width:100%;border:none;border-radius:3px;padding:2px 4px;font-size:10px;margin-top:2px;outline:none;}
-.bt thead tr.col-row th.sec-id .th-filter{background:rgba(0,0,0,.06);color:#374151;}
-.bt thead tr.col-row th.sec-trat .th-filter{background:rgba(96,165,250,.2);color:#1e3a5f;}
-.bt thead tr.col-row th.sec-disp .th-filter{background:rgba(251,146,60,.2);color:#7c2d00;}
-.bt thead tr.col-row th.col-status .th-filter,
-.bt thead tr.col-row th.col-ln .th-filter{background:rgba(0,0,0,.06);color:var(--on-sur);}
-/* Fixed col headers */
-.bt thead tr.sec-row th.col-ln,
-.bt thead tr.sec-row th.col-status{background:#6b7280;color:#fff;}
-/* Section hide button */
-.sec-hide-btn{font-size:10px;padding:1px 6px;border-radius:10px;border:1px solid rgba(255,255,255,.4);background:rgba(255,255,255,.15);color:#fff;cursor:pointer;margin-left:4px;transition:background .15s;}
-.sec-hide-btn:hover{background:rgba(255,255,255,.35);}
-/* Selected cell */
-.bt td.sel{outline:2px solid var(--pri);outline-offset:-2px;z-index:1;position:relative;}
-/* Fill handle */
-.fill-handle{position:absolute;width:8px;height:8px;background:var(--pri);border:1.5px solid #fff;bottom:-4px;right:-4px;cursor:crosshair;z-index:10;border-radius:1px;display:none;}
-.bt td.sel .fill-handle{display:block;}
-/* Kbd shortcut toast */
-.kbd-toast{position:fixed;bottom:60px;left:50%;transform:translateX(-50%);background:#323232;color:#fff;border-radius:6px;padding:7px 14px;font-size:12px;z-index:999;opacity:0;transition:opacity .3s;pointer-events:none;}
-.kbd-toast.show{opacity:1;}
 </style>
 </head>
 <body>
@@ -1012,28 +1058,35 @@ function mkEditCell(r,ri,c,secCls){
   return '<td class="'+secCls+' '+isMiss+'" data-row="'+ri+'" data-col="'+c.k+'" onclick="selCell(this)">'+inner+'<div class="fill-handle" onmousedown="startFill(event,'+ri+',\''+c.k+'\')"></div></td>';
 }
 
+// Status chip map (cache outside render for perf)
+const _stChipMap={'TRATATIVA ABERTA':'chip-ta','TRATATIVA ATRASADA':'chip-tat','ACOMPANHAR DISPUTA':'chip-ad','ACOMPANHAR ENVIO':'chip-ae','POSSÍVEL EXTRAVIO':'chip-pe','AGUARDANDO REEMBOLSO':'chip-ar','EM ATRASO':'chip-ea','A ENVIAR':'chip-av'};
 function renderBulkRows(tbody){
   if(!tbody)return;
   const visID=ID_COLS.filter(c=>!hiddenCols.has(c.k));
   const visTR=TC.filter(c=>!hiddenCols.has(c.k));
   const visDI=DC.filter(c=>!hiddenCols.has(c.k));
-  let h='';
+  // Build HTML in chunks to avoid large string concatenation
+  const parts=[];
   bulkFiltered.forEach(i=>{
     const r=bulkOrig[i];
-    h+='<tr id="br_'+i+'" class="'+(bulkChg[i]?'chg':'')+'">';
-    h+='<td class="col-ln">'+r._row+'</td>';
-    // STATUS sticky outside section
-    const stChip=({'TRATATIVA ABERTA':'chip-ta','TRATATIVA ATRASADA':'chip-tat','ACOMPANHAR DISPUTA':'chip-ad','ACOMPANHAR ENVIO':'chip-ae','POSSÍVEL EXTRAVIO':'chip-pe','AGUARDANDO REEMBOLSO':'chip-ar','EM ATRASO':'chip-ea','A ENVIAR':'chip-av'})[r.STATUS]||'';
-    h+='<td class="col-status"><span class="chip '+stChip+'" style="font-size:10px;padding:2px 6px">'+r.STATUS+'</span></td>';
-    visID.forEach(c=>{h+=mkIDCell(r,i,c);});
-    visTR.forEach(c=>{h+=mkEditCell(r,i,c,'sec-trat');});
-    visDI.forEach(c=>{h+=mkEditCell(r,i,c,'sec-disp');});
-    h+='</tr>';
+    parts.push('<tr id="br_'+i+'" class="'+(bulkChg[i]?'chg':'')+'">'
+      +'<td class="col-ln">'+r._row+'</td>'
+      +'<td class="col-status"><span class="chip '+(_stChipMap[r.STATUS]||'')+'" style="font-size:10px;padding:2px 5px">'+(r.STATUS||'—')+'</span></td>');
+    visID.forEach(c=>{parts.push(mkIDCell(r,i,c));});
+    visTR.forEach(c=>{parts.push(mkEditCell(r,i,c,'sec-trat'));});
+    visDI.forEach(c=>{parts.push(mkEditCell(r,i,c,'sec-disp'));});
+    parts.push('</tr>');
   });
-  tbody.innerHTML=h;
+  tbody.innerHTML=parts.join('');
 }
 
-function selCell(el){document.querySelectorAll('.bt td.sel').forEach(t=>t.classList.remove('sel'));el.classList.add('sel');}
+function selCell(el){
+  document.querySelectorAll('.bt td.sel').forEach(t=>t.classList.remove('sel'));
+  document.querySelectorAll('.bt td.sel-range').forEach(t=>t.classList.remove('sel-range'));
+  el.classList.add('sel');
+  _rangeAnchor=el.dataset.row?parseInt(el.dataset.row):null;
+  _rangeEnd=null;_rangeKey=el.dataset.col||null;
+}
 
 // ── FILL HANDLE ────────────────────────────────────────────────────────────────
 let fillSrc=null,fillKey=null,fillVal=null,fillScroll=null;
@@ -1192,7 +1245,7 @@ function startResize(e,key){
 }
 
 // ── KEYBOARD SHORTCUTS ────────────────────────────────────────────────────
-let _copyVal=null,_copyKey=null;
+let _copyVal=null,_copyKey=null,_rangeAnchor=null,_rangeEnd=null,_rangeKey=null;
 let _kbdToast=null;
 function showKbdToast(msg){
   let t=document.getElementById('kbdToast');
@@ -1208,6 +1261,48 @@ document.addEventListener('keydown',e=>{
   const ri=parseInt(sel.dataset.row);const key=sel.dataset.col;
   if(isNaN(ri)||!key)return;
   // Ctrl+C: copy cell value
+  // Ctrl+Shift+End: select from current to last row (same col)
+  if(e.ctrlKey&&e.shiftKey&&e.key==='End'){
+    const curFI=bulkFiltered.indexOf(ri);
+    if(curFI>=0){
+      document.querySelectorAll('.bt td.sel-range').forEach(t=>t.classList.remove('sel-range'));
+      for(let fi=curFI;fi<bulkFiltered.length;fi++){
+        const rri=bulkFiltered[fi];
+        const td=document.querySelector('td[data-row="'+rri+'"][data-col="'+key+'"]');
+        if(td){td.classList.add('sel-range');_rangeEnd=rri;_rangeKey=key;}
+      }
+      showKbdToast('Range: '+( bulkFiltered.length-curFI)+' células');
+    }
+    e.preventDefault();
+  }
+  // Shift+ArrowDown: extend range selection
+  if(e.shiftKey&&!e.ctrlKey&&e.key==='ArrowDown'){
+    const curFI=bulkFiltered.indexOf(ri);
+    const anchorFI=bulkFiltered.indexOf(_rangeAnchor!==null?_rangeAnchor:ri);
+    const newEnd=Math.min(bulkFiltered.length-1,curFI+1);
+    document.querySelectorAll('.bt td.sel-range').forEach(t=>t.classList.remove('sel-range'));
+    const from=Math.min(anchorFI,newEnd);const to=Math.max(anchorFI,newEnd);
+    for(let fi=from;fi<=to;fi++){const rri=bulkFiltered[fi];const td=document.querySelector('td[data-row="'+rri+'"][data-col="'+key+'"]');if(td)td.classList.add('sel-range');}
+    _rangeEnd=bulkFiltered[newEnd];_rangeKey=key;
+    // Move main selection
+    sel.classList.remove('sel');
+    const nextTd=document.querySelector('td[data-row="'+bulkFiltered[curFI+1<bulkFiltered.length?curFI+1:curFI]+'"][data-col="'+key+'"]');
+    if(nextTd){nextTd.classList.add('sel');nextTd.scrollIntoView({block:'nearest'});}
+    e.preventDefault();
+  }
+  // Ctrl+Shift+V: paste to all range-selected cells
+  if(e.ctrlKey&&e.shiftKey&&e.key==='V'){
+    if(_copyVal!==null&&_rangeKey){
+      const rangeTds=document.querySelectorAll('.bt td.sel-range[data-col="'+_rangeKey+'"]');
+      rangeTds.forEach(td=>{
+        const rri=parseInt(td.dataset.row);
+        bChg(rri,_rangeKey,_copyVal);
+        const el=document.getElementById('b_'+rri+'_'+_rangeKey);if(el)el.value=_copyVal;
+      });
+      showKbdToast('Colado em '+rangeTds.length+' células');
+    }
+    e.preventDefault();
+  }
   if(e.ctrlKey&&e.key==='c'){
     _copyVal=getCellVal(ri,key);_copyKey=key;
     showKbdToast('Copiado: '+(_copyVal||'(vazio)'));
