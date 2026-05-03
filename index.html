@@ -27,7 +27,7 @@ body{font-family:'Roboto',sans-serif;background:#f8f9fa;color:var(--on-sur);font
 .btn-outlined{background:transparent;border:1px solid var(--out);color:var(--pri);}.btn-outlined:hover{background:var(--pri-c);}
 .btn-text{background:transparent;color:var(--pri);padding:8px 10px;}.btn-text:hover{background:var(--pri-c);}
 .btn-sm{padding:5px 10px;font-size:12px;border-radius:14px;}
-.btn-lg{padding:10px 22px;font-size:15px;border-radius:22px;font-weight:600;}
+.btn-lg{padding:8px 18px;font-size:14px;border-radius:20px;font-weight:600;}
 .btn-icon{background:transparent;border:1px solid var(--out);width:30px;height:30px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;transition:background .2s;}.btn-icon:hover{background:var(--sur-v);}
 /* CHIPS */
 .chip{display:inline-flex;align-items:center;padding:3px 8px;border-radius:7px;font-size:11px;font-weight:500;white-space:nowrap;}
@@ -154,6 +154,10 @@ tbody tr:last-child td{border-bottom:none;}tbody tr:hover td{background:#f8f9fa;
 .bt{border-collapse:collapse;min-width:100%;table-layout:auto;}
 /* Sticky fixed cols */
 .col-ln{position:sticky;left:0;z-index:2;min-width:38px;width:38px;text-align:center;background:var(--sur-v);}
+.col-status{position:sticky;left:38px;z-index:2;min-width:130px;background:var(--sur-v);padding:3px 5px;}
+.bt thead tr.sec-row th.col-status{z-index:6;background:var(--sur-v);}
+.bt thead tr.col-row th.col-status{z-index:6;background:var(--sur-v);}
+.bt tr.chg td.col-status{background:#fff9c4;}
 .col-id{position:sticky;left:38px;z-index:2;min-width:140px;background:var(--sur-v);font-family:'Roboto Mono',monospace;font-size:10px;}
 .bt thead th.col-ln,.bt thead th.col-id{z-index:5;}
 /* Section header (span row) */
@@ -513,7 +517,7 @@ let hiddenCols=new Set(),missFilter=null,statusFilter=null,colSortState={},colFi
 // IDENTIFICAÇÃO: Status(ro), Modalidade, Nome(ro), Canal(ro), EMPR, Modelo,
 //                NF, NF_DEVOL, NF_DEVOL_EMISSAO, NEC_NF_DEVOL, AUTOR
 const ID_COLS=[
-  {k:'STATUS',      l:'Status',        t:'ro',  req:false},
+  {k:'ID_VENDA',    l:'ID Venda',      t:'ro',  req:false},
   {k:'MODALIDADE',  l:'Modalidade',    t:'sel', o:MODALIDADES, req:false},
   {k:'NOME',        l:'Nome',          t:'ro',  req:false},
   {k:'CANAL',       l:'Canal',         t:'ro',  req:false},
@@ -560,10 +564,25 @@ const DC=[
   {k:'OBS_DISPUTA',           l:'Obs. Disp.',    t:'txt'},
 ];
 
+window.addEventListener('beforeunload',e=>{
+  const n=Object.keys(bulkChg).length;
+  if(n>0){
+    e.preventDefault();
+    e.returnValue='Você tem '+n+' atualização(ões) pendente(s) no preenchimento em massa que não foram salvas. Deseja mesmo sair?';
+  }
+});
 window.onload=()=>{['sheetId','sheetName','apiKey','clientId'].forEach(k=>{document.getElementById(k).value=cfg[k]||'';});if(cfg.sheetId&&cfg.apiKey)loadData();else document.getElementById('cfgPanel').classList.add('open');switchPage(1);};
 function toggleCfg(){document.getElementById('cfgPanel').classList.toggle('open');}
 function saveCfg(){['sheetId','sheetName','apiKey','clientId'].forEach(k=>{cfg[k]=document.getElementById(k).value.trim();localStorage.setItem(k,cfg[k]);});document.getElementById('cfgPanel').classList.remove('open');loadData();}
-function switchPage(n){[0,1,2].forEach(i=>{document.getElementById('page'+i).style.display=i===n?'block':'none';document.getElementById('tab'+i).classList.toggle('active',i===n);});if(n===0)renderDashboard();if(n===2)buildBulk();}
+function switchPage(n){
+  const nChg=Object.keys(bulkChg).length;
+  if(nChg>0){
+    const ok=confirm('Você tem '+nChg+' atualização(ões) pendente(s) que ainda não foram salvas no preenchimento em massa.\nAo realizar essa ação, essas atualizações serão perdidas.\nDeseja mesmo continuar?');
+    if(!ok)return;
+    bulkChg={};
+  }
+  [0,1,2].forEach(i=>{document.getElementById('page'+i).style.display=i===n?'block':'none';document.getElementById('tab'+i).classList.toggle('active',i===n);});if(n===0)renderDashboard();if(n===2)buildBulk();
+}
 
 async function loadData(){
   if(!cfg.sheetId||!cfg.apiKey){document.getElementById('cfgPanel').classList.add('open');return;}
@@ -823,8 +842,9 @@ function buildBulkHead(thead){
   let r0='<tr class="sec-row">';
   // Ln spans 2 rows
   r0+='<th class="col-ln" rowspan="2" style="vertical-align:middle;font-size:10px;color:var(--on-sur-v)">Ln</th>';
-  // ID Venda spans 2 rows with filter
-  r0+='<th class="col-id" rowspan="2" style="vertical-align:top"><div class="th-inner"><div class="th-top"><span class="th-label" style="color:var(--on-sur-v)">ID Venda</span><div class="th-controls"><button class="th-btn" style="color:var(--on-sur-v)" onclick="toggleSort(\'ID_VENDA\')">'+(colSortState['ID_VENDA']==='asc'?'↑':colSortState['ID_VENDA']==='desc'?'↓':'⇅')+'</button></div></div><input class="th-filter" style="border-color:var(--out-v);background:var(--sur);color:var(--on-sur)" placeholder="Filtrar..." value="'+(colFilters['ID_VENDA']||'')+'" oninput="colFilter(\'ID_VENDA\',this.value)"></div></th>';
+  // STATUS: sticky col outside sections (rowspan 2)
+  const stSv=colSortState['STATUS']==='asc'?'↑':colSortState['STATUS']==='desc'?'↓':'⇅';
+  r0+='<th class="col-status" rowspan="2" style="vertical-align:top"><div class="th-inner"><div class="th-top"><span class="th-label" style="color:var(--on-sur-v)">Status</span><div class="th-controls"><button class="th-btn" style="color:var(--on-sur-v)" onclick="toggleSort(\'STATUS\')">'+stSv+'</button></div></div><input class="th-filter" style="border-color:var(--out-v);background:var(--sur);color:var(--on-sur)" placeholder="Filtrar..." value="'+(colFilters['STATUS']||'')+'" oninput="colFilter(\'STATUS\',this.value)"></div></th>';
   r0+='<th class="sec-id" colspan="'+visID.length+'">📦 Identificação</th>';
   r0+='<th class="sec-trat" colspan="'+visTR.length+'">🗂 Tratativa</th>';
   r0+='<th class="sec-disp" colspan="'+visDI.length+'">⚖️ Disputa</th>';
@@ -852,12 +872,13 @@ const CS_BULK={'TRATATIVA ABERTA':'chip-ta','TRATATIVA ATRASADA':'chip-tat','ACO
 function getCellVal(ri,key){return(bulkChg[ri]&&bulkChg[ri][key]!==undefined)?bulkChg[ri][key]:(bulkOrig[ri][key]||'');}
 
 function mkIDCell(r,ri,c){
-  // Read-only cells for STATUS, NOME, CANAL
   if(c.t==='ro'){
     let disp=r[c.k]||'—';
-    if(c.k==='STATUS'){const cc=CS_BULK[r[c.k]]||'';disp='<span class="chip '+cc+'" style="font-size:10px;padding:2px 6px">'+r[c.k]+'</span>';}
-    else if(c.k==='CANAL')disp='<span class="chip chip-canal" style="font-size:10px">'+r[c.k]+'</span>';
-    return '<td class="sec-id td-id-sec" style="padding:3px 5px">'+(c.k==='NOME'?'<div style="max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px">'+disp+'</div>':disp)+'</td>';
+    if(c.k==='CANAL')disp='<span class="chip chip-canal" style="font-size:10px">'+r[c.k]+'</span>';
+    else if(c.k==='ID_VENDA')disp='<span style="font-family:Roboto Mono,monospace;font-size:10px">'+r[c.k]+'</span>';
+    else if(c.k==='NOME')disp='<div style="max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px">'+disp+'</div>';
+    const mc=getMiss(r).includes(c.k)?'miss-cell':'';
+    return '<td class="sec-id td-id-sec '+mc+'" style="padding:3px 5px">'+disp+'</td>';
   }
   return mkEditCell(r,ri,c,'sec-id');
 }
@@ -881,7 +902,9 @@ function renderBulkRows(tbody){
     const r=bulkOrig[i];
     h+='<tr id="br_'+i+'" class="'+(bulkChg[i]?'chg':'')+'">';
     h+='<td class="col-ln">'+r._row+'</td>';
-    h+='<td class="col-id">'+r.ID_VENDA+'</td>';
+    // STATUS sticky outside section
+    const stChip=({'TRATATIVA ABERTA':'chip-ta','TRATATIVA ATRASADA':'chip-tat','ACOMPANHAR DISPUTA':'chip-ad','ACOMPANHAR ENVIO':'chip-ae','POSSÍVEL EXTRAVIO':'chip-pe','AGUARDANDO REEMBOLSO':'chip-ar','EM ATRASO':'chip-ea','A ENVIAR':'chip-av'})[r.STATUS]||'';
+    h+='<td class="col-status"><span class="chip '+stChip+'" style="font-size:10px;padding:2px 6px">'+r.STATUS+'</span></td>';
     visID.forEach(c=>{h+=mkIDCell(r,i,c);});
     visTR.forEach(c=>{h+=mkEditCell(r,i,c,'sec-trat');});
     visDI.forEach(c=>{h+=mkEditCell(r,i,c,'sec-disp');});
@@ -961,7 +984,7 @@ async function bulkSave(){
   const tkn=await getToken();if(!tkn)return;
   const data=[];keys.forEach(i=>{const r=bulkOrig[i];Object.entries(bulkChg[i]).forEach(([key,val])=>{const idx=COL[key];if(idx===undefined||FORMULA_COLS.has(idx))return;data.push({range:cfg.sheetName+'!'+n2c(idx)+r._row,values:[[val]]});});});
   if(!data.length){snack('Nenhum campo editável');return;}
-  try{const res=await fetch('https://sheets.googleapis.com/v4/spreadsheets/'+cfg.sheetId+'/values:batchUpdate',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+tkn},body:JSON.stringify({valueInputOption:'USER_ENTERED',data})});if(!res.ok){const e=await res.json();throw new Error(e.error?.message||res.statusText);}snack(data.length+' célula(s) salvas!','success');bulkChg={};loadData();}catch(e){snack('Erro: '+e.message,'error');}
+  try{const res=await fetch('https://sheets.googleapis.com/v4/spreadsheets/'+cfg.sheetId+'/values:batchUpdate',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+tkn},body:JSON.stringify({valueInputOption:'USER_ENTERED',data})});if(!res.ok){const e=await res.json();throw new Error(e.error?.message||res.statusText);}snack(data.length+' célula(s) salvas!','success');bulkChg={};await loadData();buildBulk();}catch(e){snack('Erro: '+e.message,'error');}
 }
 
 function openFS(){
