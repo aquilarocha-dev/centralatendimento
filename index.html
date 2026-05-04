@@ -282,32 +282,23 @@ tbody tr:last-child td{border-bottom:none;}tbody tr:hover td{background:#f8f9fa;
 
 
 
-#page2{overflow:hidden;height:calc(100vh - 108px);}
-/* ── Fill handle (estilo Excel/Sheets) ─────────────────────────────── */
-.bt td{position:relative;}
-.fill-handle{
-  position:absolute;
-  width:7px;height:7px;
-  background:#1a73e8;
-  border:1.5px solid #fff;
-  bottom:-3px;right:-3px;
-  cursor:crosshair;
-  z-index:20;
-  display:none;
-  pointer-events:all;
-}
-/* Mostrar fill handle: célula selecionada (.sel), hover, ou campo com foco */
-.bt td.sel>.fill-handle,
-.bt td:hover>.fill-handle,
-.bt td:focus-within>.fill-handle{display:block;}
-/* Highlight do range de preenchimento */
-.bt td.fill-range{
-  background:rgba(26,115,232,0.15)!important;
-  outline:1px solid #1a73e8;
-  outline-offset:-1px;
-}
+
+
 
 .fsec-sub{font-size:11px;font-weight:600;color:var(--on-sur-v);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;}
+
+/* Fill handle */
+.fill-handle{
+  position:absolute;width:8px;height:8px;
+  background:var(--pri);border:1.5px solid #fff;
+  bottom:-4px;right:-4px;
+  cursor:crosshair;z-index:10;border-radius:1px;
+  display:none;pointer-events:none;
+}
+.bt td.sel .fill-handle{display:block;pointer-events:all;}
+.bt td:hover .fill-handle{display:block;pointer-events:all;}
+.bt td:focus-within .fill-handle{display:block;pointer-events:all;}
+.bt td.fill-range{background:rgba(26,115,232,0.12)!important;outline:1px solid #1a73e8;outline-offset:-1px;}
 </style>
 </head>
 <body>
@@ -1181,7 +1172,7 @@ function mkEditCell(r,ri,c,secCls){
   let inner='';
   if(c.t==='sel'){const o=(c.o||[]).map(v=>'<option value="'+v+'" '+(val===v?'selected':'')+'>'+(v||'—')+'</option>').join('');inner='<select class="bulk-sel" id="'+uid+'" onfocus="selCell(this.closest(\'td\'))" onclick="event.stopPropagation()" onchange="'+chg+'">'+o+'</select>';}
   else if(c.t==='yn'){const o=['','SIM','NÃO'].map(v=>'<option value="'+v+'" '+(val===v?'selected':'')+'>'+(v||'—')+'</option>').join('');inner='<select class="bulk-sel" id="'+uid+'" onfocus="selCell(this.closest(\'td\'))" onclick="event.stopPropagation()" onchange="'+chg+'">'+o+'</select>';}
-  else{inner='<input class="bulk-inp" id="'+uid+'" value="'+(val||'').replace(/"/g,'&quot;')+'" onfocus="selCell(this.closest(\'td\'))" onclick="event.stopPropagation()" oninput="'+chg+'">';}
+  else{inner='<input class="bulk-inp" id="'+uid+'" value="'+(val||'').replace(/"/g,'&quot;')+'" onclick="event.stopPropagation()" oninput="'+chg+'">';}
   return '<td class="'+secCls+' '+isMiss+'" data-row="'+ri+'" data-col="'+c.k+'" onclick="selCell(this)">'+inner+'<div class="fill-handle" onmousedown="startFill(event,'+ri+',\''+c.k+'\')"></div></td>';
 }
 
@@ -1313,11 +1304,12 @@ function startFill(e,ri,key){
   if(fillVal===undefined||fillVal===null)fillVal='';
   const fsOpen=document.getElementById('fsOverlay').style.display==='flex';
   const scroller=fsOpen?document.getElementById('fsBody'):document.getElementById('bulkSheet');
-  const ZONE=50,SPEED=20;
+  const ZONE=50,SPEED=18;
   let fillTarget=ri;
 
-  function clearHL(){document.querySelectorAll('.bt td.fill-range').forEach(td=>{td.classList.remove('fill-range');});}
-
+  function clearHL(){
+    document.querySelectorAll('.bt td.fill-range').forEach(td=>td.classList.remove('fill-range'));
+  }
   function applyHL(){
     clearHL();
     const fi0=bulkFiltered.indexOf(fillSrc),fi1=bulkFiltered.indexOf(fillTarget);
@@ -1328,55 +1320,43 @@ function startFill(e,ri,key){
       if(td)td.classList.add('fill-range');
     }
   }
-
-  function getTd(x,y){
-    const els=document.elementsFromPoint(x,y);
-    return els.find(el=>el.tagName==='TD'&&el.dataset&&el.dataset.col===key)||null;
-  }
-
   applyHL();
 
   function onMove(ev){
     if(fillScroll){clearInterval(fillScroll);fillScroll=null;}
     const box=scroller.getBoundingClientRect();
-    if(ev.clientY>box.bottom-ZONE)      fillScroll=setInterval(()=>{scroller.scrollTop+=SPEED;doUpdate(ev);},16);
-    else if(ev.clientY<box.top+ZONE)    fillScroll=setInterval(()=>{scroller.scrollTop-=SPEED;doUpdate(ev);},16);
-    else if(ev.clientX>box.right-ZONE)  fillScroll=setInterval(()=>{scroller.scrollLeft+=SPEED;doUpdate(ev);},16);
-    else if(ev.clientX<box.left+ZONE)   fillScroll=setInterval(()=>{scroller.scrollLeft-=SPEED;doUpdate(ev);},16);
-    doUpdate(ev);
+    if(ev.clientY>box.bottom-ZONE)      fillScroll=setInterval(()=>{scroller.scrollTop+=SPEED;update(ev);},16);
+    else if(ev.clientY<box.top+ZONE)    fillScroll=setInterval(()=>{scroller.scrollTop-=SPEED;update(ev);},16);
+    else if(ev.clientX>box.right-ZONE)  fillScroll=setInterval(()=>{scroller.scrollLeft+=SPEED;update(ev);},16);
+    else if(ev.clientX<box.left+ZONE)   fillScroll=setInterval(()=>{scroller.scrollLeft-=SPEED;update(ev);},16);
+    update(ev);
   }
-
-  function doUpdate(ev){
-    const td=getTd(ev.clientX,ev.clientY);
+  function update(ev){
+    const els=document.elementsFromPoint(ev.clientX,ev.clientY);
+    const td=els.find(el=>el.tagName==='TD'&&el.dataset&&el.dataset.col===key);
     if(!td)return;
     const row=parseInt(td.dataset.row);
     if(!isNaN(row)&&row!==fillTarget){fillTarget=row;applyHL();}
   }
-
   function onUp(){
     if(fillScroll){clearInterval(fillScroll);fillScroll=null;}
     document.removeEventListener('mousemove',onMove);
     document.removeEventListener('mouseup',onUp);
-    document.body.style.cursor='';
-    document.body.style.userSelect='';
     clearHL();
     const fi0=bulkFiltered.indexOf(fillSrc),fi1=bulkFiltered.indexOf(fillTarget);
     if(fi0<0||fi1<0){fillSrc=null;return;}
     const from=Math.min(fi0,fi1),to=Math.max(fi0,fi1);
-    let changed=0;
+    let n=0;
     for(let fi=from;fi<=to;fi++){
       const ri2=bulkFiltered[fi];if(ri2===fillSrc)continue;
       bChg(ri2,key,fillVal);
       const el=document.getElementById('b_'+ri2+'_'+key);if(el)el.value=fillVal||'';
       const row=document.getElementById('br_'+ri2);if(row)row.classList.add('chg');
-      changed++;
+      n++;
     }
     fillSrc=null;fillTarget=null;
-    if(changed>0){updateBulkInfo();snack(changed+' células preenchidas','success');}
+    if(n>0){updateBulkInfo();snack(n+' células preenchidas','success');}
   }
-
-  document.body.style.cursor='crosshair';
-  document.body.style.userSelect='none';
   document.addEventListener('mousemove',onMove);
   document.addEventListener('mouseup',onUp);
 }
