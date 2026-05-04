@@ -7,8 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;600&family=Roboto:wght@300;400;500&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
-<style>html,body{overflow-x:hidden;margin:0;padding:0;}
-
+<style>
 :root{--pri:#1a73e8;--pri-c:#d2e3fc;--sur:#fff;--sur-v:#f1f3f4;--on-sur:#202124;--on-sur-v:#5f6368;--out:#dadce0;--out-v:#e8eaed;--err:#d93025;--err-c:#fce8e6;--warn:#f9ab00;--ok:#1e8e3e;--ok-c:#e6f4ea;--pur:#7627bb;--pur-c:#f3e8fd;}
 *{margin:0;padding:0;box-sizing:border-box;}
 body{font-family:'Roboto',sans-serif;background:#f8f9fa;color:var(--on-sur);font-size:14px;line-height:1.5;}
@@ -131,7 +130,7 @@ tbody tr:last-child td{border-bottom:none;}tbody tr:hover td{background:#f8f9fa;
 .snack.show{transform:translateX(-50%) translateY(0);opacity:1;}
 .snack.error{background:var(--err);}.snack.success{background:var(--ok);}
 /* BULK */
-.bulk-wrap{padding:6px 12px;display:flex;flex-direction:column;height:100%;overflow:hidden;}
+.bulk-wrap{padding:8px 16px;display:flex;flex-direction:column;height:calc(100vh - 108px);overflow:hidden;}
 .bulk-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;gap:10px;flex-wrap:wrap;}
 .bulk-tit{font-family:'Google Sans',sans-serif;font-size:16px;font-weight:500;}
 /* Status chips */
@@ -903,17 +902,14 @@ function openModal(rec){
     fInp('PROTOCOLO','Protocolo',r.PROTOCOLO),
     fInp('OBS_DISPUTA','Obs. Disputa',r.OBS_DISPUTA),
     '</div>',
-    '<div class="disp-extra '+(dA?'show ':'')+'" id="dX3" style="margin-top:8px;border-top:1px solid var(--out-v);padding-top:8px">',
-    '<div class="fsec-sub">💰 Reembolso da Plataforma</div>',
-    '<div class="fg3" style="margin-top:6px">',
-    fYN('REEMBOLSO_MKT','Reembolso do Marketplace?',r.REEMBOLSO_MKT,false,isErr('REEMBOLSO_MKT')),
+    '<div class="disp-extra fg3 '+(dA?'show ':'')+'" id="dX3" style="margin-top:8px">',
+    fYN('REEMBOLSO_MKT','Reembolso do Marketplace?',r.REEMBOLSO_MKT,false,false),
     '</div>',
-    '<div id="mktExtra" class="'+(mktA?'trat-extra show':'trat-extra')+'" style="margin-top:6px">',
+    '<div class="disp-extra '+(dA&&mktA?'show ':'')+'" id="mktExtra" style="margin-top:8px">',
     '<div class="fg3">',
     fInp('ID_TRANSACAO','ID Transação',r.ID_TRANSACAO),
-    fInp('CREDITO_RECEBIDO_VALOR','R$ Créd. Recebido',r.CREDITO_RECEBIDO_VALOR),
+    fInp('CREDITO_RECEBIDO_VALOR','R$ Créd. Rec.',r.CREDITO_RECEBIDO_VALOR),
     fYN('CREDITO_RECEBIDO','Crédito Recebido?',r.CREDITO_RECEBIDO),
-    '</div>',
     '</div>',
     '</div>',
     '</div></div>',
@@ -1315,140 +1311,74 @@ function startFill(e,ri,key){
   e.preventDefault();e.stopPropagation();
   fillSrc=ri;fillKey=key;fillVal=getCellVal(ri,key);
   if(fillVal===undefined||fillVal===null)fillVal='';
-
-  // Scroll container
   const fsOpen=document.getElementById('fsOverlay').style.display==='flex';
   const scroller=fsOpen?document.getElementById('fsBody'):document.getElementById('bulkSheet');
+  const ZONE=50,SPEED=20;
+  let fillTarget=ri;
 
-  // Estilo cursor drag global
-  document.body.style.cursor='crosshair';
-  document.body.style.userSelect='none';
+  function clearHL(){document.querySelectorAll('.bt td.fill-range').forEach(td=>{td.classList.remove('fill-range');});}
 
-  const ZONE=50, SPEED=18;
-  let fillTarget=ri; // começa na célula de origem
-
-  // Limpar highlights
-  function clearHL(){
-    document.querySelectorAll('.bt td.fill-range').forEach(td=>{
-      td.classList.remove('fill-range');
-    });
-  }
-
-  // Aplicar highlight no range atual
   function applyHL(){
     clearHL();
-    const fi0=bulkFiltered.indexOf(fillSrc);
-    const fi1=bulkFiltered.indexOf(fillTarget);
+    const fi0=bulkFiltered.indexOf(fillSrc),fi1=bulkFiltered.indexOf(fillTarget);
     if(fi0<0||fi1<0)return;
-    const from=Math.min(fi0,fi1), to=Math.max(fi0,fi1);
+    const from=Math.min(fi0,fi1),to=Math.max(fi0,fi1);
     for(let fi=from;fi<=to;fi++){
-      const td=document.querySelector(
-        '.bt td[data-row="'+bulkFiltered[fi]+'"][data-col="'+key+'"]'
-      );
+      const td=document.querySelector('.bt td[data-row="'+bulkFiltered[fi]+'"][data-col="'+key+'"]');
       if(td)td.classList.add('fill-range');
     }
   }
 
-  // Encontrar a td de destino pelo ponto do mouse
-  function getTdAt(x,y){
+  function getTd(x,y){
     const els=document.elementsFromPoint(x,y);
-    return els.find(el=>
-      el.tagName==='TD'&&
-      el.dataset&&
-      el.dataset.col===key&&
-      el.dataset.row
-    )||null;
+    return els.find(el=>el.tagName==='TD'&&el.dataset&&el.dataset.col===key)||null;
   }
 
-  // Atualizar target e highlight
-  function updateTarget(x,y){
-    const td=getTdAt(x,y);
-    if(td){
-      const row=parseInt(td.dataset.row);
-      if(!isNaN(row)&&row!==fillTarget){
-        fillTarget=row;
-        applyHL();
-      }
-    }
-  }
-
-  // Inicializar com highlight na célula de origem
   applyHL();
 
   function onMove(ev){
-    // Parar scroll anterior
     if(fillScroll){clearInterval(fillScroll);fillScroll=null;}
-
     const box=scroller.getBoundingClientRect();
-    let scrolling=false;
+    if(ev.clientY>box.bottom-ZONE)      fillScroll=setInterval(()=>{scroller.scrollTop+=SPEED;doUpdate(ev);},16);
+    else if(ev.clientY<box.top+ZONE)    fillScroll=setInterval(()=>{scroller.scrollTop-=SPEED;doUpdate(ev);},16);
+    else if(ev.clientX>box.right-ZONE)  fillScroll=setInterval(()=>{scroller.scrollLeft+=SPEED;doUpdate(ev);},16);
+    else if(ev.clientX<box.left+ZONE)   fillScroll=setInterval(()=>{scroller.scrollLeft-=SPEED;doUpdate(ev);},16);
+    doUpdate(ev);
+  }
 
-    // Auto-scroll vertical
-    if(ev.clientY>box.bottom-ZONE){
-      scrolling=true;
-      fillScroll=setInterval(()=>{
-        scroller.scrollTop+=SPEED;
-        updateTarget(ev.clientX,ev.clientY);
-      },16);
-    } else if(ev.clientY<box.top+ZONE){
-      scrolling=true;
-      fillScroll=setInterval(()=>{
-        scroller.scrollTop-=SPEED;
-        updateTarget(ev.clientX,ev.clientY);
-      },16);
-    }
-    // Auto-scroll horizontal
-    if(!scrolling&&ev.clientX>box.right-ZONE){
-      fillScroll=setInterval(()=>{
-        scroller.scrollLeft+=SPEED;
-        updateTarget(ev.clientX,ev.clientY);
-      },16);
-    } else if(!scrolling&&ev.clientX<box.left+ZONE){
-      fillScroll=setInterval(()=>{
-        scroller.scrollLeft-=SPEED;
-        updateTarget(ev.clientX,ev.clientY);
-      },16);
-    }
-
-    updateTarget(ev.clientX,ev.clientY);
+  function doUpdate(ev){
+    const td=getTd(ev.clientX,ev.clientY);
+    if(!td)return;
+    const row=parseInt(td.dataset.row);
+    if(!isNaN(row)&&row!==fillTarget){fillTarget=row;applyHL();}
   }
 
   function onUp(){
-    // Limpar
     if(fillScroll){clearInterval(fillScroll);fillScroll=null;}
-    document.removeEventListener('mousemove',onMove,true);
-    document.removeEventListener('mouseup',onUp,true);
+    document.removeEventListener('mousemove',onMove);
+    document.removeEventListener('mouseup',onUp);
     document.body.style.cursor='';
     document.body.style.userSelect='';
     clearHL();
-
-    // Aplicar valor no range
-    const fi0=bulkFiltered.indexOf(fillSrc);
-    const fi1=bulkFiltered.indexOf(fillTarget);
+    const fi0=bulkFiltered.indexOf(fillSrc),fi1=bulkFiltered.indexOf(fillTarget);
     if(fi0<0||fi1<0){fillSrc=null;return;}
-    const from=Math.min(fi0,fi1), to=Math.max(fi0,fi1);
+    const from=Math.min(fi0,fi1),to=Math.max(fi0,fi1);
     let changed=0;
     for(let fi=from;fi<=to;fi++){
-      const ri2=bulkFiltered[fi];
-      if(ri2===fillSrc)continue;
+      const ri2=bulkFiltered[fi];if(ri2===fillSrc)continue;
       bChg(ri2,key,fillVal);
-      // Atualizar input/select visível
-      const el=document.getElementById('b_'+ri2+'_'+key);
-      if(el)el.value=fillVal||'';
-      // Marcar linha como alterada
-      const row=document.getElementById('br_'+ri2);
-      if(row)row.classList.add('chg');
+      const el=document.getElementById('b_'+ri2+'_'+key);if(el)el.value=fillVal||'';
+      const row=document.getElementById('br_'+ri2);if(row)row.classList.add('chg');
       changed++;
     }
     fillSrc=null;fillTarget=null;
-    if(changed>0){
-      updateBulkInfo();
-      snack(changed+' células preenchidas','success');
-    }
+    if(changed>0){updateBulkInfo();snack(changed+' células preenchidas','success');}
   }
 
-  // Usar capture=true para interceptar antes de outros handlers
-  document.addEventListener('mousemove',onMove,true);
-  document.addEventListener('mouseup',onUp,true);
+  document.body.style.cursor='crosshair';
+  document.body.style.userSelect='none';
+  document.addEventListener('mousemove',onMove);
+  document.addEventListener('mouseup',onUp);
 }
 
 function bChg(i,key,val){
