@@ -7,7 +7,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;600&family=Roboto:wght@300;400;500&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
-<style>
+<style>html,body{overflow-x:hidden;margin:0;padding:0;}
+
 :root{--pri:#1a73e8;--pri-c:#d2e3fc;--sur:#fff;--sur-v:#f1f3f4;--on-sur:#202124;--on-sur-v:#5f6368;--out:#dadce0;--out-v:#e8eaed;--err:#d93025;--err-c:#fce8e6;--warn:#f9ab00;--ok:#1e8e3e;--ok-c:#e6f4ea;--pur:#7627bb;--pur-c:#f3e8fd;}
 *{margin:0;padding:0;box-sizing:border-box;}
 body{font-family:'Roboto',sans-serif;background:#f8f9fa;color:var(--on-sur);font-size:14px;line-height:1.5;}
@@ -130,7 +131,7 @@ tbody tr:last-child td{border-bottom:none;}tbody tr:hover td{background:#f8f9fa;
 .snack.show{transform:translateX(-50%) translateY(0);opacity:1;}
 .snack.error{background:var(--err);}.snack.success{background:var(--ok);}
 /* BULK */
-.bulk-wrap{padding:8px 16px;display:flex;flex-direction:column;height:calc(100vh - 56px);overflow:hidden;}
+.bulk-wrap{padding:6px 12px;display:flex;flex-direction:column;height:100%;overflow:hidden;}
 .bulk-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;gap:10px;flex-wrap:wrap;}
 .bulk-tit{font-family:'Google Sans',sans-serif;font-size:16px;font-weight:500;}
 /* Status chips */
@@ -281,65 +282,33 @@ tbody tr:last-child td{border-bottom:none;}tbody tr:hover td{background:#f8f9fa;
 .bt td.sel-range{background:#e0f2fe!important;outline:1px solid #93c5fd;outline-offset:-1px;}
 
 
-/* Fill handle */
 
-
-/* Cell inputs */
-.bulk-inp{width:100%;border:none;background:transparent;font-size:11px;padding:4px 5px;outline:none;display:block;box-sizing:border-box;color:var(--on-sur);}
-.bulk-inp:focus{background:#dbeafe;}
-.bulk-sel{width:100%;border:none;background:transparent;font-size:11px;padding:3px 4px;outline:none;cursor:pointer;display:block;box-sizing:border-box;color:var(--on-sur);}
-.bulk-sel:focus{background:#dbeafe;}
-
-/* Kbd toast */
-.kbd-toast{position:fixed;bottom:60px;left:50%;transform:translateX(-50%);background:#323232;color:#fff;border-radius:6px;padding:7px 14px;font-size:12px;z-index:999;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap;}
-.kbd-toast.show{opacity:1;}
-
-/* Bulk filters */
-.bulk-filters-row,.fs-filters-row{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:8px;align-items:center;}
-.bulk-filter-sel{background:var(--sur);border:1px solid var(--out);border-radius:18px;padding:5px 12px;font-size:12px;color:var(--on-sur);cursor:pointer;outline:none;}
-.bulk-filter-sel:focus{border-color:var(--pri);}
-.bulk-filter-sel.active{background:var(--pri-c);border-color:var(--pri);color:var(--pri);}
-.bulk-filter-inp{background:var(--sur);border:1px solid var(--out);border-radius:18px;padding:5px 12px;font-size:12px;color:var(--on-sur);outline:none;width:130px;}
-.bulk-filter-inp:focus{border-color:var(--pri);}
-.bulk-filter-inp.active{border-color:var(--pri);background:var(--pri-c);}
-.bulk-filter-clear{padding:5px 12px;border-radius:18px;border:1px solid var(--out);background:var(--sur);color:var(--on-sur-v);font-size:12px;cursor:pointer;}
-.bulk-filter-clear:hover{background:var(--err-c);border-color:var(--err);color:var(--err);}
-.bulk-filter-count{font-size:12px;color:var(--on-sur-v);padding:4px 10px;background:var(--sur-v);border-radius:12px;border:1px solid var(--out-v);font-weight:500;}
-
-/* Dashboard extras */
-.dash-bottom-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px;}
-.dash-table-card{background:var(--sur);border:1px solid var(--out);border-radius:10px;overflow:hidden;}
-.dash-card-title{padding:10px 14px;font-family:'Google Sans',sans-serif;font-size:13px;font-weight:500;border-bottom:1px solid var(--out-v);display:flex;align-items:center;justify-content:space-between;}
-.dash-card-scroll{max-height:280px;overflow-y:auto;}
-.dash-mini-table{width:100%;border-collapse:collapse;}
-.dash-mini-table th{background:var(--sur-v);padding:7px 12px;text-align:left;font-size:10px;font-weight:500;color:var(--on-sur-v);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--out);position:sticky;top:0;}
-.dash-mini-table td{padding:7px 12px;border-bottom:1px solid var(--out-v);font-size:12px;vertical-align:middle;}
-.dash-mini-table tr:last-child td{border-bottom:none;}
-.dash-mini-table tr:hover td{background:#f8f9fa;}
-.dash-bar-wrap{height:6px;background:var(--out-v);border-radius:3px;margin-top:2px;}
-.dash-bar-fill{height:100%;border-radius:3px;background:var(--pri);}
-.month-chart-card{background:var(--sur);border:1px solid var(--out);border-radius:10px;padding:12px 14px;margin-top:12px;}
-.month-chart-wrap{position:relative;height:200px;}
-solid var(--out);border-radius:10px;padding:12px 14px;margin-top:12px;}
-.month-chart-wrap{position:relative;height:200px;}
-
-
-.fs-overlay{position:fixed;inset:0;z-index:500;background:#f8f9fa;flex-direction:column;display:none;}
-.fs-body{flex:1;overflow:auto;position:relative;margin:8px 12px;border:1px solid var(--out);border-radius:8px;background:var(--sur);}
-.fs-header{
-  background:var(--sur);border-bottom:1px solid var(--out);
-  padding:8px 12px;display:flex;flex-direction:column;gap:6px;
+#page2{overflow:hidden;height:calc(100vh - 108px);}
+/* ── Fill handle (estilo Excel/Sheets) ─────────────────────────────── */
+.bt td{position:relative;}
+.fill-handle{
+  position:absolute;
+  width:7px;height:7px;
+  background:#1a73e8;
+  border:1.5px solid #fff;
+  bottom:-3px;right:-3px;
+  cursor:crosshair;
+  z-index:20;
+  display:none;
+  pointer-events:all;
 }
-.fs-header-row1{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
-.fs-header-row2{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
-/* Fill handle — quadradinho azul no canto inferior direito da célula selecionada */
+/* Mostrar fill handle: célula selecionada (.sel), hover, ou campo com foco */
+.bt td.sel>.fill-handle,
+.bt td:hover>.fill-handle,
+.bt td:focus-within>.fill-handle{display:block;}
+/* Highlight do range de preenchimento */
+.bt td.fill-range{
+  background:rgba(26,115,232,0.15)!important;
+  outline:1px solid #1a73e8;
+  outline-offset:-1px;
+}
 
-
-
-
-.fill-handle{position:absolute;width:8px;height:8px;background:var(--pri);border:1.5px solid #fff;bottom:-4px;right:-4px;cursor:crosshair;z-index:10;border-radius:1px;display:none;pointer-events:none;}
-.bt td.sel .fill-handle,.bt td:hover .fill-handle,.bt td:focus-within .fill-handle{display:block;pointer-events:all;}
-.bt td.fill-range{background:#dbeafe!important;}
+.fsec-sub{font-size:11px;font-weight:600;color:var(--on-sur-v);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;}
 </style>
 </head>
 <body>
@@ -858,7 +827,7 @@ function openModal(rec){
   curRec=rec;const isNew=!rec;const r=rec||{};
   document.getElementById('dlgTit').textContent=isNew?'Novo Registro':'Editar Registro';
   document.getElementById('dlgSub').textContent=isNew?'Preencha os campos obrigatórios':'Linha '+r._row+' — '+r.ID_VENDA;
-  const miss=rec?getMiss(rec):[];const wMot=['Devolução','Mensagem','Reclamação'].includes(r.MODALIDADE);const dA=r.DISPUTA_ABERTA==='SIM';const pA=r.NEC_PECAS==='SIM';const tA=r.TRATATIVA_ABERTA==='SIM'||r.TRATATIVA_ABERTA==='Reaberta';const dF=r.DISPUTA_FINALIZADA==='SIM';const rS=r.REEMBOLSO_MKT==='SIM';
+  const miss=rec?getMiss(rec):[];const wMot=['Devolução','Mensagem','Reclamação'].includes(r.MODALIDADE);const dA=r.DISPUTA_ABERTA==='SIM';const pA=r.NEC_PECAS==='SIM';const mktA=r.REEMBOLSO_MKT==='SIM';const tA=r.TRATATIVA_ABERTA==='SIM'||r.TRATATIVA_ABERTA==='Reaberta';const dF=r.DISPUTA_FINALIZADA==='SIM';const rS=r.REEMBOLSO_MKT==='SIM';
   const isErr=k=>!isNew&&miss.includes(k);
   const mH=miss.length&&!isNew?'<div class="alert-b a-err"><span>⚠</span><span><strong>Campos em falta:</strong> '+miss.map(f=>ML[f]||f).join(' • ')+'</span></div>':'';
   const aH=(r.NOME||r.SKU)?'<div class="alert-b a-ok"><span>✓</span><span>Campos fórmula preenchidos automaticamente.</span></div>':'';
@@ -884,7 +853,7 @@ function openModal(rec){
     '<div class="fsec"><div class="fsec-tit">📋 Tratativa</div>',
     '<div class="fg" style="margin-bottom:8px">',
     fRadio3('TRATATIVA_ABERTA','Tratativa Aberta?',r.TRATATIVA_ABERTA,true,isErr('TRATATIVA_ABERTA')),
-    fYN('DEVOLUCAO_ABERTA','Devolução Aberta?',r.DEVOLUCAO_ABERTA,false,false),
+    fYN('DEVOLUCAO_ABERTA','Devolução Aberta?',r.DEVOLUCAO_ABERTA,true,isErr('DEVOLUCAO_ABERTA')),
     '</div>',
     '<div id="tratExtra" class="'+(tA?'trat-extra show':'trat-extra')+'">',
     '<div class="fg">',
@@ -898,15 +867,14 @@ function openModal(rec){
     '<div class="fg3" style="margin-top:8px">',
     fYN('REPUTACAO','Impacto Reputação?',r.REPUTACAO),
     fYN('REEMBOLSADO','Cliente Reembolsado?',r.REEMBOLSADO),
-    fYN('TRATATIVA_FINALIZADA','Tratativa Final?',r.TRATATIVA_FINALIZADA,tA,isErr('TRATATIVA_FINALIZADA')),
-    '</div>',
-    '<div class="fg3" style="margin-top:8px">',
-    fYN('NEC_PECAS','Nec. Enviar Peças?',r.NEC_PECAS,tA,isErr('NEC_PECAS')),
     '</div>',
     '<div class="fg3" style="margin-top:8px">',
     fInpMoney('PAGO_PLAT','Pago Plat/Cliente',r.PAGO_PLAT),
     fInpMoney('VALOR_PAGO','Valor Pago',r.VALOR_PAGO),
     fInpMoney('CUSTOS_TOTAL','Custos Total',r.CUSTOS_TOTAL),
+    '</div>',
+    '<div class="fg3" style="margin-top:8px">',
+    fYN('NEC_PECAS','Nec. Enviar Peças?',r.NEC_PECAS,tA,isErr('NEC_PECAS')),
     '</div>',
     '<div id="pecasExtra" class="'+(pA?'trat-extra show':'trat-extra')+'">',
     '<div class="fg3" style="margin-top:8px">',
@@ -917,6 +885,9 @@ function openModal(rec){
     fInp('OBS_PECAS','Obs. Peças',r.OBS_PECAS),
     fInp('CUSTO_ENVIO','Custo Envio',r.CUSTO_ENVIO),
     '</div></div>',
+    '<div class="fg3" style="margin-top:8px">',
+    fYN('TRATATIVA_FINALIZADA','Tratativa Finalizada?',r.TRATATIVA_FINALIZADA,tA,isErr('TRATATIVA_FINALIZADA')),
+    '</div>',
     '</div></div>',
     '<div class="fsec"><div class="fsec-tit">⚖️ Disputa</div>',
     '<div class="fg3" id="dBase">',
@@ -924,17 +895,27 @@ function openModal(rec){
     '</div>',
     '<div class="disp-extra fg3 '+(dA?'show ':'')+'" id="dX1" style="margin-top:8px">',
     fYN('DISPUTA_FINALIZADA','Disputa Final?',r.DISPUTA_FINALIZADA,true,isErr('DISPUTA_FINALIZADA')),
-    fYN('REEMBOLSO_MKT','Reembolso Mkt?',r.REEMBOLSO_MKT,dF,isErr('REEMBOLSO_MKT')),
     fYN('CREDITO','R$ Crédito?',r.CREDITO,rS,isErr('CREDITO')),
     '</div>',
     '<div class="disp-extra fg '+(dA?'show ':'')+'" id="dX2" style="margin-top:8px">',
     fInp('PLAT_DISPUTA','Plataforma',r.PLAT_DISPUTA),
     fInp('MOTIVO_DISPUTA','Motivo Disputa',r.MOTIVO_DISPUTA),
     fInp('PROTOCOLO','Protocolo',r.PROTOCOLO),
-    fInp('ID_TRANSACAO','ID Transação',r.ID_TRANSACAO),
-    fInp('CREDITO_RECEBIDO_VALOR','R$ Créd. Rec.',r.CREDITO_RECEBIDO_VALOR),
-    fYN('CREDITO_RECEBIDO','Crédito Rec.?',r.CREDITO_RECEBIDO),
     fInp('OBS_DISPUTA','Obs. Disputa',r.OBS_DISPUTA),
+    '</div>',
+    '<div class="disp-extra '+(dA?'show ':'')+'" id="dX3" style="margin-top:8px;border-top:1px solid var(--out-v);padding-top:8px">',
+    '<div class="fsec-sub">💰 Reembolso da Plataforma</div>',
+    '<div class="fg3" style="margin-top:6px">',
+    fYN('REEMBOLSO_MKT','Reembolso do Marketplace?',r.REEMBOLSO_MKT,false,isErr('REEMBOLSO_MKT')),
+    '</div>',
+    '<div id="mktExtra" class="'+(mktA?'trat-extra show':'trat-extra')+'" style="margin-top:6px">',
+    '<div class="fg3">',
+    fInp('ID_TRANSACAO','ID Transação',r.ID_TRANSACAO),
+    fInp('CREDITO_RECEBIDO_VALOR','R$ Créd. Recebido',r.CREDITO_RECEBIDO_VALOR),
+    fYN('CREDITO_RECEBIDO','Crédito Recebido?',r.CREDITO_RECEBIDO),
+    '</div>',
+    '</div>',
+    '</div>',
     '</div></div>',
     '<div class="fsec"><div class="fsec-tit">🏭 Full/Estoque</div><div class="fg3">',
     fInp('STATUS_FULL','Status Full',r.STATUS_FULL),
@@ -955,6 +936,13 @@ function openModal(rec){
       const v=document.querySelector('input[name="f_TRATATIVA_ABERTA"]:checked')?.value||'';
       const show=v==='SIM'||v==='Reaberta';
       document.getElementById('tratExtra')?.classList.toggle('show',show);
+    });
+  });
+  // Wire REEMBOLSO_MKT toggle
+  document.querySelectorAll('input[name="f_REEMBOLSO_MKT"]').forEach(radio=>{
+    radio.addEventListener('change',()=>{
+      const v=document.querySelector('input[name="f_REEMBOLSO_MKT"]:checked')?.value||'';
+      document.getElementById('mktExtra')?.classList.toggle('show',v==='SIM');
     });
   });
   document.querySelectorAll('input[name="f_DISPUTA_ABERTA"]').forEach(radio=>{radio.addEventListener('change',()=>{const sim=document.querySelector('input[name="f_DISPUTA_ABERTA"]:checked')?.value==='SIM';document.getElementById('dX1')?.classList.toggle('show',sim);document.getElementById('dX2')?.classList.toggle('show',sim);});});
@@ -1326,64 +1314,141 @@ let fillSrc=null,fillKey=null,fillVal=null,fillScroll=null;
 function startFill(e,ri,key){
   e.preventDefault();e.stopPropagation();
   fillSrc=ri;fillKey=key;fillVal=getCellVal(ri,key);
+  if(fillVal===undefined||fillVal===null)fillVal='';
+
+  // Scroll container
   const fsOpen=document.getElementById('fsOverlay').style.display==='flex';
   const scroller=fsOpen?document.getElementById('fsBody'):document.getElementById('bulkSheet');
-  const ZONE=50,SPEED=20;
-  let fillTarget=null;
 
-  function getTd(x,y){
-    const els=document.elementsFromPoint(x,y);
-    return els.find(el=>el.tagName==='TD'&&el.dataset&&el.dataset.col===key)||null;
-  }
+  // Estilo cursor drag global
+  document.body.style.cursor='crosshair';
+  document.body.style.userSelect='none';
+
+  const ZONE=50, SPEED=18;
+  let fillTarget=ri; // começa na célula de origem
+
+  // Limpar highlights
   function clearHL(){
-    document.querySelectorAll('.bt td.fill-range').forEach(td=>{td.classList.remove('fill-range');td.style.outline='';});
+    document.querySelectorAll('.bt td.fill-range').forEach(td=>{
+      td.classList.remove('fill-range');
+    });
   }
-  function highlight(tgtRow){
+
+  // Aplicar highlight no range atual
+  function applyHL(){
     clearHL();
-    if(tgtRow==null)return;
-    const fi0=bulkFiltered.indexOf(fillSrc),fi1=bulkFiltered.indexOf(tgtRow);
+    const fi0=bulkFiltered.indexOf(fillSrc);
+    const fi1=bulkFiltered.indexOf(fillTarget);
     if(fi0<0||fi1<0)return;
-    const from=Math.min(fi0,fi1),to=Math.max(fi0,fi1);
+    const from=Math.min(fi0,fi1), to=Math.max(fi0,fi1);
     for(let fi=from;fi<=to;fi++){
-      const td=document.querySelector('.bt td[data-row="'+bulkFiltered[fi]+'"][data-col="'+key+'"]');
-      if(td){td.classList.add('fill-range');td.style.outline='2px solid #1a73e8';}
+      const td=document.querySelector(
+        '.bt td[data-row="'+bulkFiltered[fi]+'"][data-col="'+key+'"]'
+      );
+      if(td)td.classList.add('fill-range');
     }
   }
-  function doMove(x,y){
-    const td=getTd(x,y);
-    if(!td)return;
-    const row=parseInt(td.dataset.row);
-    if(!isNaN(row)){fillTarget=row;highlight(row);}
+
+  // Encontrar a td de destino pelo ponto do mouse
+  function getTdAt(x,y){
+    const els=document.elementsFromPoint(x,y);
+    return els.find(el=>
+      el.tagName==='TD'&&
+      el.dataset&&
+      el.dataset.col===key&&
+      el.dataset.row
+    )||null;
   }
+
+  // Atualizar target e highlight
+  function updateTarget(x,y){
+    const td=getTdAt(x,y);
+    if(td){
+      const row=parseInt(td.dataset.row);
+      if(!isNaN(row)&&row!==fillTarget){
+        fillTarget=row;
+        applyHL();
+      }
+    }
+  }
+
+  // Inicializar com highlight na célula de origem
+  applyHL();
+
   function onMove(ev){
+    // Parar scroll anterior
     if(fillScroll){clearInterval(fillScroll);fillScroll=null;}
+
     const box=scroller.getBoundingClientRect();
-    if(ev.clientY>box.bottom-ZONE)      fillScroll=setInterval(()=>{scroller.scrollTop+=SPEED;doMove(ev.clientX,ev.clientY);},16);
-    else if(ev.clientY<box.top+ZONE)    fillScroll=setInterval(()=>{scroller.scrollTop-=SPEED;doMove(ev.clientX,ev.clientY);},16);
-    else if(ev.clientX>box.right-ZONE)  fillScroll=setInterval(()=>{scroller.scrollLeft+=SPEED;doMove(ev.clientX,ev.clientY);},16);
-    else if(ev.clientX<box.left+ZONE)   fillScroll=setInterval(()=>{scroller.scrollLeft-=SPEED;doMove(ev.clientX,ev.clientY);},16);
-    doMove(ev.clientX,ev.clientY);
+    let scrolling=false;
+
+    // Auto-scroll vertical
+    if(ev.clientY>box.bottom-ZONE){
+      scrolling=true;
+      fillScroll=setInterval(()=>{
+        scroller.scrollTop+=SPEED;
+        updateTarget(ev.clientX,ev.clientY);
+      },16);
+    } else if(ev.clientY<box.top+ZONE){
+      scrolling=true;
+      fillScroll=setInterval(()=>{
+        scroller.scrollTop-=SPEED;
+        updateTarget(ev.clientX,ev.clientY);
+      },16);
+    }
+    // Auto-scroll horizontal
+    if(!scrolling&&ev.clientX>box.right-ZONE){
+      fillScroll=setInterval(()=>{
+        scroller.scrollLeft+=SPEED;
+        updateTarget(ev.clientX,ev.clientY);
+      },16);
+    } else if(!scrolling&&ev.clientX<box.left+ZONE){
+      fillScroll=setInterval(()=>{
+        scroller.scrollLeft-=SPEED;
+        updateTarget(ev.clientX,ev.clientY);
+      },16);
+    }
+
+    updateTarget(ev.clientX,ev.clientY);
   }
-  function onUp(ev){
+
+  function onUp(){
+    // Limpar
     if(fillScroll){clearInterval(fillScroll);fillScroll=null;}
-    document.removeEventListener('mousemove',onMove);
-    document.removeEventListener('mouseup',onUp);
+    document.removeEventListener('mousemove',onMove,true);
+    document.removeEventListener('mouseup',onUp,true);
+    document.body.style.cursor='';
+    document.body.style.userSelect='';
     clearHL();
-    if(fillTarget==null){fillSrc=null;return;}
-    const fi0=bulkFiltered.indexOf(fillSrc),fi1=bulkFiltered.indexOf(fillTarget);
+
+    // Aplicar valor no range
+    const fi0=bulkFiltered.indexOf(fillSrc);
+    const fi1=bulkFiltered.indexOf(fillTarget);
     if(fi0<0||fi1<0){fillSrc=null;return;}
-    const from=Math.min(fi0,fi1),to=Math.max(fi0,fi1);
+    const from=Math.min(fi0,fi1), to=Math.max(fi0,fi1);
+    let changed=0;
     for(let fi=from;fi<=to;fi++){
-      const ri2=bulkFiltered[fi];if(ri2===fillSrc)continue;
+      const ri2=bulkFiltered[fi];
+      if(ri2===fillSrc)continue;
       bChg(ri2,key,fillVal);
-      const el=document.getElementById('b_'+ri2+'_'+key);if(el)el.value=fillVal||'';
-      const row=document.getElementById('br_'+ri2);if(row)row.classList.add('chg');
+      // Atualizar input/select visível
+      const el=document.getElementById('b_'+ri2+'_'+key);
+      if(el)el.value=fillVal||'';
+      // Marcar linha como alterada
+      const row=document.getElementById('br_'+ri2);
+      if(row)row.classList.add('chg');
+      changed++;
     }
     fillSrc=null;fillTarget=null;
-    updateBulkInfo();
+    if(changed>0){
+      updateBulkInfo();
+      snack(changed+' células preenchidas','success');
+    }
   }
-  document.addEventListener('mousemove',onMove);
-  document.addEventListener('mouseup',onUp);
+
+  // Usar capture=true para interceptar antes de outros handlers
+  document.addEventListener('mousemove',onMove,true);
+  document.addEventListener('mouseup',onUp,true);
 }
 
 function bChg(i,key,val){
