@@ -299,6 +299,25 @@ tbody tr:last-child td{border-bottom:none;}tbody tr:hover td{background:#f8f9fa;
 .bt td:hover .fill-handle{display:block;pointer-events:all;}
 .bt td:focus-within .fill-handle{display:block;pointer-events:all;}
 .bt td.fill-range{background:rgba(26,115,232,0.12)!important;outline:1px solid #1a73e8;outline-offset:-1px;}
+
+#page2{overflow-x:hidden;}
+.bulk-sheet{max-width:100%;}
+.app-bar,.nav-tabs,.cfg-panel{max-width:100vw;overflow-x:hidden;}
+/* Botão X — fechar popup */
+.dlg-hdr{position:relative;display:flex;align-items:flex-start;justify-content:space-between;gap:8px;}
+.dlg-hdr-inner{flex:1;min-width:0;}
+.dlg-x{
+  flex-shrink:0;
+  background:none;border:none;cursor:pointer;
+  font-size:20px;line-height:1;
+  color:var(--on-sur-v);
+  width:28px;height:28px;
+  border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  transition:background .15s,color .15s;
+  margin-top:2px;
+}
+.dlg-x:hover{background:var(--err-c);color:var(--err);}
 </style>
 </head>
 <body>
@@ -385,6 +404,7 @@ tbody tr:last-child td{border-bottom:none;}tbody tr:hover td{background:#f8f9fa;
       <option>ACOMPANHAR DISPUTA</option><option>ACOMPANHAR ENVIO</option>
       <option>POSSÍVEL EXTRAVIO</option><option>AGUARDANDO REEMBOLSO</option>
       <option>EM ATRASO</option><option>A ENVIAR</option>
+      <option>CONCLUÍDO</option><option>AGUARDANDO PRODUTO</option>
     </select>
     <select class="sel-field" id="fCanal" onchange="render()">
       <option value="">Todos os canais</option>
@@ -502,7 +522,7 @@ tbody tr:last-child td{border-bottom:none;}tbody tr:hover td{background:#f8f9fa;
 <!-- DIALOG -->
 <div class="dlg-ov" id="dlgOv">
   <div class="dlg">
-    <div class="dlg-hdr"><div class="dlg-tit" id="dlgTit">Novo Registro</div><div class="dlg-sub" id="dlgSub"></div></div>
+    <div class="dlg-hdr"><div class="dlg-hdr-inner"><div class="dlg-tit" id="dlgTit">Novo Registro</div><div class="dlg-sub" id="dlgSub"></div></div><button class="dlg-x" onclick="closeDlg()" title="Fechar sem salvar">✕</button></div>
     <div class="dlg-body" id="dlgBody"></div>
     <div class="dlg-ftr"><button class="btn btn-text" onclick="closeDlg()">Cancelar</button><button class="btn btn-filled" onclick="saveRecord()">💾 Salvar</button></div>
   </div>
