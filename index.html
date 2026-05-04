@@ -341,6 +341,7 @@ solid var(--out);border-radius:10px;padding:12px 14px;margin-top:12px;}
   display:none;pointer-events:none;
 }
 .bt td.sel .fill-handle{display:block;pointer-events:all;}
+.bt td:hover .fill-handle{display:block;pointer-events:all;}
 </style>
 </head>
 <body>
@@ -814,13 +815,13 @@ function renderDashboard(){
   // ── KPIs FINANCEIROS (usa allData) ───────────────────────────────────────
   function parseMoney(v){return parseFloat((v||'').replace(/[R$\s]/g,'').replace(/\./g,'').replace(',','.'))||0;}
   const custoTotal=allData.reduce((s,r)=>s+parseMoney(r.CUSTOS_TOTAL),0);
-  const reembolsoTotal=allData.filter(r=>r.REEMBOLSADO==='SIM').reduce((s,r)=>s+parseMoney(r.VALOR_PAGO),0);
+  const reembolsoTotal=allData.filter(r=>r.REEMBOLSO_MKT==='SIM').reduce((s,r)=>s+parseMoney(r.CREDITO_RECEBIDO_VALOR),0);
   const resultadoFin=allData.reduce((s,r)=>s+parseMoney(r.CREDITO_RECEBIDO_VALOR),0)-custoTotal;
   const finEl=document.getElementById('finKpiRow');
   if(finEl){
     finEl.innerHTML=
       '<div class="kpi kpi-err"><div class="kpi-lbl">Custos Total</div><div class="kpi-val" style="font-size:18px">R$ '+custoTotal.toFixed(2).replace('.',',')+'</div><div class="kpi-sub">todos os registros</div></div>'+
-      '<div class="kpi kpi-ok"><div class="kpi-lbl">Total Reembolsado</div><div class="kpi-val" style="font-size:18px">R$ '+reembolsoTotal.toFixed(2).replace('.',',')+'</div><div class="kpi-sub">valor pago ao cliente</div></div>'+
+      '<div class="kpi kpi-ok"><div class="kpi-lbl">Reemb. da Plataforma</div><div class="kpi-val" style="font-size:18px">R$ '+reembolsoTotal.toFixed(2).replace('.',',')+'</div><div class="kpi-sub">recebido da plataforma</div></div>'+
       '<div class="kpi kpi-pur"><div class="kpi-lbl">Resultado Financeiro</div><div class="kpi-val" style="font-size:18px">R$ '+resultadoFin.toFixed(2).replace('.',',')+'</div><div class="kpi-sub">crédito - custos</div></div>';
   }
 }
@@ -864,12 +865,84 @@ function openModal(rec){
   const mH=miss.length&&!isNew?'<div class="alert-b a-err"><span>⚠</span><span><strong>Campos em falta:</strong> '+miss.map(f=>ML[f]||f).join(' • ')+'</span></div>':'';
   const aH=(r.NOME||r.SKU)?'<div class="alert-b a-ok"><span>✓</span><span>Campos fórmula preenchidos automaticamente.</span></div>':'';
   const nH=isNew?'<div class="alert-b a-inf"><span>💡</span><span>Digite o ID — Canal, EMPR. e dados serão preenchidos automaticamente.</span></div>':'';
-  document.getElementById('dlgBody').innerHTML=mH+aH+nH+
-'<div class="fsec"><div class="fsec-tit">🗂 Modalidade</div><div class="fg3">'+fSel('MODALIDADE','Modalidade',r.MODALIDADE,MODALIDADES,false,isErr('MODALIDADE'))+'</div></div>'+
-'<div class="fsec"><div class="fsec-tit">📦 Identificação</div><div class="fg">'+fInp('ID_VENDA','ID Venda',r.ID_VENDA,'text',true,isNew?'Digite o ID...':'',false,isNew)+fSel('CANAL','Canal',r.CANAL,['','Mercado Livre','Shopee','Amazon','Magalu','Cardex'],true,isErr('CANAL'))+fSel('EMPR','EMPR.',r.EMPR,['','JLD','DGL'],true,isErr('EMPR'))+fSel('MODELO','Modelo',r.MODELO,['','Full','Normal','Flex','Cardex'],true,isErr('MODELO'))+'</div><div class="fg4" style="margin-top:8px">'+fRO('NOME','Nome (f)',r.NOME)+fRO('DATA_VENDA','Data (f)',r.DATA_VENDA)+fRO('SKU','SKU (f)',r.SKU)+fRO('QT','QT (f)',r.QT)+'</div><div class="fg3" style="margin-top:8px">'+fRO('RASTREIO','Rastreio (f)',r.RASTREIO)+fRO('ID_BLING','ID Bling (f)',r.ID_BLING)+fRO('DESC_STATUS','Desc. Status (f)',r.DESC_STATUS)+'</div><div class="fg" style="margin-top:8px">'+fInp('AUTOR','Autor',r.AUTOR)+fInp('NEC_NF_DEVOL','Nec. NF Devol?',r.NEC_NF_DEVOL)+fInp('NF','NF',r.NF)+fInp('NF_DEVOL','NF DEVOL',r.NF_DEVOL)+fInp('NF_DEVOL_EMISSAO','NF DEVOL Em.',r.NF_DEVOL_EMISSAO)+'</div></div>'+
-'<div class="fsec"><div class="fsec-tit">📋 Tratativa</div>'+'<div class="fg3" style="margin-bottom:8px">'+fRadio3('TRATATIVA_ABERTA','Tratativa Aberta?',r.TRATATIVA_ABERTA,true,isErr('TRATATIVA_ABERTA'))+'</div>'+'<div id="tratExtra" class="'+(tA?'trat-extra show':'trat-extra')+'">'+'<div class="fg">'+fInp('DATA_TRATATIVA','DATA Tratativa',r.DATA_TRATATIVA,'text',false,'DD/MM/AAAA')+fInp('NUM_RECLAM','Nº Reclamação',r.NUM_RECLAM)+fSel('MOTIVO','Motivo Reclamação',r.MOTIVO,MOTIVOS,wMot,isErr('MOTIVO'))+fSel('DETALHAMENTO','Detalhamento',r.DETALHAMENTO,DETALHAMENTOS)+fInp('OBS_RECLAM','Obs. Reclamação',r.OBS_RECLAM)+fInp('OBS_RELEVANTES','Obs. Relevantes',r.OBS_RELEVANTES)+'</div>'+'<div class="fg3" style="margin-top:8px">'+fYN('REPUTACAO','Impacto Reputação?',r.REPUTACAO)+fYN('REEMBOLSADO','Cliente Reembolsado?',r.REEMBOLSADO)+fYN('DEVOLUCAO_ABERTA','Devolução Aberta?',r.DEVOLUCAO_ABERTA,true,isErr('DEVOLUCAO_ABERTA'))+fYN('TRATATIVA_FINALIZADA','Tratativa Final?',r.TRATATIVA_FINALIZADA,true,isErr('TRATATIVA_FINALIZADA'))+'</div>'+'<div class="fg3" style="margin-top:8px">'+fYN('NEC_PECAS','Necessário Enviar Peças?',r.NEC_PECAS,true,isErr('NEC_PECAS'))+'</div>'+'<div id="pecasExtra" class="'+(pA?'trat-extra show':'trat-extra')+'">'+'<div class="fg3" style="margin-top:8px">'+fYN('PECAS_ENVIADAS','Peças Enviadas?',r.PECAS_ENVIADAS)+fYN('REENVIO_RECEBIDO','Reenvio Recebido?',r.REENVIO_RECEBIDO)+'</div>'+'<div class="fg" style="margin-top:8px">'+fInp('OBS_PECAS','Obs. Peças',r.OBS_PECAS)+fInp('CUSTO_ENVIO','Custo Envio',r.CUSTO_ENVIO)+'</div></div>'+'<div class="fg3" style="margin-top:8px">'+fInp('PAGO_PLAT','Pago Plat/Cliente',r.PAGO_PLAT)+fInp('VALOR_PAGO','Valor Pago',r.VALOR_PAGO)+fInp('CUSTOS_TOTAL','Custos Total',r.CUSTOS_TOTAL)+'</div>'+'</div></div>'+
-'<div class="fsec"><div class="fsec-tit">⚖️ Disputa</div><div class="fg3" id="dBase">'+fYN('DISPUTA_ABERTA','Disputa Aberta?',r.DISPUTA_ABERTA,true,isErr('DISPUTA_ABERTA'))+'</div><div class="disp-extra fg3 '+(dA?'show':'')+'" id="dX1" style="margin-top:8px">'+fYN('DISPUTA_FINALIZADA','Disputa Final?',r.DISPUTA_FINALIZADA,true,isErr('DISPUTA_FINALIZADA'))+fYN('REEMBOLSO_MKT','Reembolso Mkt?',r.REEMBOLSO_MKT,dF,isErr('REEMBOLSO_MKT'))+fYN('CREDITO','R$ Crédito?',r.CREDITO,rS,isErr('CREDITO'))+'</div><div class="disp-extra fg '+(dA?'show':'')+'" id="dX2" style="margin-top:8px">'+fInp('PLAT_DISPUTA','Plataforma',r.PLAT_DISPUTA)+fInp('MOTIVO_DISPUTA','Motivo Disputa',r.MOTIVO_DISPUTA)+fInp('PROTOCOLO','Protocolo',r.PROTOCOLO)+fInp('ID_TRANSACAO','ID Transação',r.ID_TRANSACAO)+fInp('CREDITO_RECEBIDO_VALOR','R$ Créd. Rec.',r.CREDITO_RECEBIDO_VALOR)+fYN('CREDITO_RECEBIDO','Crédito Rec.?',r.CREDITO_RECEBIDO)+fInp('OBS_DISPUTA','Obs. Disputa',r.OBS_DISPUTA)+'</div></div>'+
-'<div class="fsec"><div class="fsec-tit">🏭 Full/Estoque</div><div class="fg3">'+fInp('STATUS_FULL','Status Full',r.STATUS_FULL)+fYN('CHEGOU_CARDEX','Chegou Cardex?',r.CHEGOU_CARDEX)+'</div></div>';
+  document.getElementById('dlgBody').innerHTML=[
+    mH,aH,nH,
+    '<div class="fsec"><div class="fsec-tit">🗂 Modalidade</div><div class="fg3">',
+    fSel('MODALIDADE','Modalidade',r.MODALIDADE,MODALIDADES,false,isErr('MODALIDADE')),
+    '</div></div>',
+    '<div class="fsec"><div class="fsec-tit">📦 Identificação</div><div class="fg">',
+    fInp('ID_VENDA','ID Venda',r.ID_VENDA,'text',true,isNew?'Digite o ID...':'',false,isNew),
+    fSel('CANAL','Canal',r.CANAL,['','Mercado Livre','Shopee','Amazon','Magalu','Cardex'],true,isErr('CANAL')),
+    fSel('EMPR','EMPR.',r.EMPR,['','JLD','DGL'],true,isErr('EMPR')),
+    fSel('MODELO','Modelo',r.MODELO,['','Full','Normal','Flex','Cardex'],true,isErr('MODELO')),
+    '</div><div class="fg4" style="margin-top:8px">',
+    fRO('NOME','Nome (f)',r.NOME),fRO('DATA_VENDA','Data (f)',r.DATA_VENDA),fRO('SKU','SKU (f)',r.SKU),fRO('QT','QT (f)',r.QT),
+    '</div><div class="fg3" style="margin-top:8px">',
+    fRO('RASTREIO','Rastreio (f)',r.RASTREIO),fRO('ID_BLING','ID Bling (f)',r.ID_BLING),fRO('DESC_STATUS','Desc. Status (f)',r.DESC_STATUS),
+    '</div><div class="fg" style="margin-top:8px">',
+    fInp('AUTOR','Autor',r.AUTOR),fInp('NEC_NF_DEVOL','Nec. NF Devol?',r.NEC_NF_DEVOL),
+    fInp('NF','NF',r.NF),fInp('NF_DEVOL','NF DEVOL',r.NF_DEVOL),fInp('NF_DEVOL_EMISSAO','NF DEVOL Em.',r.NF_DEVOL_EMISSAO),
+    '</div></div>',
+    '<div class="fsec"><div class="fsec-tit">📋 Tratativa</div>',
+    '<div class="fg" style="margin-bottom:8px">',
+    fRadio3('TRATATIVA_ABERTA','Tratativa Aberta?',r.TRATATIVA_ABERTA,true,isErr('TRATATIVA_ABERTA')),
+    fYN('DEVOLUCAO_ABERTA','Devolução Aberta?',r.DEVOLUCAO_ABERTA,false,false),
+    '</div>',
+    '<div id="tratExtra" class="'+(tA?'trat-extra show':'trat-extra')+'">',
+    '<div class="fg">',
+    fInp('DATA_TRATATIVA','DATA Tratativa',r.DATA_TRATATIVA,'text',false,'DD/MM/AAAA'),
+    fInp('NUM_RECLAM','Nº Reclamação',r.NUM_RECLAM),
+    fSel('MOTIVO','Motivo Reclamação',r.MOTIVO,MOTIVOS,wMot,isErr('MOTIVO')),
+    fSel('DETALHAMENTO','Detalhamento',r.DETALHAMENTO,DETALHAMENTOS),
+    fInp('OBS_RECLAM','Obs. Reclamação',r.OBS_RECLAM),
+    fInp('OBS_RELEVANTES','Obs. Relevantes',r.OBS_RELEVANTES),
+    '</div>',
+    '<div class="fg3" style="margin-top:8px">',
+    fYN('REPUTACAO','Impacto Reputação?',r.REPUTACAO),
+    fYN('REEMBOLSADO','Cliente Reembolsado?',r.REEMBOLSADO),
+    fYN('TRATATIVA_FINALIZADA','Tratativa Final?',r.TRATATIVA_FINALIZADA,tA,isErr('TRATATIVA_FINALIZADA')),
+    '</div>',
+    '<div class="fg3" style="margin-top:8px">',
+    fYN('NEC_PECAS','Nec. Enviar Peças?',r.NEC_PECAS,tA,isErr('NEC_PECAS')),
+    '</div>',
+    '<div class="fg3" style="margin-top:8px">',
+    fInpMoney('PAGO_PLAT','Pago Plat/Cliente',r.PAGO_PLAT),
+    fInpMoney('VALOR_PAGO','Valor Pago',r.VALOR_PAGO),
+    fInpMoney('CUSTOS_TOTAL','Custos Total',r.CUSTOS_TOTAL),
+    '</div>',
+    '<div id="pecasExtra" class="'+(pA?'trat-extra show':'trat-extra')+'">',
+    '<div class="fg3" style="margin-top:8px">',
+    fYN('PECAS_ENVIADAS','Peças Enviadas?',r.PECAS_ENVIADAS),
+    fYN('REENVIO_RECEBIDO','Reenvio Recebido?',r.REENVIO_RECEBIDO),
+    '</div>',
+    '<div class="fg" style="margin-top:8px">',
+    fInp('OBS_PECAS','Obs. Peças',r.OBS_PECAS),
+    fInp('CUSTO_ENVIO','Custo Envio',r.CUSTO_ENVIO),
+    '</div></div>',
+    '</div></div>',
+    '<div class="fsec"><div class="fsec-tit">⚖️ Disputa</div>',
+    '<div class="fg3" id="dBase">',
+    fYN('DISPUTA_ABERTA','Disputa Aberta?',r.DISPUTA_ABERTA,true,isErr('DISPUTA_ABERTA')),
+    '</div>',
+    '<div class="disp-extra fg3 '+(dA?'show ':'')+'" id="dX1" style="margin-top:8px">',
+    fYN('DISPUTA_FINALIZADA','Disputa Final?',r.DISPUTA_FINALIZADA,true,isErr('DISPUTA_FINALIZADA')),
+    fYN('REEMBOLSO_MKT','Reembolso Mkt?',r.REEMBOLSO_MKT,dF,isErr('REEMBOLSO_MKT')),
+    fYN('CREDITO','R$ Crédito?',r.CREDITO,rS,isErr('CREDITO')),
+    '</div>',
+    '<div class="disp-extra fg '+(dA?'show ':'')+'" id="dX2" style="margin-top:8px">',
+    fInp('PLAT_DISPUTA','Plataforma',r.PLAT_DISPUTA),
+    fInp('MOTIVO_DISPUTA','Motivo Disputa',r.MOTIVO_DISPUTA),
+    fInp('PROTOCOLO','Protocolo',r.PROTOCOLO),
+    fInp('ID_TRANSACAO','ID Transação',r.ID_TRANSACAO),
+    fInp('CREDITO_RECEBIDO_VALOR','R$ Créd. Rec.',r.CREDITO_RECEBIDO_VALOR),
+    fYN('CREDITO_RECEBIDO','Crédito Rec.?',r.CREDITO_RECEBIDO),
+    fInp('OBS_DISPUTA','Obs. Disputa',r.OBS_DISPUTA),
+    '</div></div>',
+    '<div class="fsec"><div class="fsec-tit">🏭 Full/Estoque</div><div class="fg3">',
+    fInp('STATUS_FULL','Status Full',r.STATUS_FULL),
+    fYN('CHEGOU_CARDEX','Chegou Cardex?',r.CHEGOU_CARDEX),
+    '</div></div>'
+  ].join('');
   document.getElementById('dlgOv').classList.add('open');
   // Wire TRATATIVA_ABERTA toggle
   document.getElementById('f_NEC_PECAS_SIM')?.addEventListener('change',()=>{
@@ -898,6 +971,11 @@ function openModal(rec){
 function fInp(id,lbl,val,type,req,ph,ro,isNew){type=type||'text';req=req||false;ph=ph||'';ro=ro||false;isNew=isNew||false;const e=req&&!val&&!isNew?'err':'';const rc=req?'req-fld':'';return '<div class="fld '+rc+'"><label>'+lbl+'</label><input type="'+type+'" id="f_'+id+'" class="mdi '+e+(ro?' af':'')+'" value="'+(val||'').replace(/"/g,'&quot;')+'" placeholder="'+ph+'"'+(ro?' readonly':'')+'></div>';}
 function fRO(id,lbl,val){return '<div class="fld"><label>'+lbl+'</label><input type="text" id="f_'+id+'" class="mdi '+(val?'af':'')+'" value="'+(val||'').replace(/"/g,'&quot;')+'" readonly></div>';}
 function fSel(id,lbl,val,opts,req,fe){req=req||false;fe=fe||false;const e=(req&&!val)||fe?'err':'';const rc=req?'req-fld':'';const o=opts.map(v=>'<option value="'+v+'" '+(val===v?'selected':'')+'>'+(v||'— Selecione —')+'</option>').join('');return '<div class="fld '+rc+'"><label>'+lbl+'</label><select id="f_'+id+'" class="mdi '+e+'">'+o+'</select></div>';}
+function fInpMoney(id,lbl,val){
+  const num=parseFloat((val||"").replace(/[R$\s.]/g,"").replace(",","."))||0;
+  const style=num<0?"background:#fef2f2;border-color:var(--err);":"";
+  return '<div class="fld"><label>'+lbl+'</label><input type="text" id="f_'+id+'" class="mdi" value="'+( val||"").replace(/"/g,"&quot;")+'" style="'+style+'"></div>';
+}
 function fRadio3(id,lbl,val,req,fe){
   req=req||false;fe=fe||false;
   const b=(req&&!val)||fe?'reqb':'';const rc=req?'req-fld':'';
@@ -1109,12 +1187,9 @@ function getCellVal(ri,key){return(bulkChg[ri]&&bulkChg[ri][key]!==undefined)?bu
 
 function mkIDCell(r,ri,c){
   if(c.t==='ro'){
-    // Campos fórmula: mostrar valor sem traço se vazio
     const val=r[c.k]||'';
-    let disp=val;
-    if(c.k==='CANAL'&&val)disp='<span class="chip chip-canal" style="font-size:10px">'+val+'</span>';
     const mc=getMiss(r).includes(c.k)?'miss-cell':'';
-    return '<td class="sec-id '+mc+'" style="padding:3px 5px;white-space:nowrap;font-size:10px;color:var(--on-sur-v)">'+disp+'</td>';
+    return `<td class="sec-id ${mc}" data-row="${ri}" data-col="${c.k}" onclick="selCell(this)" style="padding:3px 5px;white-space:nowrap;font-size:10px;color:var(--on-sur-v)">${val}<div class="fill-handle" onmousedown="startFill(event,${ri},'${c.k}')"></div></td>`;
   }
   return mkEditCell(r,ri,c,'sec-id');
 }
