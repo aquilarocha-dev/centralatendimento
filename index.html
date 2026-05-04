@@ -323,7 +323,8 @@ tbody tr:last-child td{border-bottom:none;}tbody tr:hover td{background:#f8f9fa;
 solid var(--out);border-radius:10px;padding:12px 14px;margin-top:12px;}
 .month-chart-wrap{position:relative;height:200px;}
 
-</style>
+
+.fs-overlay{position:fixed;inset:0;z-index:500;background:#f8f9fa;flex-direction:column;display:none;}</style>
 </head>
 <body>
 
@@ -661,89 +662,96 @@ function setPeriod(days){document.querySelectorAll('.period-btn').forEach(b=>b.c
 function setPeriodCustom(){document.querySelectorAll('.period-btn').forEach(b=>b.classList.remove('active'));}
 function applyDashFilter(){const dtDe=document.getElementById('dtDe').value;const dtAte=document.getElementById('dtAte').value;if(dtDe||dtAte){const de=dtDe?new Date(dtDe):null;const ate=dtAte?new Date(dtAte):null;if(ate)ate.setHours(23,59,59);dashData=allData.filter(r=>{const d=parseDate(r.DATA_VENDA);if(!d)return true;if(de&&d<de)return false;if(ate&&d>ate)return false;return true;});document.getElementById('periodInfo').textContent=(dtDe?dtDe.split('-').reverse().join('/'):'início')+' → '+(dtAte?dtAte.split('-').reverse().join('/'):'hoje');}else{dashData=allData;document.getElementById('periodInfo').textContent='Todos os registros';}renderDashboard();}
 function renderDashboard(){
-  const ativos=dashData.filter(r=>!IGNORADOS.includes(r.STATUS));const today=new Date();
+  // ativos = registros ativos dentro do período filtrado (para KPIs e gráficos de status)
+  const ativos=dashData.filter(r=>!IGNORADOS.includes(r.STATUS));
+  // todosAtivos = todos os ativos sem filtro de período (para motivos, SKU, financeiro)
+  const todosAtivos=allData.filter(r=>!IGNORADOS.includes(r.STATUS));
+
+  // ── KPIs PRINCIPAIS (respeitam filtro de período) ───────────────────────
   const atrasadas=ativos.filter(r=>r.STATUS==='TRATATIVA ATRASADA').length;
   const disputas=ativos.filter(r=>r.DISPUTA_ABERTA==='SIM').length;
   const concluidos=dashData.filter(r=>r.STATUS==='CONCLUÍDO').length;
   const totalAll=dashData.filter(r=>r.ID_VENDA).length;
   const taxaResol=totalAll?Math.round((concluidos/totalAll)*100):0;
-  document.getElementById('kpiRow').innerHTML='<div class="kpi kpi-pri"><div class="kpi-lbl">Total Ativos</div><div class="kpi-val">'+ativos.length+'</div><div class="kpi-sub">pendentes</div></div><div class="kpi kpi-err"><div class="kpi-lbl">Trat. Atrasadas</div><div class="kpi-val">'+atrasadas+'</div><div class="kpi-sub">&gt;7 dias</div></div><div class="kpi kpi-pur"><div class="kpi-lbl">Disputas Abertas</div><div class="kpi-val">'+disputas+'</div><div class="kpi-sub">em andamento</div></div><div class="kpi kpi-ok"><div class="kpi-lbl">Taxa Resolução</div><div class="kpi-val">'+taxaResol+'%</div><div class="kpi-sub">'+concluidos+' de '+totalAll+'</div></div>';
+  document.getElementById('kpiRow').innerHTML=
+    '<div class="kpi kpi-pri"><div class="kpi-lbl">Total Ativos</div><div class="kpi-val">'+ativos.length+'</div><div class="kpi-sub">no período</div></div>'+
+    '<div class="kpi kpi-err"><div class="kpi-lbl">Trat. Atrasadas</div><div class="kpi-val">'+atrasadas+'</div><div class="kpi-sub">no período</div></div>'+
+    '<div class="kpi kpi-pur"><div class="kpi-lbl">Disputas Abertas</div><div class="kpi-val">'+disputas+'</div><div class="kpi-sub">no período</div></div>'+
+    '<div class="kpi kpi-ok"><div class="kpi-lbl">Taxa Resolução</div><div class="kpi-val">'+taxaResol+'%</div><div class="kpi-sub">'+concluidos+' de '+totalAll+'</div></div>';
+
+  // ── GRÁFICOS DE STATUS / CANAL / MODALIDADE (respeitam filtro de período) ─
   const sL=['TRATATIVA ABERTA','TRATATIVA ATRASADA','ACOMPANHAR DISPUTA','ACOMPANHAR ENVIO','POSSÍVEL EXTRAVIO','AGUARDANDO REEMBOLSO','EM ATRASO','A ENVIAR'];
   const sC=['#f9ab00','#d93025','#7627bb','#1a73e8','#e8710a','#1e8e3e','#c5221f','#34a853'];
-  const cn=['Mercado Livre','Shopee','Amazon','Magalu','Cardex'];const cc=['#f9ab00','#e55722','#232f3e','#0086ff','#7627bb'];
+  const cn=['Mercado Livre','Shopee','Amazon','Magalu','Cardex'];
+  const cc=['#f9ab00','#e55722','#232f3e','#0086ff','#7627bb'];
   const mo=['Devolução','Cancelado','Não Entregue','Mensagem','Reclamação','Resolvido'];
-  const reclamArr=allData.filter(r=>r.MOTIVO&&r.MOTIVO.trim());const mm={};reclamArr.forEach(r=>{mm[r.MOTIVO]=(mm[r.MOTIVO]||0)+1;});const mt=Object.entries(mm).sort((a,b)=>b[1]-a[1]).slice(0,8);
+
+  // ── TOP MOTIVOS (usa allData — todos os registros históricos) ────────────
+  const mm={};
+  allData.filter(r=>r.MOTIVO&&r.MOTIVO.trim()).forEach(r=>{mm[r.MOTIVO]=(mm[r.MOTIVO]||0)+1;});
+  const mt=Object.entries(mm).sort((a,b)=>b[1]-a[1]).slice(0,8);
+
+  // Destruir charts anteriores
   Object.values(charts).forEach(c=>{try{c.destroy();}catch(e){}});charts={};
-  const mk=(id,type,labels,data,colors)=>{const ctx=document.getElementById(id)?.getContext('2d');if(!ctx)return;charts[id]=new Chart(ctx,{type,data:{labels,datasets:[{data,backgroundColor:colors,borderColor:colors,borderWidth:type==='bar'?0:2,borderRadius:type==='bar'?4:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:type!=='bar',position:'right',labels:{font:{size:10},padding:7,boxWidth:11}},tooltip:{bodyFont:{size:10},titleFont:{size:10}}},scales:type==='bar'?{y:{beginAtZero:true,grid:{color:'#f1f3f4'},ticks:{font:{size:9}}},x:{grid:{display:false},ticks:{font:{size:9}}}}:{}}});};
+
+  const mk=(id,type,labels,data,colors,extra)=>{
+    const ctx=document.getElementById(id)?.getContext('2d');if(!ctx)return;
+    const ds={data,backgroundColor:colors,borderColor:colors,borderWidth:type==='bar'?0:2,borderRadius:type==='bar'?4:0,...(extra||{})};
+    charts[id]=new Chart(ctx,{type,data:{labels,datasets:[ds]},options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:type!=='bar',position:'right',labels:{font:{size:10},padding:7,boxWidth:11}},tooltip:{bodyFont:{size:10},titleFont:{size:10}}},
+      scales:type==='bar'?{y:{beginAtZero:true,grid:{color:'#f1f3f4'},ticks:{font:{size:9}}},x:{grid:{display:false},ticks:{font:{size:9}}}}:{}
+    }});
+  };
+
   mk('chartStatus','doughnut',sL.map(s=>s.replace('TRATATIVA ','').replace('ACOMPANHAR ','')),sL.map(s=>ativos.filter(r=>r.STATUS===s).length),sC);
   mk('chartCanal','doughnut',cn,cn.map(c=>ativos.filter(r=>r.CANAL===c).length),cc);
   mk('chartModal','bar',mo,mo.map(m=>ativos.filter(r=>r.MODALIDADE===m).length),['#1a73e8','#d93025','#f9ab00','#7627bb','#e55722','#1e8e3e']);
-  mk('chartMotivo','bar',mt.map(m=>m[0]),mt.map(m=>m[1]),['#1a73e8','#4285f4','#669df6','#8ab4f8','#aecbfa','#d2e3fc']);
+  mk('chartMotivo','bar',mt.map(m=>m[0]),mt.map(m=>m[1]),['#1a73e8','#4285f4','#669df6','#8ab4f8','#aecbfa','#d2e3fc','#c6dafc','#e8f0fe']);
 
-  // ── KPIs FINANCEIROS ─────────────────────────────────────────────
-  function parseMoney(v){
-    if(!v||v==='R$ 0,00'||v==='0')return 0;
-    return parseFloat((v||'').replace(/[^0-9,.-]/g,'').replace(',','.').replace(/\./g,(m,i,s)=>i===s.lastIndexOf('.')?'.':''))||0;
-  }
-  const custoTotal=ativos.reduce((s,r)=>s+parseMoney(r.CUSTOS_TOTAL),0);
-  const reembolsoTotal=ativos.filter(r=>r.REEMBOLSADO==='SIM').length;
-  const resultFin=ativos.reduce((s,r)=>s+parseMoney(r.CREDITO_RECEBIDO_VALOR||'0'),0);
-
-  // Atualizar KPI financeiro panel
-  const finEl=document.getElementById('finKpiRow');
-  if(finEl){
-    // Calcular Resultado Financeiro da Reclamação (col específica da planilha)
-    const resultFinReclam=ativos.reduce((s,r)=>s+parseMoney(r.RESULTADO_FIN_RECLAM||r.OBS_DISPUTA||'0'),0);
-    finEl.innerHTML=
-      '<div class="kpi kpi-err"><div class="kpi-lbl">Custos Total</div><div class="kpi-val" style="font-size:18px">R$ '+custoTotal.toFixed(2).replace('.',',')+'</div><div class="kpi-sub">somado dos ativos</div></div>'+
-      '<div class="kpi kpi-ok"><div class="kpi-lbl">Reembolso Total</div><div class="kpi-val" style="font-size:18px">'+reembolsoTotal+' casos</div><div class="kpi-sub">clientes reembolsados</div></div>'+
-      '<div class="kpi kpi-pri"><div class="kpi-lbl">Resultado Financeiro</div><div class="kpi-val" style="font-size:18px">R$ '+(resultFin-custoTotal).toFixed(2).replace('.',',')+'</div><div class="kpi-sub">crédito - custos</div></div>'+
-      '<div class="kpi kpi-pur"><div class="kpi-lbl">Res. Fin. Reclamação</div><div class="kpi-val" style="font-size:18px">R$ '+resultFin.toFixed(2).replace('.',',')+'</div><div class="kpi-sub">crédito recebido</div></div>';
-  }
-
-  // ── SKU TABLE ────────────────────────────────────────────────────────────
+  // ── SKU TABLE (usa allData) ──────────────────────────────────────────────
   const skuMap={};
-  ativos.forEach(r=>{
-    const sku=r.SKU||'(sem SKU)';
+  allData.filter(r=>r.SKU).forEach(r=>{
+    const sku=r.SKU;
     if(!skuMap[sku])skuMap[sku]={total:0,reclam:0};
     skuMap[sku].total++;
-    if(r.MOTIVO)skuMap[sku].reclam++;
+    if(r.MOTIVO&&r.MOTIVO.trim())skuMap[sku].reclam++;
   });
   const skuArr=Object.entries(skuMap).sort((a,b)=>b[1].total-a[1].total);
   const maxSku=skuArr[0]?skuArr[0][1].total:1;
   document.getElementById('skuTotalBadge').textContent=skuArr.length+' SKUs';
   document.getElementById('skuTableBody').innerHTML=skuArr.slice(0,30).map(([sku,d])=>{
     const pct=Math.round((d.total/maxSku)*100);
-    return '<tr><td style="font-family:Roboto Mono,monospace;font-size:11px">'+sku+'</td><td><strong>'+d.total+'</strong><div class="dash-bar-wrap"><div class="dash-bar-fill" style="width:'+pct+'%"></div></div></td><td><span style="color:'+(d.reclam>0?'var(--err)':'var(--on-sur-v)')+'">'+d.reclam+'</span></td></tr>';
+    return '<tr><td style="font-family:Roboto Mono,monospace;font-size:11px">'+sku+'</td>'
+      +'<td><strong>'+d.total+'</strong><div class="dash-bar-wrap"><div class="dash-bar-fill" style="width:'+pct+'%"></div></div></td>'
+      +'<td><span style="color:'+(d.reclam>0?'var(--err)':'var(--on-sur-v)')+'">'+d.reclam+'</span></td></tr>';
   }).join('');
 
-  // ── SKU + MOTIVO TABLE ────────────────────────────────────────────────────
+  // ── SKU + MOTIVO TABLE (usa allData) ─────────────────────────────────────
   const skuMotivoMap={};
   allData.filter(r=>r.MOTIVO&&r.SKU&&r.MOTIVO.trim()).forEach(r=>{
     const key=r.SKU+'||'+r.MOTIVO;
-    skuMotivoMap[key]=(skuMotivoMap[key]||{sku:r.SKU,motivo:r.MOTIVO,n:0});
+    if(!skuMotivoMap[key])skuMotivoMap[key]={sku:r.SKU,motivo:r.MOTIVO,n:0};
     skuMotivoMap[key].n++;
   });
   const skuMotivoArr=Object.values(skuMotivoMap).sort((a,b)=>b.n-a.n);
-  document.getElementById('skuMotivoBody').innerHTML=skuMotivoArr.slice(0,30).map(d=>{
-    return '<tr><td style="font-family:Roboto Mono,monospace;font-size:10px">'+d.sku+'</td><td style="font-size:11px">'+d.motivo+'</td><td><strong style="color:var(--err)">'+d.n+'</strong></td></tr>';
-  }).join('') || '<tr><td colspan="3" style="text-align:center;color:var(--on-sur-v);padding:20px">Sem reclamações com motivo</td></tr>';
+  document.getElementById('skuMotivoBody').innerHTML=skuMotivoArr.slice(0,30).map(d=>
+    '<tr><td style="font-family:Roboto Mono,monospace;font-size:10px">'+d.sku+'</td>'
+    +'<td style="font-size:11px">'+d.motivo+'</td>'
+    +'<td><strong style="color:var(--err)">'+d.n+'</strong></td></tr>'
+  ).join('') || '<tr><td colspan="3" style="text-align:center;color:var(--on-sur-v);padding:20px">Sem reclamações</td></tr>';
 
-  // ── REGISTROS POR MÊS — sempre últimos 12 meses ───────────────────────────
+  // ── REGISTROS POR MÊS (usa allData — ignora filtro de período) ───────────
   const MESES=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
   const todayMes=new Date();
-  // Gerar os 12 últimos meses fixos (independente de ter dados)
   const mesKeys12=[];
   for(let i=11;i>=0;i--){
     const d=new Date(todayMes.getFullYear(),todayMes.getMonth()-i,1);
     mesKeys12.push(d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'));
   }
-  // Contar registros por mês
   const mesMap={};
-  // Usar allData — ignorar filtro de período para o gráfico de meses
   allData.forEach(r=>{
-    const d=parseDate(r.DATA_VENDA);
-    if(!d)return;
+    const d=parseDate(r.DATA_VENDA);if(!d)return;
     const key=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
     mesMap[key]=(mesMap[key]||0)+1;
   });
@@ -754,38 +762,37 @@ function renderDashboard(){
   if(ctxMes){
     charts['chartMes']=new Chart(ctxMes,{
       type:'line',
-      data:{
-        labels:mesLabels12,
-        datasets:[{
-          label:'Registros',
-          data:mesVals12,
-          borderColor:'#1a73e8',
-          backgroundColor:'rgba(26,115,232,0.08)',
-          borderWidth:2,
-          pointBackgroundColor:'#1a73e8',
-          pointRadius:4,
-          pointHoverRadius:6,
-          fill:true,
-          tension:0.3
-        }]
-      },
       plugins:[ChartDataLabels],
+      data:{labels:mesLabels12,datasets:[{
+        label:'Registros',data:mesVals12,
+        borderColor:'#1a73e8',backgroundColor:'rgba(26,115,232,0.08)',
+        borderWidth:2,pointBackgroundColor:'#1a73e8',pointRadius:5,
+        pointHoverRadius:7,fill:true,tension:0.3,
+        datalabels:{display:true,align:'top',anchor:'end',color:'#1a73e8',font:{size:9,weight:'bold'},formatter:v=>v>0?v:''}
+      }]},
       options:{
-        responsive:true,
-        maintainAspectRatio:false,
-        plugins:{
-          legend:{display:false},
-          tooltip:{bodyFont:{size:11},titleFont:{size:11}},
-          datalabels:{display:true}
-        },
-        scales:{
-          y:{beginAtZero:true,grid:{color:'#f1f3f4'},ticks:{font:{size:9},precision:0}},
-          x:{grid:{display:false},ticks:{font:{size:9},maxRotation:45}}
-        }
+        responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:false},tooltip:{bodyFont:{size:11},titleFont:{size:11}},datalabels:{display:true}},
+        scales:{y:{beginAtZero:true,grid:{color:'#f1f3f4'},ticks:{font:{size:9},precision:0}},x:{grid:{display:false},ticks:{font:{size:9},maxRotation:45}}}
       }
     });
   }
+
+  // ── KPIs FINANCEIROS (usa allData) ───────────────────────────────────────
+  function parseMoney(v){return parseFloat((v||'').replace(/[R$\s.]/g,'').replace(',','.'))||0;}
+  const custoTotal=allData.reduce((s,r)=>s+parseMoney(r.CUSTOS_TOTAL),0);
+  const creditoTotal=allData.reduce((s,r)=>s+parseMoney(r.CREDITO_RECEBIDO_VALOR),0);
+  const reembolsados=allData.filter(r=>r.REEMBOLSADO==='SIM').length;
+  const finEl=document.getElementById('finKpiRow');
+  if(finEl){
+    finEl.innerHTML=
+      '<div class="kpi kpi-err"><div class="kpi-lbl">Custos Total (todos)</div><div class="kpi-val" style="font-size:18px">R$ '+custoTotal.toFixed(2).replace('.',',')+'</div><div class="kpi-sub">todos os registros</div></div>'+
+      '<div class="kpi kpi-ok"><div class="kpi-lbl">Reembolsos (todos)</div><div class="kpi-val">'+reembolsados+'</div><div class="kpi-sub">clientes reembolsados</div></div>'+
+      '<div class="kpi kpi-pri"><div class="kpi-lbl">Crédito Recebido (todos)</div><div class="kpi-val" style="font-size:18px">R$ '+creditoTotal.toFixed(2).replace('.',',')+'</div><div class="kpi-sub">recuperado em disputas</div></div>'+
+      '<div class="kpi kpi-pur"><div class="kpi-lbl">Resultado (todos)</div><div class="kpi-val" style="font-size:18px">R$ '+(creditoTotal-custoTotal).toFixed(2).replace('.',',')+'</div><div class="kpi-sub">crédito - custos</div></div>';
+  }
 }
+
 
 // PAGE 1
 const SL=[{k:'TRATATIVA ATRASADA',c:'sc-err',l:'ATRASADA'},{k:'TRATATIVA ABERTA',c:'sc-warn',l:'ABERTA'},{k:'ACOMPANHAR DISPUTA',c:'sc-pur',l:'DISPUTA'},{k:'ACOMPANHAR ENVIO',c:'sc-info',l:'ENVIO'},{k:'POSSÍVEL EXTRAVIO',c:'sc-err',l:'EXTRAVIO'},{k:'AGUARDANDO REEMBOLSO',c:'sc-ok2',l:'REEMBOLSO'},{k:'EM ATRASO',c:'sc-err',l:'EM ATRASO'},{k:'A ENVIAR',c:'sc-ok2',l:'A ENVIAR'}];
@@ -820,7 +827,7 @@ function openModal(rec){
   curRec=rec;const isNew=!rec;const r=rec||{};
   document.getElementById('dlgTit').textContent=isNew?'Novo Registro':'Editar Registro';
   document.getElementById('dlgSub').textContent=isNew?'Preencha os campos obrigatórios':'Linha '+r._row+' — '+r.ID_VENDA;
-  const miss=rec?getMiss(rec):[];const wMot=['Devolução','Mensagem','Reclamação'].includes(r.MODALIDADE);const dA=r.DISPUTA_ABERTA==='SIM';const tA=r.TRATATIVA_ABERTA==='SIM'||r.TRATATIVA_ABERTA==='Reaberta';const dF=r.DISPUTA_FINALIZADA==='SIM';const rS=r.REEMBOLSO_MKT==='SIM';
+  const miss=rec?getMiss(rec):[];const wMot=['Devolução','Mensagem','Reclamação'].includes(r.MODALIDADE);const dA=r.DISPUTA_ABERTA==='SIM';const pA=r.NEC_PECAS==='SIM';const tA=r.TRATATIVA_ABERTA==='SIM'||r.TRATATIVA_ABERTA==='Reaberta';const dF=r.DISPUTA_FINALIZADA==='SIM';const rS=r.REEMBOLSO_MKT==='SIM';
   const isErr=k=>!isNew&&miss.includes(k);
   const mH=miss.length&&!isNew?'<div class="alert-b a-err"><span>⚠</span><span><strong>Campos em falta:</strong> '+miss.map(f=>ML[f]||f).join(' • ')+'</span></div>':'';
   const aH=(r.NOME||r.SKU)?'<div class="alert-b a-ok"><span>✓</span><span>Campos fórmula preenchidos automaticamente.</span></div>':'';
@@ -828,11 +835,17 @@ function openModal(rec){
   document.getElementById('dlgBody').innerHTML=mH+aH+nH+
 '<div class="fsec"><div class="fsec-tit">🗂 Modalidade</div><div class="fg3">'+fSel('MODALIDADE','Modalidade',r.MODALIDADE,MODALIDADES,false,isErr('MODALIDADE'))+'</div></div>'+
 '<div class="fsec"><div class="fsec-tit">📦 Identificação</div><div class="fg">'+fInp('ID_VENDA','ID Venda',r.ID_VENDA,'text',true,isNew?'Digite o ID...':'',false,isNew)+fSel('CANAL','Canal',r.CANAL,['','Mercado Livre','Shopee','Amazon','Magalu','Cardex'],true,isErr('CANAL'))+fSel('EMPR','EMPR.',r.EMPR,['','JLD','DGL'],true,isErr('EMPR'))+fSel('MODELO','Modelo',r.MODELO,['','Full','Normal','Flex','Cardex'],true,isErr('MODELO'))+'</div><div class="fg4" style="margin-top:8px">'+fRO('NOME','Nome (f)',r.NOME)+fRO('DATA_VENDA','Data (f)',r.DATA_VENDA)+fRO('SKU','SKU (f)',r.SKU)+fRO('QT','QT (f)',r.QT)+'</div><div class="fg3" style="margin-top:8px">'+fRO('RASTREIO','Rastreio (f)',r.RASTREIO)+fRO('ID_BLING','ID Bling (f)',r.ID_BLING)+fRO('DESC_STATUS','Desc. Status (f)',r.DESC_STATUS)+'</div><div class="fg" style="margin-top:8px">'+fInp('AUTOR','Autor',r.AUTOR)+fInp('NEC_NF_DEVOL','Nec. NF Devol?',r.NEC_NF_DEVOL)+fInp('NF','NF',r.NF)+fInp('NF_DEVOL','NF DEVOL',r.NF_DEVOL)+fInp('NF_DEVOL_EMISSAO','NF DEVOL Em.',r.NF_DEVOL_EMISSAO)+'</div></div>'+
-'<div class="fsec"><div class="fsec-tit">📋 Tratativa</div><div class="fg">'+fInp('DATA_TRATATIVA','DATA Tratativa',r.DATA_TRATATIVA,'text',false,'DD/MM/AAAA')+fInp('NUM_RECLAM','Nº Reclamação',r.NUM_RECLAM)+fSel('MOTIVO','Motivo Reclamação',r.MOTIVO,MOTIVOS,wMot,isErr('MOTIVO'))+fSel('DETALHAMENTO','Detalhamento',r.DETALHAMENTO,DETALHAMENTOS)+fInp('OBS_RECLAM','Obs. Reclamação',r.OBS_RECLAM)+fInp('OBS_RELEVANTES','Obs. Relevantes',r.OBS_RELEVANTES)+'</div><div class="fg3" style="margin-top:8px">'+fYN('REPUTACAO','Impacto Reputação?',r.REPUTACAO)+fYN('REEMBOLSADO','Cliente Reembolsado?',r.REEMBOLSADO)+fYN('DEVOLUCAO_ABERTA','Devolução Aberta?',r.DEVOLUCAO_ABERTA,true,isErr('DEVOLUCAO_ABERTA'))+fYN('TRATATIVA_FINALIZADA','Tratativa Final?',r.TRATATIVA_FINALIZADA,true,isErr('TRATATIVA_FINALIZADA'))+'</div></div>'+
-'<div class="fsec"><div class="fsec-tit">📬 Tratativa</div><div class="fg3">'+fYN('NEC_PECAS','Nec. Peças?',r.NEC_PECAS,true,isErr('NEC_PECAS'))+fYN('PECAS_ENVIADAS','Peças Enviadas?',r.PECAS_ENVIADAS)+fYN('REENVIO_RECEBIDO','Reenvio Recebido?',r.REENVIO_RECEBIDO)+'</div><div class="fg" style="margin-top:8px">'+fInp('OBS_PECAS','Obs. Peças',r.OBS_PECAS)+fInp('CUSTO_ENVIO','Custo Envio',r.CUSTO_ENVIO)+fInp('PAGO_PLAT','Pago Plat/Cliente',r.PAGO_PLAT)+fInp('VALOR_PAGO','Valor Pago',r.VALOR_PAGO)+fInp('CUSTOS_TOTAL','Custos Total',r.CUSTOS_TOTAL)+'</div></div>'+
+'<div class="fsec"><div class="fsec-tit">📋 Tratativa</div>'+'<div class="fg3" style="margin-bottom:8px">'+fSel('TRATATIVA_ABERTA','Tratativa Aberta?',r.TRATATIVA_ABERTA,['','SIM','NÃO','Reaberta'],true,isErr('TRATATIVA_ABERTA'))+'</div>'+'<div id="tratExtra" class="'+(tA?'trat-extra show':'trat-extra')+'">'+'<div class="fg">'+fInp('DATA_TRATATIVA','DATA Tratativa',r.DATA_TRATATIVA,'text',false,'DD/MM/AAAA')+fInp('NUM_RECLAM','Nº Reclamação',r.NUM_RECLAM)+fSel('MOTIVO','Motivo Reclamação',r.MOTIVO,MOTIVOS,wMot,isErr('MOTIVO'))+fSel('DETALHAMENTO','Detalhamento',r.DETALHAMENTO,DETALHAMENTOS)+fInp('OBS_RECLAM','Obs. Reclamação',r.OBS_RECLAM)+fInp('OBS_RELEVANTES','Obs. Relevantes',r.OBS_RELEVANTES)+'</div>'+'<div class="fg3" style="margin-top:8px">'+fYN('REPUTACAO','Impacto Reputação?',r.REPUTACAO)+fYN('REEMBOLSADO','Cliente Reembolsado?',r.REEMBOLSADO)+fYN('DEVOLUCAO_ABERTA','Devolução Aberta?',r.DEVOLUCAO_ABERTA,true,isErr('DEVOLUCAO_ABERTA'))+fYN('TRATATIVA_FINALIZADA','Tratativa Final?',r.TRATATIVA_FINALIZADA,true,isErr('TRATATIVA_FINALIZADA'))+'</div>'+'<div class="fg3" style="margin-top:8px">'+fYN('NEC_PECAS','Necessário Enviar Peças?',r.NEC_PECAS,true,isErr('NEC_PECAS'))+'</div>'+'<div id="pecasExtra" class="'+(pA?'trat-extra show':'trat-extra')+'">'+'<div class="fg3" style="margin-top:8px">'+fYN('PECAS_ENVIADAS','Peças Enviadas?',r.PECAS_ENVIADAS)+fYN('REENVIO_RECEBIDO','Reenvio Recebido?',r.REENVIO_RECEBIDO)+'</div>'+'<div class="fg" style="margin-top:8px">'+fInp('OBS_PECAS','Obs. Peças',r.OBS_PECAS)+fInp('CUSTO_ENVIO','Custo Envio',r.CUSTO_ENVIO)+fInp('PAGO_PLAT','Pago Plat/Cliente',r.PAGO_PLAT)+fInp('VALOR_PAGO','Valor Pago',r.VALOR_PAGO)+fInp('CUSTOS_TOTAL','Custos Total',r.CUSTOS_TOTAL)+'</div></div>'+'</div></div>'+
 '<div class="fsec"><div class="fsec-tit">⚖️ Disputa</div><div class="fg3" id="dBase">'+fYN('DISPUTA_ABERTA','Disputa Aberta?',r.DISPUTA_ABERTA,true,isErr('DISPUTA_ABERTA'))+'</div><div class="disp-extra fg3 '+(dA?'show':'')+'" id="dX1" style="margin-top:8px">'+fYN('DISPUTA_FINALIZADA','Disputa Final?',r.DISPUTA_FINALIZADA,true,isErr('DISPUTA_FINALIZADA'))+fYN('REEMBOLSO_MKT','Reembolso Mkt?',r.REEMBOLSO_MKT,dF,isErr('REEMBOLSO_MKT'))+fYN('CREDITO','R$ Crédito?',r.CREDITO,rS,isErr('CREDITO'))+'</div><div class="disp-extra fg '+(dA?'show':'')+'" id="dX2" style="margin-top:8px">'+fInp('PLAT_DISPUTA','Plataforma',r.PLAT_DISPUTA)+fInp('MOTIVO_DISPUTA','Motivo Disputa',r.MOTIVO_DISPUTA)+fInp('PROTOCOLO','Protocolo',r.PROTOCOLO)+fInp('ID_TRANSACAO','ID Transação',r.ID_TRANSACAO)+fInp('CREDITO_RECEBIDO_VALOR','R$ Créd. Rec.',r.CREDITO_RECEBIDO_VALOR)+fYN('CREDITO_RECEBIDO','Crédito Rec.?',r.CREDITO_RECEBIDO)+fInp('OBS_DISPUTA','Obs. Disputa',r.OBS_DISPUTA)+'</div></div>'+
 '<div class="fsec"><div class="fsec-tit">🏭 Full/Estoque</div><div class="fg3">'+fInp('STATUS_FULL','Status Full',r.STATUS_FULL)+fYN('CHEGOU_CARDEX','Chegou Cardex?',r.CHEGOU_CARDEX)+'</div></div>';
   document.getElementById('dlgOv').classList.add('open');
+  // Wire TRATATIVA_ABERTA toggle
+  document.getElementById('f_NEC_PECAS_SIM')?.addEventListener('change',()=>{
+    document.getElementById('pecasExtra')?.classList.add('show');
+  });
+  document.getElementById('f_NEC_PECAS_NÃO')?.addEventListener('change',()=>{
+    document.getElementById('pecasExtra')?.classList.remove('show');
+  });
   // Wire TRATATIVA_ABERTA toggle
   document.querySelectorAll('select[id="f_TRATATIVA_ABERTA"]').forEach(sel=>{
     sel.addEventListener('change',()=>{
