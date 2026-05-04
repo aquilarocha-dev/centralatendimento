@@ -130,7 +130,7 @@ tbody tr:last-child td{border-bottom:none;}tbody tr:hover td{background:#f8f9fa;
 .snack.show{transform:translateX(-50%) translateY(0);opacity:1;}
 .snack.error{background:var(--err);}.snack.success{background:var(--ok);}
 /* BULK */
-.bulk-wrap{padding:12px 20px;}
+.bulk-wrap{padding:8px 16px;display:flex;flex-direction:column;height:calc(100vh - 56px);overflow:hidden;}
 .bulk-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;gap:10px;flex-wrap:wrap;}
 .bulk-tit{font-family:'Google Sans',sans-serif;font-size:16px;font-weight:500;}
 /* Status chips */
@@ -150,7 +150,7 @@ tbody tr:last-child td{border-bottom:none;}tbody tr:hover td{background:#f8f9fa;
 .miss-chip.on{background:var(--err);color:#fff;}
 .miss-counter{font-size:11px;color:var(--err);padding:3px 9px;background:#fff;border-radius:12px;border:1px solid #f28b82;font-weight:600;}
 /* Bulk table */
-.bulk-sheet{border:1px solid var(--out);border-radius:10px;overflow:auto;background:var(--sur);}
+.bulk-sheet{flex:1;border:1px solid var(--out);border-radius:10px;overflow:auto;background:var(--sur);position:relative;}
 .bulk-sheet-footer{padding:5px 10px;background:var(--sur-v);border-top:1px solid var(--out);font-size:11px;color:var(--on-sur-v);display:flex;justify-content:space-between;border-radius:0 0 10px 10px;}
 
 
@@ -165,7 +165,7 @@ tbody tr:last-child td{border-bottom:none;}tbody tr:hover td{background:#f8f9fa;
 .bt{border-collapse:collapse;border-spacing:0;min-width:100%;table-layout:auto;}
 
 /* Reset todas as células */
-.bt th,.bt td{padding:0;margin:0;box-sizing:border-box;font-size:11px;vertical-align:top;}
+.bt th,.bt td{position:relative;padding:0;margin:0;box-sizing:border-box;font-size:11px;vertical-align:top;}
 
 /* Células de dados */
 .bt td{
@@ -333,15 +333,13 @@ solid var(--out);border-radius:10px;padding:12px 14px;margin-top:12px;}
 .fs-header-row1{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
 .fs-header-row2{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
 /* Fill handle — quadradinho azul no canto inferior direito da célula selecionada */
-.fill-handle{
-  position:absolute;width:8px;height:8px;
-  background:var(--pri);border:1.5px solid #fff;
-  bottom:-4px;right:-4px;
-  cursor:crosshair;z-index:10;border-radius:1px;
-  display:none;pointer-events:none;
-}
-.bt td.sel .fill-handle{display:block;pointer-events:all;}
-.bt td:hover .fill-handle{display:block;pointer-events:all;}
+
+
+
+
+.fill-handle{position:absolute;width:8px;height:8px;background:var(--pri);border:1.5px solid #fff;bottom:-4px;right:-4px;cursor:crosshair;z-index:10;border-radius:1px;display:none;pointer-events:none;}
+.bt td.sel .fill-handle,.bt td:hover .fill-handle,.bt td:focus-within .fill-handle{display:block;pointer-events:all;}
+.bt td.fill-range{background:#dbeafe!important;}
 </style>
 </head>
 <body>
@@ -1091,7 +1089,7 @@ function buildBulkHead(thead){
     const lCls='th-label'+(c.req?' req-lbl':'');
     const fv=colFilters[c.k]||'';
     const cw=colWidths[c.k]?('width:'+colWidths[c.k]+'px;'):'';
-    const hideBtn=c.t!=='ro'?'<button class="th-btn" onclick="hideCol(\''+c.k+'\')" title="Ocultar">✕</button>':'';
+    const hideBtn='<button class="th-btn" onclick="hideCol(\''+c.k+'\')" title="Ocultar">✕</button>';
     return '<th class="'+secCls+'" data-colkey="'+c.k+'" style="'+cw+'">'
       +'<div class="th-col">'
         +'<div class="th-top">'
@@ -1129,7 +1127,7 @@ function buildBulkHead(thead){
     const lCls='th-label'+(c.req?' req-lbl':'');
     const fv=colFilters[c.k]||'';
     const cw=colWidths[c.k]?('width:'+colWidths[c.k]+'px;'):'';
-    const hideBtn=c.t!=='ro'?'<button class="th-btn" onclick="hideCol(\''+c.k+'\')" title="Ocultar">✕</button>':'';
+    const hideBtn='<button class="th-btn" onclick="hideCol(\''+c.k+'\')" title="Ocultar">✕</button>';
     const secContent=secLabel
       ?secLabel+'<button class="sec-hide-btn" onclick="hideSection(\''+secKey+'\')" title="Ocultar seção">✕</button>'
       :'';
@@ -1197,9 +1195,9 @@ function mkEditCell(r,ri,c,secCls){
   if(hiddenCols.has(c.k))return'';
   const val=getCellVal(ri,c.k);const uid='b_'+ri+'_'+c.k;const isMiss=getMiss(r).includes(c.k)?'miss-cell':'';const chg='bChg('+ri+',\''+c.k+'\',this.value)';
   let inner='';
-  if(c.t==='sel'){const o=(c.o||[]).map(v=>'<option value="'+v+'" '+(val===v?'selected':'')+'>'+(v||'—')+'</option>').join('');inner='<select class="bulk-sel" id="'+uid+'" onclick="event.stopPropagation()" onchange="'+chg+'">'+o+'</select>';}
-  else if(c.t==='yn'){const o=['','SIM','NÃO'].map(v=>'<option value="'+v+'" '+(val===v?'selected':'')+'>'+(v||'—')+'</option>').join('');inner='<select class="bulk-sel" id="'+uid+'" onclick="event.stopPropagation()" onchange="'+chg+'">'+o+'</select>';}
-  else{inner='<input class="bulk-inp" id="'+uid+'" value="'+(val||'').replace(/"/g,'&quot;')+'" onclick="event.stopPropagation()" oninput="'+chg+'">';}
+  if(c.t==='sel'){const o=(c.o||[]).map(v=>'<option value="'+v+'" '+(val===v?'selected':'')+'>'+(v||'—')+'</option>').join('');inner='<select class="bulk-sel" id="'+uid+'" onfocus="selCell(this.closest(\'td\'))" onclick="event.stopPropagation()" onchange="'+chg+'">'+o+'</select>';}
+  else if(c.t==='yn'){const o=['','SIM','NÃO'].map(v=>'<option value="'+v+'" '+(val===v?'selected':'')+'>'+(v||'—')+'</option>').join('');inner='<select class="bulk-sel" id="'+uid+'" onfocus="selCell(this.closest(\'td\'))" onclick="event.stopPropagation()" onchange="'+chg+'">'+o+'</select>';}
+  else{inner='<input class="bulk-inp" id="'+uid+'" value="'+(val||'').replace(/"/g,'&quot;')+'" onfocus="selCell(this.closest(\'td\'))" onclick="event.stopPropagation()" oninput="'+chg+'">';}
   return '<td class="'+secCls+' '+isMiss+'" data-row="'+ri+'" data-col="'+c.k+'" onclick="selCell(this)">'+inner+'<div class="fill-handle" onmousedown="startFill(event,'+ri+',\''+c.k+'\')"></div></td>';
 }
 
@@ -1237,9 +1235,20 @@ function _setupVirtualScroll(tbody,sheet){
 }
 
 function _renderVirtual(tbody,sheet){
-  // Não re-renderizar se o usuário está digitando em um input dentro da tabela
+  // Não re-renderizar se o input focado seria destruído pelo re-render
   const active=document.activeElement;
-  if(active&&(active.tagName==='INPUT'||active.tagName==='SELECT')&&tbody.contains(active))return;
+  if(active&&(active.tagName==='INPUT'||active.tagName==='SELECT')&&tbody.contains(active)){
+    // Verificar se o input ativo está dentro do range que seria re-renderizado
+    const activeTd=active.closest('td');
+    const activeRow=activeTd?parseInt(activeTd.dataset.row):-1;
+    if(activeRow>=0){
+      const fi=bulkFiltered.indexOf(activeRow);
+      const scrollTop=sheet.scrollTop;const viewH=sheet.clientHeight||600;
+      let vS=Math.max(0,Math.floor(scrollTop/VIRTUAL_ROW_H)-VIRTUAL_BUFFER);
+      let vE=Math.min(bulkFiltered.length,Math.ceil((scrollTop+viewH)/VIRTUAL_ROW_H)+VIRTUAL_BUFFER);
+      if(fi>=vS&&fi<vE)return; // input ativo está no range — não re-renderizar
+    }
+  }
   const scrollTop=sheet.scrollTop;
   const viewH=sheet.clientHeight||600;
   let vStart=Math.max(0,Math.floor(scrollTop/VIRTUAL_ROW_H)-VIRTUAL_BUFFER);
@@ -1317,53 +1326,61 @@ let fillSrc=null,fillKey=null,fillVal=null,fillScroll=null;
 function startFill(e,ri,key){
   e.preventDefault();e.stopPropagation();
   fillSrc=ri;fillKey=key;fillVal=getCellVal(ri,key);
-  // Determine scroll container: fullscreen body or bulk-sheet
   const fsOpen=document.getElementById('fsOverlay').style.display==='flex';
   const scroller=fsOpen?document.getElementById('fsBody'):document.getElementById('bulkSheet');
+  const ZONE=50,SPEED=20;
+  let fillTarget=null;
 
-  function allTds(){return document.querySelectorAll('.bt td[data-col="'+key+'"]');}
-  function clearHL(){allTds().forEach(td=>{td.style.outline='';});}
-
-  function onMove(ev){
-    // Auto-scroll
-    if(fillScroll)clearInterval(fillScroll);
-    const box=scroller.getBoundingClientRect();
-    const ZONE=50,SPEED=18;
-    if(ev.clientY>box.bottom-ZONE)fillScroll=setInterval(()=>{scroller.scrollTop+=SPEED;},16);
-    else if(ev.clientY<box.top+ZONE)fillScroll=setInterval(()=>{scroller.scrollTop-=SPEED;},16);
-    else if(ev.clientX>box.right-ZONE)fillScroll=setInterval(()=>{scroller.scrollLeft+=SPEED;},16);
-    else if(ev.clientX<box.left+ZONE)fillScroll=setInterval(()=>{scroller.scrollLeft-=SPEED;},16);
-    else{clearInterval(fillScroll);fillScroll=null;}
-    // Find target
-    clearHL();
-    const els=document.elementsFromPoint(ev.clientX,ev.clientY);
-    const tgt=els.find(el=>el.tagName==='TD'&&el.dataset&&el.dataset.col===key);
-    if(!tgt)return;
-    const tgtRow=parseInt(tgt.dataset.row);
-    const fi0=bulkFiltered.indexOf(fillSrc);const fi1=bulkFiltered.indexOf(tgtRow);
-    if(fi0<0||fi1<0)return;
-    const from=Math.min(fi0,fi1);const to=Math.max(fi0,fi1);
-    for(let fi=from;fi<=to;fi++){const ri2=bulkFiltered[fi];const td=document.querySelector('td[data-row="'+ri2+'"][data-col="'+key+'"]');if(td)td.style.outline='2px solid #1a73e8';}
+  function getTd(x,y){
+    const els=document.elementsFromPoint(x,y);
+    return els.find(el=>el.tagName==='TD'&&el.dataset&&el.dataset.col===key)||null;
   }
-
+  function clearHL(){
+    document.querySelectorAll('.bt td.fill-range').forEach(td=>{td.classList.remove('fill-range');td.style.outline='';});
+  }
+  function highlight(tgtRow){
+    clearHL();
+    if(tgtRow==null)return;
+    const fi0=bulkFiltered.indexOf(fillSrc),fi1=bulkFiltered.indexOf(tgtRow);
+    if(fi0<0||fi1<0)return;
+    const from=Math.min(fi0,fi1),to=Math.max(fi0,fi1);
+    for(let fi=from;fi<=to;fi++){
+      const td=document.querySelector('.bt td[data-row="'+bulkFiltered[fi]+'"][data-col="'+key+'"]');
+      if(td){td.classList.add('fill-range');td.style.outline='2px solid #1a73e8';}
+    }
+  }
+  function doMove(x,y){
+    const td=getTd(x,y);
+    if(!td)return;
+    const row=parseInt(td.dataset.row);
+    if(!isNaN(row)){fillTarget=row;highlight(row);}
+  }
+  function onMove(ev){
+    if(fillScroll){clearInterval(fillScroll);fillScroll=null;}
+    const box=scroller.getBoundingClientRect();
+    if(ev.clientY>box.bottom-ZONE)      fillScroll=setInterval(()=>{scroller.scrollTop+=SPEED;doMove(ev.clientX,ev.clientY);},16);
+    else if(ev.clientY<box.top+ZONE)    fillScroll=setInterval(()=>{scroller.scrollTop-=SPEED;doMove(ev.clientX,ev.clientY);},16);
+    else if(ev.clientX>box.right-ZONE)  fillScroll=setInterval(()=>{scroller.scrollLeft+=SPEED;doMove(ev.clientX,ev.clientY);},16);
+    else if(ev.clientX<box.left+ZONE)   fillScroll=setInterval(()=>{scroller.scrollLeft-=SPEED;doMove(ev.clientX,ev.clientY);},16);
+    doMove(ev.clientX,ev.clientY);
+  }
   function onUp(ev){
     if(fillScroll){clearInterval(fillScroll);fillScroll=null;}
-    document.removeEventListener('mousemove',onMove);document.removeEventListener('mouseup',onUp);
+    document.removeEventListener('mousemove',onMove);
+    document.removeEventListener('mouseup',onUp);
     clearHL();
-    const els=document.elementsFromPoint(ev.clientX,ev.clientY);
-    const tgt=els.find(el=>el.tagName==='TD'&&el.dataset&&el.dataset.col===key);
-    if(!tgt){fillSrc=null;return;}
-    const tgtRow=parseInt(tgt.dataset.row);
-    const fi0=bulkFiltered.indexOf(fillSrc);const fi1=bulkFiltered.indexOf(tgtRow);
+    if(fillTarget==null){fillSrc=null;return;}
+    const fi0=bulkFiltered.indexOf(fillSrc),fi1=bulkFiltered.indexOf(fillTarget);
     if(fi0<0||fi1<0){fillSrc=null;return;}
-    const from=Math.min(fi0,fi1);const to=Math.max(fi0,fi1);
+    const from=Math.min(fi0,fi1),to=Math.max(fi0,fi1);
     for(let fi=from;fi<=to;fi++){
       const ri2=bulkFiltered[fi];if(ri2===fillSrc)continue;
       bChg(ri2,key,fillVal);
-      // Update all input/select elements with this id in ALL tables
-      document.querySelectorAll('#b_'+ri2+'_'+key).forEach(el=>{el.value=fillVal||'';});
+      const el=document.getElementById('b_'+ri2+'_'+key);if(el)el.value=fillVal||'';
+      const row=document.getElementById('br_'+ri2);if(row)row.classList.add('chg');
     }
-    fillSrc=null;
+    fillSrc=null;fillTarget=null;
+    updateBulkInfo();
   }
   document.addEventListener('mousemove',onMove);
   document.addEventListener('mouseup',onUp);
