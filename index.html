@@ -318,6 +318,120 @@ tbody tr:last-child td{border-bottom:none;}tbody tr:hover td{background:#f8f9fa;
   margin-top:2px;
 }
 .dlg-x:hover{background:var(--err-c);color:var(--err);}
+
+/* ── Filtros bulk — Google Material ──────────────────────────────── */
+.bulk-filters-row,.fs-filters-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;align-items:center;}
+.bulk-filter-sel{
+  font-family:'Google Sans',sans-serif;font-size:13px;font-weight:500;
+  color:#202124;background:#fff;border:1px solid #dadce0;border-radius:20px;
+  padding:6px 14px 6px 14px;cursor:pointer;outline:none;
+  transition:border-color .15s,box-shadow .15s,background .15s;
+  appearance:none;-webkit-appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%235f6368'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 10px center;padding-right:28px;
+}
+.bulk-filter-sel:hover{border-color:#1a73e8;background:#f6fbff;}
+.bulk-filter-sel:focus{border-color:#1a73e8;box-shadow:0 0 0 2px rgba(26,115,232,.2);}
+.bulk-filter-sel.active{background:#e8f0fe;border-color:#1a73e8;color:#1a73e8;font-weight:600;}
+.bulk-filter-inp{
+  font-family:'Google Sans',sans-serif;font-size:13px;
+  color:#202124;background:#fff;border:1px solid #dadce0;border-radius:20px;
+  padding:6px 14px;outline:none;width:140px;
+  transition:border-color .15s,box-shadow .15s;
+}
+.bulk-filter-inp::placeholder{color:#80868b;}
+.bulk-filter-inp:hover{border-color:#1a73e8;}
+.bulk-filter-inp:focus{border-color:#1a73e8;box-shadow:0 0 0 2px rgba(26,115,232,.2);}
+.bulk-filter-inp.active{border-color:#1a73e8;background:#e8f0fe;color:#1a73e8;}
+.bulk-filter-clear{
+  font-family:'Google Sans',sans-serif;font-size:13px;font-weight:500;
+  padding:6px 14px;border-radius:20px;border:1px solid #dadce0;
+  background:#fff;color:#5f6368;cursor:pointer;
+  transition:background .15s,border-color .15s,color .15s;
+}
+.bulk-filter-clear:hover{background:#fce8e6;border-color:#d93025;color:#d93025;}
+.bulk-filter-count{
+  font-family:'Google Sans',sans-serif;font-size:13px;color:#5f6368;
+  padding:4px 12px;background:#f1f3f4;border-radius:20px;font-weight:500;
+}
+
+/* ── Inputs das células — Google Material ─────────────────────── */
+.bulk-inp{
+  width:100%;border:none;background:transparent;
+  font-size:12px;font-family:'Roboto',sans-serif;
+  padding:3px 6px;outline:none;
+  display:block;box-sizing:border-box;color:#202124;
+}
+.bulk-inp:focus{background:#e8f0fe;outline:2px solid #1a73e8;outline-offset:-2px;}
+.bulk-sel{
+  width:100%;border:none;background:transparent;
+  font-size:12px;font-family:'Roboto',sans-serif;
+  padding:2px 4px;outline:none;
+  cursor:pointer;display:block;box-sizing:border-box;color:#202124;
+}
+.bulk-sel:focus{background:#e8f0fe;outline:2px solid #1a73e8;outline-offset:-2px;}
+
+/* ── Miss bar ─────────────────────────────────────────────────── */
+.miss-bar{display:flex;align-items:center;gap:6px;margin-bottom:6px;flex-wrap:wrap;font-size:12px;color:#d93025;}
+.miss-counter{background:#d93025;color:#fff;border-radius:10px;padding:1px 7px;font-size:11px;font-weight:600;}
+.miss-chip{background:#fce8e6;color:#d93025;border:1px solid #f5c6c2;border-radius:12px;padding:2px 8px;font-size:11px;cursor:pointer;}
+.miss-chip:hover{background:#f5c6c2;}
+.miss-chip.active{background:#d93025;color:#fff;}
+
+.fs-overlay{position:fixed;inset:0;z-index:900;background:#fff;flex-direction:column;display:none;}
+
+/* ── Dashboard — cards SKU e gráfico de meses ───────────────── */
+.dash-bottom-row{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+  margin-top:12px;
+}
+.dash-table-card{
+  background:var(--sur);
+  border:1px solid var(--out);
+  border-radius:10px;
+  overflow:hidden;
+}
+.dash-card-title{
+  padding:10px 14px;
+  font-family:'Google Sans',sans-serif;
+  font-size:13px;font-weight:500;
+  border-bottom:1px solid var(--out-v);
+  display:flex;align-items:center;gap:6px;
+}
+.dash-card-scroll{
+  max-height:220px;
+  overflow-y:auto;
+}
+.dash-mini-table{width:100%;border-collapse:collapse;}
+.dash-mini-table th{
+  background:var(--sur-v);
+  padding:6px 12px;
+  text-align:left;
+  font-size:10px;font-weight:500;
+  color:var(--on-sur-v);
+  text-transform:uppercase;letter-spacing:.5px;
+  border-bottom:1px solid var(--out);
+  position:sticky;top:0;
+}
+.dash-mini-table td{
+  padding:6px 12px;
+  border-bottom:1px solid var(--out-v);
+  font-size:12px;vertical-align:middle;
+}
+.dash-mini-table tr:last-child td{border-bottom:none;}
+.dash-mini-table tr:hover td{background:#f8f9fa;}
+.dash-bar-wrap{height:5px;background:var(--out-v);border-radius:3px;margin-top:2px;}
+.dash-bar-fill{height:100%;border-radius:3px;background:var(--pri);}
+.month-chart-card{
+  background:var(--sur);
+  border:1px solid var(--out);
+  border-radius:10px;
+  padding:12px 14px;
+  margin-top:12px;
+}
+.month-chart-wrap{position:relative;height:200px;}
 </style>
 </head>
 <body>
@@ -731,7 +845,7 @@ function renderDashboard(){
   const skuArr=Object.entries(skuMap).sort((a,b)=>b[1].total-a[1].total);
   const maxSku=skuArr[0]?skuArr[0][1].total:1;
   document.getElementById('skuTotalBadge').textContent=skuArr.length+' SKUs';
-  document.getElementById('skuTableBody').innerHTML=skuArr.slice(0,30).map(([sku,d])=>{
+  document.getElementById('skuTableBody').innerHTML=skuArr.slice(0,8).map(([sku,d])=>{
     const pct=Math.round((d.total/maxSku)*100);
     return '<tr><td style="font-family:Roboto Mono,monospace;font-size:11px">'+sku+'</td>'
       +'<td><strong>'+d.total+'</strong><div class="dash-bar-wrap"><div class="dash-bar-fill" style="width:'+pct+'%"></div></div></td>'
@@ -746,7 +860,7 @@ function renderDashboard(){
     skuMotivoMap[key].n++;
   });
   const skuMotivoArr=Object.values(skuMotivoMap).sort((a,b)=>b.n-a.n);
-  document.getElementById('skuMotivoBody').innerHTML=skuMotivoArr.slice(0,30).map(d=>
+  document.getElementById('skuMotivoBody').innerHTML=skuMotivoArr.slice(0,8).map(d=>
     '<tr><td style="font-family:Roboto Mono,monospace;font-size:10px">'+d.sku+'</td>'
     +'<td style="font-size:11px">'+d.motivo+'</td>'
     +'<td><strong style="color:var(--err)">'+d.n+'</strong></td></tr>'
@@ -858,8 +972,7 @@ function openModal(rec){
     fRO('RASTREIO','Rastreio (f)',r.RASTREIO),fRO('ID_BLING','ID Bling (f)',r.ID_BLING),fRO('DESC_STATUS','Desc. Status (f)',r.DESC_STATUS),
     '</div><div class="fg" style="margin-top:8px">',
     fInp('AUTOR','Autor',r.AUTOR),fInp('NEC_NF_DEVOL','Nec. NF Devol?',r.NEC_NF_DEVOL),
-    fInp('NF','NF',r.NF),fInp('NF_DEVOL','NF DEVOL',r.NF_DEVOL),fInp('NF_DEVOL_EMISSAO','NF DEVOL Em.',r.NF_DEVOL_EMISSAO),
-    '</div></div>',
+    fInp('NF','NF',r.NF),fInp('NF_DEVOL','NF DEVOL',r.NF_DEVOL),    '</div></div>',
     '<div class="fsec"><div class="fsec-tit">📋 Tratativa</div>',
     '<div class="fg" style="margin-bottom:8px">',
     fRadio3('TRATATIVA_ABERTA','Tratativa Aberta?',r.TRATATIVA_ABERTA,true,isErr('TRATATIVA_ABERTA')),
@@ -871,7 +984,6 @@ function openModal(rec){
     fInp('NUM_RECLAM','Nº Reclamação',r.NUM_RECLAM),
     fSel('MOTIVO','Motivo Reclamação',r.MOTIVO,MOTIVOS,wMot,isErr('MOTIVO')),
     fSel('DETALHAMENTO','Detalhamento',r.DETALHAMENTO,DETALHAMENTOS),
-    fInp('OBS_RECLAM','Obs. Reclamação',r.OBS_RECLAM),
     fInp('OBS_RELEVANTES','Obs. Relevantes',r.OBS_RELEVANTES),
     '</div>',
     '<div class="fg3" style="margin-top:8px">',
@@ -905,7 +1017,6 @@ function openModal(rec){
     '</div>',
     '<div class="disp-extra fg3 '+(dA?'show ':'')+'" id="dX1" style="margin-top:8px">',
     fYN('DISPUTA_FINALIZADA','Disputa Final?',r.DISPUTA_FINALIZADA,true,isErr('DISPUTA_FINALIZADA')),
-    fYN('CREDITO','R$ Crédito?',r.CREDITO,rS,isErr('CREDITO')),
     '</div>',
     '<div class="disp-extra fg '+(dA?'show ':'')+'" id="dX2" style="margin-top:8px">',
     fInp('PLAT_DISPUTA','Plataforma',r.PLAT_DISPUTA),
@@ -913,10 +1024,10 @@ function openModal(rec){
     fInp('PROTOCOLO','Protocolo',r.PROTOCOLO),
     fInp('OBS_DISPUTA','Obs. Disputa',r.OBS_DISPUTA),
     '</div>',
-    '<div class="disp-extra fg3 '+(dA?'show ':'')+'" id="dX3" style="margin-top:8px">',
+    '<div class="fg3" style="margin-top:8px;border-top:1px solid var(--out-v);padding-top:8px">',
     fYN('REEMBOLSO_MKT','Reembolso do Marketplace?',r.REEMBOLSO_MKT,false,false),
     '</div>',
-    '<div class="disp-extra '+(dA&&mktA?'show ':'')+'" id="mktExtra" style="margin-top:8px">',
+    '<div id="mktExtra" class="'+(mktA?'':'trat-extra')+'" style="margin-top:8px">',
     '<div class="fg3">',
     fInp('ID_TRANSACAO','ID Transação',r.ID_TRANSACAO),
     fInp('CREDITO_RECEBIDO_VALOR','R$ Créd. Rec.',r.CREDITO_RECEBIDO_VALOR),
