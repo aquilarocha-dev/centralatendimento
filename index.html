@@ -715,11 +715,13 @@ function renderDashboard(){
   // Atualizar KPI financeiro panel
   const finEl=document.getElementById('finKpiRow');
   if(finEl){
+    // Calcular Resultado Financeiro da Reclamação (col específica da planilha)
+    const resultFinReclam=ativos.reduce((s,r)=>s+parseMoney(r.RESULTADO_FIN_RECLAM||r.OBS_DISPUTA||'0'),0);
     finEl.innerHTML=
       '<div class="kpi kpi-err"><div class="kpi-lbl">Custos Total</div><div class="kpi-val" style="font-size:18px">R$ '+custoTotal.toFixed(2).replace('.',',')+'</div><div class="kpi-sub">somado dos ativos</div></div>'+
-      '<div class="kpi kpi-ok"><div class="kpi-lbl">Crédito Recebido</div><div class="kpi-val" style="font-size:18px">R$ '+resultFin.toFixed(2).replace('.',',')+'</div><div class="kpi-sub">recuperado em disputas</div></div>'+
+      '<div class="kpi kpi-ok"><div class="kpi-lbl">Reembolso Total</div><div class="kpi-val" style="font-size:18px">'+reembolsoTotal+' casos</div><div class="kpi-sub">clientes reembolsados</div></div>'+
       '<div class="kpi kpi-pri"><div class="kpi-lbl">Resultado Financeiro</div><div class="kpi-val" style="font-size:18px">R$ '+(resultFin-custoTotal).toFixed(2).replace('.',',')+'</div><div class="kpi-sub">crédito - custos</div></div>'+
-      '<div class="kpi kpi-pur"><div class="kpi-lbl">Clientes Reembolsados</div><div class="kpi-val">'+reembolsoTotal+'</div><div class="kpi-sub">total de ativos</div></div>';
+      '<div class="kpi kpi-pur"><div class="kpi-lbl">Res. Fin. Reclamação</div><div class="kpi-val" style="font-size:18px">R$ '+resultFin.toFixed(2).replace('.',',')+'</div><div class="kpi-sub">crédito recebido</div></div>';
   }
 
   // ── SKU TABLE ────────────────────────────────────────────────────────────
@@ -1059,6 +1061,9 @@ const VIRTUAL_ROW_H = 28; // altura estimada de cada linha em px
 const VIRTUAL_BUFFER = 15; // linhas extra acima e abaixo do viewport
 
 let _lastVStart=-1,_lastVEnd=-1,_lastVTarget=null;
+
+// Status chip map (cache para performance)
+const _stChipMap={'TRATATIVA ABERTA':'chip-ta','TRATATIVA ATRASADA':'chip-tat','ACOMPANHAR DISPUTA':'chip-ad','ACOMPANHAR ENVIO':'chip-ae','POSSÍVEL EXTRAVIO':'chip-pe','AGUARDANDO REEMBOLSO':'chip-ar','EM ATRASO':'chip-ea','A ENVIAR':'chip-av'};
 
 function renderBulkRows(tbody){
   if(!tbody)return;
