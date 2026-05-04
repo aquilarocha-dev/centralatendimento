@@ -551,7 +551,22 @@ solid var(--out);border-radius:10px;padding:12px 14px;margin-top:12px;}
 </div>
 <div class="snack" id="snack"></div>
 <script>
-const COL={STATUS:0,MODALIDADE:1,ID_VENDA:2,NOME:3,CANAL:4,EMPR:5,MODELO:6,DATA_VENDA:7,SKU:8,QT:9,RASTREIO:10,ID_BLING:11,DESC_STATUS:12,NEC_NF_DEVOL:13,NF:14,NF_DEVOL:15,NF_DEVOL_EMISSAO:16,AUTOR:17,MOTIVO:18,DETALHAMENTO:19,OBS_RECLAM:20,DATA_TRATATIVA:21,NUM_RECLAM:22,REPUTACAO:23,REEMBOLSADO:24,DEVOLUCAO_ABERTA:25,NEC_PECAS:26,PECAS_ENVIADAS:27,OBS_PECAS:28,REENVIO_RECEBIDO:29,CUSTO_ENVIO:30,PAGO_PLAT:31,VALOR_PAGO:32,CUSTOS_TOTAL:33,TRATATIVA_FINALIZADA:34,OBS_RELEVANTES:35,STATUS_FULL:36,CHEGOU_CARDEX:37,DISPUTA_ABERTA:38,PLAT_DISPUTA:39,MOTIVO_DISPUTA:40,PROTOCOLO:41,CREDITO:42,ID_TRANSACAO:43,REEMBOLSO_MKT:44,DISPUTA_FINALIZADA:45,CREDITO_RECEBIDO_VALOR:46,CREDITO_RECEBIDO:47,OBS_DISPUTA:48,TRATATIVA_ABERTA:49};
+const COL={
+  STATUS:0,MODALIDADE:1,ID_VENDA:2,NOME:3,CANAL:4,EMPR:5,MODELO:6,
+  DATA_VENDA:7,SKU:8,QT:9,RASTREIO:10,ID_BLING:11,DESC_STATUS:12,
+  NEC_NF_DEVOL:13,NF:14,NF_DEVOL:15,NF_DEVOL_EMISSAO:16,AUTOR:17,
+  TRATATIVA_ABERTA:18,
+  MOTIVO:19,DETALHAMENTO:20,OBS_RECLAM:21,
+  DATA_TRATATIVA:22,NUM_RECLAM:23,REPUTACAO:24,REEMBOLSADO:25,
+  DEVOLUCAO_ABERTA:26,NEC_PECAS:27,PECAS_ENVIADAS:28,OBS_PECAS:29,
+  REENVIO_RECEBIDO:30,CUSTO_ENVIO:31,PAGO_PLAT:32,VALOR_PAGO:33,
+  CUSTOS_TOTAL:34,TRATATIVA_FINALIZADA:35,OBS_RELEVANTES:36,
+  STATUS_FULL:37,CHEGOU_CARDEX:38,
+  DISPUTA_ABERTA:39,PLAT_DISPUTA:40,MOTIVO_DISPUTA:41,PROTOCOLO:42,
+  CREDITO:43,ID_TRANSACAO:44,REEMBOLSO_MKT:45,DISPUTA_FINALIZADA:46,
+  CREDITO_RECEBIDO_VALOR:47,CREDITO_RECEBIDO:48,OBS_DISPUTA:49,
+  RESULTADO_FIN:55
+};
 const FORMULA_COLS=new Set([0,3,7,8,9,10,11,12]);
 const EDIT_COLS=Object.entries(COL).filter(([,i])=>!FORMULA_COLS.has(i)).map(([k,i])=>({key:k,idx:i}));
 const BANCO_ID='1JF2Yf2rHz_yBwlrpB5Mjnf9Zam1z2Uwdgo8RqFzyARs';
@@ -602,40 +617,40 @@ const ID_COLS=[
   {k:'AUTOR',            l:'AUTOR',             t:'txt'},
 ];
 const TC=[
-  {k:'TRATATIVA_ABERTA',   l:'Tratativa Aberta?', t:'sel', o:['','SIM','NÃO','Reaberta'], req:true},
-  {k:'MOTIVO',             l:'Motivo Reclamação',  t:'sel', o:MOTIVOS},
-  {k:'DETALHAMENTO',       l:'Detalhamento',       t:'sel', o:DETALHAMENTOS},
-  {k:'OBS_RECLAM',         l:'Obs. Reclamação',    t:'txt'},
-  {k:'DATA_TRATATIVA',     l:'DATA Tratativa',     t:'txt'},
-  {k:'NUM_RECLAM',         l:'Nº Recl. Cliente',   t:'txt'},
-  {k:'REPUTACAO',          l:'Impacto Reputação?', t:'yn'},
+  {k:'TRATATIVA_ABERTA',   l:'Tratativa Aberta?',  t:'sel', o:['','SIM','NÃO','Reaberta'], req:true},
+  {k:'MOTIVO',             l:'Motivo Reclamação',   t:'sel', o:MOTIVOS},
+  {k:'DETALHAMENTO',       l:'Detalhamento',        t:'sel', o:DETALHAMENTOS},
+  {k:'OBS_RECLAM',         l:'Obs. Reclamação',     t:'txt'},
+  {k:'DATA_TRATATIVA',     l:'DATA Tratativa',      t:'txt'},
+  {k:'NUM_RECLAM',         l:'Nº Recl. Cliente',    t:'txt'},
+  {k:'REPUTACAO',          l:'Impacto Reputação?',  t:'yn'},
   {k:'REEMBOLSADO',        l:'Cliente Reembolsado?',t:'yn'},
-  {k:'DEVOLUCAO_ABERTA',   l:'Devol. Aberta?',     t:'yn', req:true},
-  {k:'NEC_PECAS',          l:'Nec. Peças?',        t:'yn', req:true},
-  {k:'PECAS_ENVIADAS',     l:'Peças Enviadas?',    t:'yn'},
-  {k:'OBS_PECAS',          l:'Obs. Peças',         t:'txt'},
-  {k:'REENVIO_RECEBIDO',   l:'Reenvio Recebido?',  t:'yn'},
-  {k:'CUSTO_ENVIO',        l:'Custo Envio',        t:'txt'},
-  {k:'PAGO_PLAT',          l:'Pago Plat/Cliente',  t:'txt'},
-  {k:'VALOR_PAGO',         l:'Valor Pago',         t:'txt'},
-  {k:'CUSTOS_TOTAL',       l:'Custos Total',       t:'txt'},
-  {k:'TRATATIVA_FINALIZADA',l:'Trat. Finalizada?', t:'yn', req:true},
-  {k:'OBS_RELEVANTES',     l:'Obs. Relevantes',    t:'txt'},
-  {k:'STATUS_FULL',        l:'Status Full',        t:'txt'},
-  {k:'CHEGOU_CARDEX',      l:'Chegou Cardex?',     t:'yn'},
+  {k:'DEVOLUCAO_ABERTA',   l:'Devol. Aberta?',      t:'yn', req:true},
+  {k:'NEC_PECAS',          l:'Nec. Peças?',         t:'yn', req:true},
+  {k:'PECAS_ENVIADAS',     l:'Peças Enviadas?',     t:'yn'},
+  {k:'OBS_PECAS',          l:'Obs. Peças',          t:'txt'},
+  {k:'REENVIO_RECEBIDO',   l:'Reenvio Recebido?',   t:'yn'},
+  {k:'CUSTO_ENVIO',        l:'Custo Envio',         t:'txt'},
+  {k:'PAGO_PLAT',          l:'Pago Plat/Cliente',   t:'txt'},
+  {k:'VALOR_PAGO',         l:'Valor Pago',          t:'txt'},
+  {k:'CUSTOS_TOTAL',       l:'Custos Total',        t:'txt'},
+  {k:'TRATATIVA_FINALIZADA',l:'Trat. Finalizada?',  t:'yn', req:true},
+  {k:'OBS_RELEVANTES',     l:'Obs. Relevantes',     t:'txt'},
+  {k:'STATUS_FULL',        l:'Status Full',         t:'txt'},
+  {k:'CHEGOU_CARDEX',      l:'Chegou Cardex?',      t:'yn'},
 ];
 const DC=[
-  {k:'DISPUTA_ABERTA',        l:'Disp. Ab.?',    t:'yn', req:true},
-  {k:'PLAT_DISPUTA',          l:'Plataforma',    t:'txt'},
-  {k:'MOTIVO_DISPUTA',        l:'Motivo Disp.',  t:'txt'},
-  {k:'PROTOCOLO',             l:'Protocolo',     t:'txt'},
-  {k:'CREDITO',               l:'R$ Créd.?',     t:'yn'},
-  {k:'ID_TRANSACAO',          l:'ID Transação',  t:'txt'},
-  {k:'REEMBOLSO_MKT',         l:'Reemb. Mkt?',   t:'yn'},
-  {k:'DISPUTA_FINALIZADA',    l:'Disp. Final?',  t:'yn'},
-  {k:'CREDITO_RECEBIDO_VALOR',l:'R$ Créd. Rec.', t:'txt'},
-  {k:'CREDITO_RECEBIDO',      l:'Créd. Rec.?',   t:'yn'},
-  {k:'OBS_DISPUTA',           l:'Obs. Disp.',    t:'txt'},
+  {k:'DISPUTA_ABERTA',         l:'Disp. Aberta?',     t:'yn', req:true},
+  {k:'PLAT_DISPUTA',           l:'Plataforma',        t:'txt'},
+  {k:'MOTIVO_DISPUTA',         l:'Motivo Disputa',    t:'txt'},
+  {k:'PROTOCOLO',              l:'Protocolo',         t:'txt'},
+  {k:'CREDITO',                l:'R$ Crédito?',       t:'yn'},
+  {k:'ID_TRANSACAO',           l:'ID Transação',      t:'txt'},
+  {k:'REEMBOLSO_MKT',          l:'Reemb. Marketplace?',t:'yn'},
+  {k:'DISPUTA_FINALIZADA',     l:'Disp. Finalizada?', t:'yn'},
+  {k:'CREDITO_RECEBIDO_VALOR', l:'R$ Créd. Recebido', t:'txt'},
+  {k:'CREDITO_RECEBIDO',       l:'Crédito Recebido?', t:'yn'},
+  {k:'OBS_DISPUTA',            l:'Obs. Disputa',      t:'txt'},
 ];
 
 window.addEventListener('beforeunload',e=>{
@@ -1228,7 +1243,7 @@ function startFill(e,ri,key){
   e.preventDefault();e.stopPropagation();
   fillSrc=ri;fillKey=key;fillVal=getCellVal(ri,key);
   // Determine scroll container: fullscreen body or bulk-sheet
-  const fsOpen=document.getElementById('fsOverlay').classList.contains('open');
+  const fsOpen=document.getElementById('fsOverlay').style.display==='flex';
   const scroller=fsOpen?document.getElementById('fsBody'):document.getElementById('bulkSheet');
 
   function allTds(){return document.querySelectorAll('.bt td[data-col="'+key+'"]');}
@@ -1238,8 +1253,11 @@ function startFill(e,ri,key){
     // Auto-scroll
     if(fillScroll)clearInterval(fillScroll);
     const box=scroller.getBoundingClientRect();
-    if(ev.clientY>box.bottom-40)fillScroll=setInterval(()=>{scroller.scrollTop+=10;},16);
-    else if(ev.clientY<box.top+40)fillScroll=setInterval(()=>{scroller.scrollTop-=10;},16);
+    const ZONE=50,SPEED=18;
+    if(ev.clientY>box.bottom-ZONE)fillScroll=setInterval(()=>{scroller.scrollTop+=SPEED;},16);
+    else if(ev.clientY<box.top+ZONE)fillScroll=setInterval(()=>{scroller.scrollTop-=SPEED;},16);
+    else if(ev.clientX>box.right-ZONE)fillScroll=setInterval(()=>{scroller.scrollLeft+=SPEED;},16);
+    else if(ev.clientX<box.left+ZONE)fillScroll=setInterval(()=>{scroller.scrollLeft-=SPEED;},16);
     else{clearInterval(fillScroll);fillScroll=null;}
     // Find target
     clearHL();
@@ -1398,7 +1416,7 @@ function showKbdToast(msg){
 }
 document.addEventListener('keydown',e=>{
   if(!e.ctrlKey)return;
-  if(document.getElementById('page2').style.display==='none'&&!document.getElementById('fsOverlay').classList.contains('open'))return;
+  if(document.getElementById('page2').style.display==='none'&&!document.getElementById('fsOverlay').style.display==='flex')return;
   const sel=document.querySelector('.bt td.sel');
   if(!sel)return;
   const ri=parseInt(sel.dataset.row);const key=sel.dataset.col;
