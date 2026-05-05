@@ -162,7 +162,7 @@ tbody tr:last-child td{border-bottom:none;}tbody tr:hover td{background:#f8f9fa;
 /* ═════════════════════════════════════════════════════════════════
    BULK TABLE — UMA ÚNICA ROW DE HEADER, ZERO GAP
    ═════════════════════════════════════════════════════════════════ */
-.bt{border-collapse:collapse;border-spacing:0;min-width:100%;table-layout:auto;}
+.bt{border-collapse:collapse;border-spacing:0;width:max-content;table-layout:fixed;}
 
 /* Reset todas as células */
 .bt th,.bt td{position:relative;padding:0;margin:0;box-sizing:border-box;font-size:11px;vertical-align:top;}
@@ -287,18 +287,6 @@ tbody tr:last-child td{border-bottom:none;}tbody tr:hover td{background:#f8f9fa;
 
 .fsec-sub{font-size:11px;font-weight:600;color:var(--on-sur-v);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;}
 
-/* Fill handle */
-.fill-handle{
-  position:absolute;width:8px;height:8px;
-  background:var(--pri);border:1.5px solid #fff;
-  bottom:-4px;right:-4px;
-  cursor:crosshair;z-index:10;border-radius:1px;
-  display:none;pointer-events:none;
-}
-.bt td.sel .fill-handle{display:block;pointer-events:all;}
-.bt td:hover .fill-handle{display:block;pointer-events:all;}
-.bt td:focus-within .fill-handle{display:block;pointer-events:all;}
-.bt td.fill-range{background:rgba(26,115,232,0.12)!important;outline:1px solid #1a73e8;outline-offset:-1px;}
 
 #page2{overflow-x:hidden;}
 .bulk-sheet{max-width:100%;}
@@ -319,169 +307,68 @@ tbody tr:last-child td{border-bottom:none;}tbody tr:hover td{background:#f8f9fa;
 }
 .dlg-x:hover{background:var(--err-c);color:var(--err);}
 
-/* ── Filtros bulk — Google Material ──────────────────────────────── */
+/* Tela cheia */
+.fs-overlay{position:fixed;inset:0;z-index:900;background:#f8f9fa;flex-direction:column;display:none;}
+.fs-header{background:#fff;border-bottom:1px solid var(--out);padding:8px 16px;display:flex;flex-direction:column;gap:6px;flex-shrink:0;}
+.fs-header-row1{display:flex;align-items:center;gap:8px;min-height:36px;}
+.fs-header-row2{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding-bottom:2px;}
+.fs-miss-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:12px;color:var(--err);min-height:20px;}
+.fs-body{flex:1;overflow:auto;position:relative;background:#fff;}
+.fs-footer{background:#fff;border-top:1px solid var(--out);padding:6px 16px;display:flex;align-items:center;gap:16px;font-size:12px;color:var(--on-sur-v);flex-shrink:0;}
+.fs-title{font-family:'Google Sans',sans-serif;font-size:15px;font-weight:500;color:var(--on-sur);flex-shrink:0;}
+
+/* Popup — fundo colorido por seção */
+.fsec{border-radius:8px;padding:12px;margin-bottom:12px;}
+.fsec-id{background:#f8f9fa;}
+.fsec-trat{background:#eff6ff;}
+.fsec-disp{background:#fff7ed;}
+.fsec-tit{font-family:'Google Sans',sans-serif;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--on-sur-v);margin-bottom:10px;}
+.fsec-id .fsec-tit{color:#3c4043;}
+.fsec-trat .fsec-tit{color:#1a73e8;}
+.fsec-disp .fsec-tit{color:#b45309;}
+
+/* Dashboard SKU cards */
+.dash-bottom-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px;}
+.dash-table-card{background:var(--sur);border:1px solid var(--out);border-radius:10px;overflow:hidden;}
+.dash-card-title{padding:10px 14px;font-family:'Google Sans',sans-serif;font-size:13px;font-weight:500;border-bottom:1px solid var(--out-v);display:flex;align-items:center;gap:6px;}
+.dash-card-scroll{max-height:220px;overflow-y:auto;}
+.dash-mini-table{width:100%;border-collapse:collapse;}
+.dash-mini-table th{background:var(--sur-v);padding:6px 12px;text-align:left;font-size:10px;font-weight:500;color:var(--on-sur-v);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--out);position:sticky;top:0;}
+.dash-mini-table td{padding:6px 12px;border-bottom:1px solid var(--out-v);font-size:12px;vertical-align:middle;}
+.dash-mini-table tr:last-child td{border-bottom:none;}
+.dash-mini-table tr:hover td{background:#f8f9fa;}
+.month-chart-card{background:var(--sur);border:1px solid var(--out);border-radius:10px;padding:12px 14px;margin-top:12px;}
+.month-chart-wrap{position:relative;height:200px;}
+
+/* Filtros Google Material */
 .bulk-filters-row,.fs-filters-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;align-items:center;}
-.bulk-filter-sel{
-  font-family:'Google Sans',sans-serif;font-size:13px;font-weight:500;
-  color:#202124;background:#fff;border:1px solid #dadce0;border-radius:20px;
-  padding:6px 14px 6px 14px;cursor:pointer;outline:none;
-  transition:border-color .15s,box-shadow .15s,background .15s;
-  appearance:none;-webkit-appearance:none;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%235f6368'/%3E%3C/svg%3E");
-  background-repeat:no-repeat;background-position:right 10px center;padding-right:28px;
-}
+.bulk-filter-sel{font-family:'Google Sans',sans-serif;font-size:13px;font-weight:500;color:#202124;background:#fff;border:1px solid #dadce0;border-radius:20px;padding:6px 14px;cursor:pointer;outline:none;transition:border-color .15s,box-shadow .15s;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%235f6368'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:28px;}
 .bulk-filter-sel:hover{border-color:#1a73e8;background:#f6fbff;}
 .bulk-filter-sel:focus{border-color:#1a73e8;box-shadow:0 0 0 2px rgba(26,115,232,.2);}
 .bulk-filter-sel.active{background:#e8f0fe;border-color:#1a73e8;color:#1a73e8;font-weight:600;}
-.bulk-filter-inp{
-  font-family:'Google Sans',sans-serif;font-size:13px;
-  color:#202124;background:#fff;border:1px solid #dadce0;border-radius:20px;
-  padding:6px 14px;outline:none;width:140px;
-  transition:border-color .15s,box-shadow .15s;
-}
-.bulk-filter-inp::placeholder{color:#80868b;}
-.bulk-filter-inp:hover{border-color:#1a73e8;}
+.bulk-filter-inp{font-family:'Google Sans',sans-serif;font-size:13px;color:#202124;background:#fff;border:1px solid #dadce0;border-radius:20px;padding:6px 14px;outline:none;width:140px;transition:border-color .15s;}
 .bulk-filter-inp:focus{border-color:#1a73e8;box-shadow:0 0 0 2px rgba(26,115,232,.2);}
 .bulk-filter-inp.active{border-color:#1a73e8;background:#e8f0fe;color:#1a73e8;}
-.bulk-filter-clear{
-  font-family:'Google Sans',sans-serif;font-size:13px;font-weight:500;
-  padding:6px 14px;border-radius:20px;border:1px solid #dadce0;
-  background:#fff;color:#5f6368;cursor:pointer;
-  transition:background .15s,border-color .15s,color .15s;
-}
+.bulk-filter-clear{font-family:'Google Sans',sans-serif;font-size:13px;font-weight:500;padding:6px 14px;border-radius:20px;border:1px solid #dadce0;background:#fff;color:#5f6368;cursor:pointer;}
 .bulk-filter-clear:hover{background:#fce8e6;border-color:#d93025;color:#d93025;}
-.bulk-filter-count{
-  font-family:'Google Sans',sans-serif;font-size:13px;color:#5f6368;
-  padding:4px 12px;background:#f1f3f4;border-radius:20px;font-weight:500;
-}
-
-/* ── Inputs das células — Google Material ─────────────────────── */
-.bulk-inp{
-  width:100%;border:none;background:transparent;
-  font-size:12px;font-family:'Roboto',sans-serif;
-  padding:3px 6px;outline:none;
-  display:block;box-sizing:border-box;color:#202124;
-}
+.bulk-filter-count{font-family:'Google Sans',sans-serif;font-size:13px;color:#5f6368;padding:4px 12px;background:#f1f3f4;border-radius:20px;font-weight:500;}
+.bulk-inp{width:100%;border:none;background:transparent;font-size:12px;font-family:'Roboto',sans-serif;padding:3px 6px;outline:none;display:block;box-sizing:border-box;color:#202124;}
 .bulk-inp:focus{background:#e8f0fe;outline:2px solid #1a73e8;outline-offset:-2px;}
-.bulk-sel{
-  width:100%;border:none;background:transparent;
-  font-size:12px;font-family:'Roboto',sans-serif;
-  padding:2px 4px;outline:none;
-  cursor:pointer;display:block;box-sizing:border-box;color:#202124;
-}
+.bulk-sel{width:100%;border:none;background:transparent;font-size:12px;font-family:'Roboto',sans-serif;padding:2px 4px;outline:none;cursor:pointer;display:block;box-sizing:border-box;color:#202124;}
 .bulk-sel:focus{background:#e8f0fe;outline:2px solid #1a73e8;outline-offset:-2px;}
 
-/* ── Miss bar ─────────────────────────────────────────────────── */
-.miss-bar{display:flex;align-items:center;gap:6px;margin-bottom:6px;flex-wrap:wrap;font-size:12px;color:#d93025;}
-.miss-counter{background:#d93025;color:#fff;border-radius:10px;padding:1px 7px;font-size:11px;font-weight:600;}
-.miss-chip{background:#fce8e6;color:#d93025;border:1px solid #f5c6c2;border-radius:12px;padding:2px 8px;font-size:11px;cursor:pointer;}
-.miss-chip:hover{background:#f5c6c2;}
-.miss-chip.active{background:#d93025;color:#fff;}
+/* Fill handle */
+.fill-handle{position:absolute;width:8px;height:8px;background:var(--pri);border:1.5px solid #fff;bottom:-4px;right:-4px;cursor:crosshair;z-index:10;border-radius:1px;display:none;pointer-events:none;}
+.bt td.sel .fill-handle{display:block;pointer-events:all;}
+.bt td:hover .fill-handle{display:block;pointer-events:all;}
+.bt td:focus-within .fill-handle{display:block;pointer-events:all;}
+.bt td.fill-range{background:rgba(26,115,232,0.12)!important;outline:1px solid #1a73e8;outline-offset:-1px;}
 
-
-
-/* ── Dashboard — cards SKU e gráfico de meses ───────────────── */
-.dash-bottom-row{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:12px;
-  margin-top:12px;
-}
-.dash-table-card{
-  background:var(--sur);
-  border:1px solid var(--out);
-  border-radius:10px;
-  overflow:hidden;
-}
-.dash-card-title{
-  padding:10px 14px;
-  font-family:'Google Sans',sans-serif;
-  font-size:13px;font-weight:500;
-  border-bottom:1px solid var(--out-v);
-  display:flex;align-items:center;gap:6px;
-}
-.dash-card-scroll{
-  max-height:220px;
-  overflow-y:auto;
-}
-.dash-mini-table{width:100%;border-collapse:collapse;}
-.dash-mini-table th{
-  background:var(--sur-v);
-  padding:6px 12px;
-  text-align:left;
-  font-size:10px;font-weight:500;
-  color:var(--on-sur-v);
-  text-transform:uppercase;letter-spacing:.5px;
-  border-bottom:1px solid var(--out);
-  position:sticky;top:0;
-}
-.dash-mini-table td{
-  padding:6px 12px;
-  border-bottom:1px solid var(--out-v);
-  font-size:12px;vertical-align:middle;
-}
-.dash-mini-table tr:last-child td{border-bottom:none;}
-.dash-mini-table tr:hover td{background:#f8f9fa;}
-.dash-bar-wrap{height:5px;background:var(--out-v);border-radius:3px;margin-top:2px;}
-.dash-bar-fill{height:100%;border-radius:3px;background:var(--pri);}
-.month-chart-card{
-  background:var(--sur);
-  border:1px solid var(--out);
-  border-radius:10px;
-  padding:12px 14px;
-  margin-top:12px;
-}
-.month-chart-wrap{position:relative;height:200px;}
-
-/* ── Tela cheia Preenchimento em Massa ─────────────────────────── */
-.fs-overlay{
-  position:fixed;inset:0;z-index:900;
-  background:#f8f9fa;
-  flex-direction:column;
-  display:none;
-}
-.fs-header{
-  background:#fff;
-  border-bottom:1px solid var(--out);
-  padding:8px 16px;
-  display:flex;flex-direction:column;gap:6px;
-  flex-shrink:0;
-}
-.fs-header-row1{
-  display:flex;align-items:center;gap:8px;
-  min-height:36px;
-}
-.fs-header-row2{
-  display:flex;align-items:center;gap:8px;
-  flex-wrap:wrap;
-  padding-bottom:2px;
-}
-.fs-miss-row{
-  display:flex;align-items:center;gap:6px;
-  flex-wrap:wrap;font-size:12px;
-  color:var(--err);
-  min-height:20px;
-}
-.fs-body{
-  flex:1;
-  overflow:auto;          /* ← scroll horizontal + vertical */
-  position:relative;
-  background:#fff;
-}
-.fs-footer{
-  background:#fff;
-  border-top:1px solid var(--out);
-  padding:6px 16px;
-  display:flex;align-items:center;gap:16px;
-  font-size:12px;color:var(--on-sur-v);
-  flex-shrink:0;
-}
-.fs-title{
-  font-family:'Google Sans',sans-serif;
-  font-size:15px;font-weight:500;
-  color:var(--on-sur);
-  flex-shrink:0;
-}
+/* Popup X button */
+.dlg-hdr{position:relative;display:flex;align-items:flex-start;justify-content:space-between;gap:8px;}
+.dlg-hdr-inner{flex:1;min-width:0;}
+.dlg-x{flex-shrink:0;background:none;border:none;cursor:pointer;font-size:20px;line-height:1;color:var(--on-sur-v);width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:background .15s,color .15s;margin-top:2px;}
+.dlg-x:hover{background:var(--err-c);color:var(--err);}
 </style>
 </head>
 <body>
@@ -549,6 +436,10 @@ tbody tr:last-child td{border-bottom:none;}tbody tr:hover td{background:#f8f9fa;
       <div class="dash-card-title">🔍 Motivos por SKU</div>
       <div class="dash-card-scroll"><table class="dash-mini-table"><thead><tr><th>SKU</th><th>Motivo</th><th>Qtd</th></tr></thead><tbody id="skuMotivoBody"></tbody></table></div>
     </div>
+  </div>
+  <div class="month-chart-card" style="margin-top:12px">
+    <div class="dash-card-title">💰 Evolução Financeira (últimos 12 meses)</div>
+    <div class="month-chart-wrap"><canvas id="chartFin"></canvas></div>
   </div>
   <div class="month-chart-card">
     <div class="dash-card-title">📅 Registros por Mês (últimos 12 meses)</div>
@@ -637,7 +528,6 @@ tbody tr:last-child td{border-bottom:none;}tbody tr:hover td{background:#f8f9fa;
 <!-- FULLSCREEN -->
 <div class="fs-overlay" id="fsOverlay" style="display:none">
   <div class="fs-header">
-    <!-- Linha 1: título + ações -->
     <div class="fs-header-row1">
       <span class="fs-title">📝 Preenchimento em Massa</span>
       <div style="flex:1"></div>
@@ -646,7 +536,6 @@ tbody tr:last-child td{border-bottom:none;}tbody tr:hover td{background:#f8f9fa;
       <button class="btn btn-filled btn-sm" onclick="bulkSave()">💾 Salvar</button>
       <button class="btn-icon" onclick="closeFS()" title="Fechar">✕</button>
     </div>
-    <!-- Linha 2: filtros -->
     <div class="fs-header-row2">
       <select class="bulk-filter-sel" id="fsBfStatus" onchange="syncFSFilters()">
         <option value="">Todos os Status</option>
@@ -670,21 +559,18 @@ tbody tr:last-child td{border-bottom:none;}tbody tr:hover td{background:#f8f9fa;
       <button class="bulk-filter-clear" onclick="clearBulkFilters()">✕ Limpar</button>
       <span class="bulk-filter-count" id="fsBulkFilterCount">0</span>
     </div>
-    <!-- Linha 3: campos em falta -->
     <div class="fs-miss-row">
       <span id="fsMissChips"></span>
       <span class="miss-counter" id="fsMissCounter" style="display:none">0</span>
     </div>
   </div>
-  <!-- Tabela com scroll -->
   <div class="fs-body" id="fsBody">
     <table class="bt"><thead id="fsHead"></thead><tbody id="fsBBody"></tbody></table>
   </div>
   <div class="fs-footer">
     <span>Mostrando <strong id="fsBfCount">0</strong> de <strong id="fsBfTotal">0</strong></span>
     <span>Alteradas: <strong id="fsChg">0</strong></span>
-  </div></div>
-
+  </div>
 <!-- DIALOG -->
 <div class="dlg-ov" id="dlgOv">
   <div class="dlg">
@@ -897,7 +783,7 @@ function renderDashboard(){
   const skuArr=Object.entries(skuMap).sort((a,b)=>b[1].total-a[1].total);
   const maxSku=skuArr[0]?skuArr[0][1].total:1;
   document.getElementById('skuTotalBadge').textContent=skuArr.length+' SKUs';
-  document.getElementById('skuTableBody').innerHTML=skuArr.slice(0,8).map(([sku,d])=>{
+  document.getElementById('skuTableBody').innerHTML=skuArr.slice(0,30).map(([sku,d])=>{
     const pct=Math.round((d.total/maxSku)*100);
     return '<tr><td style="font-family:Roboto Mono,monospace;font-size:11px">'+sku+'</td>'
       +'<td><strong>'+d.total+'</strong><div class="dash-bar-wrap"><div class="dash-bar-fill" style="width:'+pct+'%"></div></div></td>'
@@ -912,7 +798,7 @@ function renderDashboard(){
     skuMotivoMap[key].n++;
   });
   const skuMotivoArr=Object.values(skuMotivoMap).sort((a,b)=>b.n-a.n);
-  document.getElementById('skuMotivoBody').innerHTML=skuMotivoArr.slice(0,8).map(d=>
+  document.getElementById('skuMotivoBody').innerHTML=skuMotivoArr.slice(0,30).map(d=>
     '<tr><td style="font-family:Roboto Mono,monospace;font-size:10px">'+d.sku+'</td>'
     +'<td style="font-size:11px">'+d.motivo+'</td>'
     +'<td><strong style="color:var(--err)">'+d.n+'</strong></td></tr>'
@@ -961,6 +847,28 @@ function renderDashboard(){
   const reembolsoTotal=allData.filter(r=>r.REEMBOLSO_MKT==='SIM').reduce((s,r)=>s+parseMoney(r.CREDITO_RECEBIDO_VALOR),0);
   const resultadoFin=allData.reduce((s,r)=>s+parseMoney(r.CREDITO_RECEBIDO_VALOR),0)-custoTotal;
   const finEl=document.getElementById('finKpiRow');
+  // Gráfico financeiro
+  function pm(v){return parseFloat((v||'').replace(/[R$\s]/g,'').replace(/\./g,'').replace(',','.'))||0;}
+  const finMesMap={custos:{},reembolso:{},resultado:{}};
+  allData.forEach(r=>{
+    const d=parseDate(r.DATA_VENDA);if(!d)return;
+    const key=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
+    if(!finMesMap.custos[key])finMesMap.custos[key]=0;
+    if(!finMesMap.reembolso[key])finMesMap.reembolso[key]=0;
+    if(!finMesMap.resultado[key])finMesMap.resultado[key]=0;
+    finMesMap.custos[key]+=pm(r.CUSTOS_TOTAL);
+    if(r.REEMBOLSO_MKT==='SIM')finMesMap.reembolso[key]+=pm(r.CREDITO_RECEBIDO_VALOR);
+    finMesMap.resultado[key]+=pm(r.RESULTADO_FIN||'0');
+  });
+  if(charts['chartFin']){try{charts['chartFin'].destroy();}catch(e){}}
+  const ctxFin=document.getElementById('chartFin')?.getContext('2d');
+  if(ctxFin){
+    charts['chartFin']=new Chart(ctxFin,{type:'line',data:{labels:mesLabels12,datasets:[
+      {label:'Custos Total',data:mesKeys12.map(k=>finMesMap.custos[k]||0),borderColor:'#d93025',backgroundColor:'rgba(217,48,37,0.08)',borderWidth:2,pointBackgroundColor:'#d93025',pointRadius:4,fill:true,tension:0.3},
+      {label:'Reembolso Plat.',data:mesKeys12.map(k=>finMesMap.reembolso[k]||0),borderColor:'#1e8e3e',backgroundColor:'rgba(30,142,62,0.08)',borderWidth:2,pointBackgroundColor:'#1e8e3e',pointRadius:4,fill:false,tension:0.3},
+      {label:'Resultado Fin.',data:mesKeys12.map(k=>finMesMap.resultado[k]||0),borderColor:'#1a73e8',backgroundColor:'rgba(26,115,232,0.08)',borderWidth:2,pointBackgroundColor:'#1a73e8',pointRadius:4,fill:false,tension:0.3,borderDash:[5,3]}
+    ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'top',labels:{font:{size:11},padding:12,boxWidth:12}},tooltip:{callbacks:{label:ctx=>'R$ '+ctx.parsed.y.toFixed(2).replace('.',',')},bodyFont:{size:11},titleFont:{size:11}}},scales:{y:{beginAtZero:false,grid:{color:'#f1f3f4'},ticks:{font:{size:9},callback:v=>'R$'+v.toFixed(0)}},x:{grid:{display:false},ticks:{font:{size:9},maxRotation:45}}}}});
+  }
   if(finEl){
     finEl.innerHTML=
       '<div class="kpi kpi-err"><div class="kpi-lbl">Custos Total</div><div class="kpi-val" style="font-size:18px">R$ '+custoTotal.toFixed(2).replace('.',',')+'</div><div class="kpi-sub">todos os registros</div></div>'+
@@ -1010,10 +918,10 @@ function openModal(rec){
   const nH=isNew?'<div class="alert-b a-inf"><span>💡</span><span>Digite o ID — Canal, EMPR. e dados serão preenchidos automaticamente.</span></div>':'';
   document.getElementById('dlgBody').innerHTML=[
     mH,aH,nH,
-    '<div class="fsec"><div class="fsec-tit">🗂 Modalidade</div><div class="fg3">',
+    '<div class="fsec fsec-id"><div class="fsec-tit">🗂 Modalidade</div><div class="fg3">',
     fSel('MODALIDADE','Modalidade',r.MODALIDADE,MODALIDADES,false,isErr('MODALIDADE')),
     '</div></div>',
-    '<div class="fsec"><div class="fsec-tit">📦 Identificação</div><div class="fg">',
+    '<div class="fsec fsec-id"><div class="fsec-tit">📦 Identificação</div><div class="fg">',
     fInp('ID_VENDA','ID Venda',r.ID_VENDA,'text',true,isNew?'Digite o ID...':'',false,isNew),
     fSel('CANAL','Canal',r.CANAL,['','Mercado Livre','Shopee','Amazon','Magalu','Cardex'],true,isErr('CANAL')),
     fSel('EMPR','EMPR.',r.EMPR,['','JLD','DGL'],true,isErr('EMPR')),
@@ -1024,8 +932,9 @@ function openModal(rec){
     fRO('RASTREIO','Rastreio (f)',r.RASTREIO),fRO('ID_BLING','ID Bling (f)',r.ID_BLING),fRO('DESC_STATUS','Desc. Status (f)',r.DESC_STATUS),
     '</div><div class="fg" style="margin-top:8px">',
     fInp('AUTOR','Autor',r.AUTOR),fInp('NEC_NF_DEVOL','Nec. NF Devol?',r.NEC_NF_DEVOL),
-    fInp('NF','NF',r.NF),fInp('NF_DEVOL','NF DEVOL',r.NF_DEVOL),    '</div></div>',
-    '<div class="fsec"><div class="fsec-tit">📋 Tratativa</div>',
+    fInp('NF','NF',r.NF),fInp('NF_DEVOL','NF DEVOL',r.NF_DEVOL),fInp('NF_DEVOL_EMISSAO','NF DEVOL Em.',r.NF_DEVOL_EMISSAO),
+    '</div></div>',
+    '<div class="fsec fsec-trat"><div class="fsec-tit">📋 Tratativa</div>',
     '<div class="fg" style="margin-bottom:8px">',
     fRadio3('TRATATIVA_ABERTA','Tratativa Aberta?',r.TRATATIVA_ABERTA,true,isErr('TRATATIVA_ABERTA')),
     fYN('DEVOLUCAO_ABERTA','Devolução Aberta?',r.DEVOLUCAO_ABERTA,true,isErr('DEVOLUCAO_ABERTA')),
@@ -1036,6 +945,7 @@ function openModal(rec){
     fInp('NUM_RECLAM','Nº Reclamação',r.NUM_RECLAM),
     fSel('MOTIVO','Motivo Reclamação',r.MOTIVO,MOTIVOS,wMot,isErr('MOTIVO')),
     fSel('DETALHAMENTO','Detalhamento',r.DETALHAMENTO,DETALHAMENTOS),
+    fInp('OBS_RECLAM','Obs. Reclamação',r.OBS_RECLAM),
     fInp('OBS_RELEVANTES','Obs. Relevantes',r.OBS_RELEVANTES),
     '</div>',
     '<div class="fg3" style="margin-top:8px">',
@@ -1063,12 +973,13 @@ function openModal(rec){
     fYN('TRATATIVA_FINALIZADA','Tratativa Finalizada?',r.TRATATIVA_FINALIZADA,tA,isErr('TRATATIVA_FINALIZADA')),
     '</div>',
     '</div></div>',
-    '<div class="fsec"><div class="fsec-tit">⚖️ Disputa</div>',
+    '<div class="fsec fsec-disp"><div class="fsec-tit">⚖️ Disputa</div>',
     '<div class="fg3" id="dBase">',
     fYN('DISPUTA_ABERTA','Disputa Aberta?',r.DISPUTA_ABERTA,true,isErr('DISPUTA_ABERTA')),
     '</div>',
     '<div class="disp-extra fg3 '+(dA?'show ':'')+'" id="dX1" style="margin-top:8px">',
     fYN('DISPUTA_FINALIZADA','Disputa Final?',r.DISPUTA_FINALIZADA,true,isErr('DISPUTA_FINALIZADA')),
+    fYN('CREDITO','R$ Crédito?',r.CREDITO,rS,isErr('CREDITO')),
     '</div>',
     '<div class="disp-extra fg '+(dA?'show ':'')+'" id="dX2" style="margin-top:8px">',
     fInp('PLAT_DISPUTA','Plataforma',r.PLAT_DISPUTA),
@@ -1076,10 +987,10 @@ function openModal(rec){
     fInp('PROTOCOLO','Protocolo',r.PROTOCOLO),
     fInp('OBS_DISPUTA','Obs. Disputa',r.OBS_DISPUTA),
     '</div>',
-    '<div class="fg3" style="margin-top:8px;border-top:1px solid var(--out-v);padding-top:8px">',
+    '<div class="disp-extra fg3 '+(dA?'show ':'')+'" id="dX3" style="margin-top:8px">',
     fYN('REEMBOLSO_MKT','Reembolso do Marketplace?',r.REEMBOLSO_MKT,false,false),
     '</div>',
-    '<div id="mktExtra" class="'+(mktA?'':'trat-extra')+'" style="margin-top:8px">',
+    '<div class="disp-extra '+(dA&&mktA?'show ':'')+'" id="mktExtra" style="margin-top:8px">',
     '<div class="fg3">',
     fInp('ID_TRANSACAO','ID Transação',r.ID_TRANSACAO),
     fInp('CREDITO_RECEBIDO_VALOR','R$ Créd. Rec.',r.CREDITO_RECEBIDO_VALOR),
@@ -1087,7 +998,7 @@ function openModal(rec){
     '</div>',
     '</div>',
     '</div></div>',
-    '<div class="fsec"><div class="fsec-tit">🏭 Full/Estoque</div><div class="fg3">',
+    '<div class="fsec fsec-id"><div class="fsec-tit">🏭 Full/Estoque</div><div class="fg3">',
     fInp('STATUS_FULL','Status Full',r.STATUS_FULL),
     fYN('CHEGOU_CARDEX','Chegou Cardex?',r.CHEGOU_CARDEX),
     '</div></div>'
@@ -1342,8 +1253,6 @@ const CS_BULK={'TRATATIVA ABERTA':'chip-ta','TRATATIVA ATRASADA':'chip-tat','ACO
 function getCellVal(ri,key){return(bulkChg[ri]&&bulkChg[ri][key]!==undefined)?bulkChg[ri][key]:(bulkOrig[ri][key]||'');}
 
 function mkIDCell(r,ri,c){
-  // Todos os campos de Identificação agora são editáveis no bulk
-  // (incluindo campos fórmula — permite correção manual)
   return mkEditCell(r,ri,c,'sec-id');
 }
 function mkEditCell(r,ri,c,secCls){
@@ -1358,8 +1267,8 @@ function mkEditCell(r,ri,c,secCls){
 
 // ── VIRTUAL RENDERING ────────────────────────────────────────────────
 // Renderiza só as linhas visíveis + margem. Drasticamente mais rápido.
-const VIRTUAL_ROW_H = 28; // altura estimada de cada linha em px
-const VIRTUAL_BUFFER = 15; // linhas extra acima e abaixo do viewport
+const VIRTUAL_ROW_H = 26; // altura estimada de cada linha em px
+const VIRTUAL_BUFFER = 10; // linhas extra acima e abaixo do viewport
 
 let _lastVStart=-1,_lastVEnd=-1,_lastVTarget=null;
 
@@ -1369,7 +1278,7 @@ const _stChipMap={'TRATATIVA ABERTA':'chip-ta','TRATATIVA ATRASADA':'chip-tat','
 function renderBulkRows(tbody){
   if(!tbody)return;
   // Para tabelas pequenas, renderiza tudo normalmente
-  if(bulkFiltered.length<=200){
+  if(bulkFiltered.length<=80){
     _renderAllRows(tbody);
     return;
   }
@@ -1484,7 +1393,7 @@ function startFill(e,ri,key){
   if(fillVal===undefined||fillVal===null)fillVal='';
   const fsOpen=document.getElementById('fsOverlay').style.display==='flex';
   const scroller=fsOpen?document.getElementById('fsBody'):document.getElementById('bulkSheet');
-  const ZONE=60,SPEED=22;
+  const ZONE=50,SPEED=18;
   let fillTarget=ri;
 
   function clearHL(){
@@ -1615,14 +1524,18 @@ function clearBulkFilters(){
 
 // ── HIDE SECTION ──────────────────────────────────────────────────────────
 function hideSection(sec){
-  // sec = 'id' | 'trat' | 'disp'
-  const secCols={'id':ID_COLS,'trat':TC,'disp':DC};
-  const cols=secCols[sec];if(!cols)return;
-  cols.forEach(c=>{if(c.t!=='ro')hiddenCols.add(c.k);});
+  if(sec==='id'){
+    const keep=new Set(['MODALIDADE','NOME','CANAL','SKU']);
+    ID_COLS.forEach(c=>{if(!keep.has(c.k))hiddenCols.add(c.k);});
+  } else {
+    const secCols={'trat':TC,'disp':DC};
+    const cols=secCols[sec];if(!cols)return;
+    cols.forEach(c=>{hiddenCols.add(c.k);});
+  }
   buildBulkHead(document.getElementById('bHead'));
   buildBulkHead(document.getElementById('fsHead'));
   applyBF();
-  snack('Seção ocultada — clique ↺ Desfazer para restaurar');
+  snack('Seção simplificada — clique ↺ Desfazer para restaurar');
 }
 
 // ── COLUMN RESIZE ─────────────────────────────────────────────────────────
@@ -1630,23 +1543,21 @@ let _resizeKey=null,_resizeStartX=0,_resizeStartW=0;
 function startResize(e,key){
   e.preventDefault();e.stopPropagation();
   _resizeKey=key;_resizeStartX=e.clientX;
-  _resizeStartW=colWidths[key]||100;
+  _resizeStartW=colWidths[key]||document.querySelector('th[data-colkey="'+key+'"]')?.offsetWidth||110;
   document.body.style.cursor='col-resize';
   document.body.style.userSelect='none';
   function onMove(ev){
     const delta=ev.clientX-_resizeStartX;
-    colWidths[_resizeKey]=Math.max(50,_resizeStartW+delta);
-    // Update all TH widths live
-    const ths=document.querySelectorAll('th[data-colkey="'+_resizeKey+'"]');
-    ths.forEach(th=>{th.style.width=colWidths[_resizeKey]+'px';});
+    const newW=Math.max(50,_resizeStartW+delta);
+    colWidths[_resizeKey]=newW;
+    document.querySelectorAll('[data-colkey="'+_resizeKey+'"]').forEach(th=>{
+      th.style.width=newW+'px';th.style.minWidth=newW+'px';
+    });
   }
   function onUp(){
     document.body.style.cursor='';document.body.style.userSelect='';
     document.removeEventListener('mousemove',onMove);
-    document.removeEventListener('mouseup',onUp);
-    buildBulkHead(document.getElementById('bHead'));
-    buildBulkHead(document.getElementById('fsHead'));
-    _resizeKey=null;
+    document.removeEventListener('mouseup',onUp);_resizeKey=null;
   }
   document.addEventListener('mousemove',onMove);
   document.addEventListener('mouseup',onUp);
