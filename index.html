@@ -378,7 +378,7 @@ tbody tr:last-child td{border-bottom:none;}tbody tr:hover td{background:#f8f9fa;
 .miss-chip:hover{background:#f5c6c2;}
 .miss-chip.active{background:#d93025;color:#fff;}
 
-.fs-overlay{position:fixed;inset:0;z-index:900;background:#fff;flex-direction:column;display:none;}
+
 
 /* ── Dashboard — cards SKU e gráfico de meses ───────────────── */
 .dash-bottom-row{
@@ -432,6 +432,56 @@ tbody tr:last-child td{border-bottom:none;}tbody tr:hover td{background:#f8f9fa;
   margin-top:12px;
 }
 .month-chart-wrap{position:relative;height:200px;}
+
+/* ── Tela cheia Preenchimento em Massa ─────────────────────────── */
+.fs-overlay{
+  position:fixed;inset:0;z-index:900;
+  background:#f8f9fa;
+  flex-direction:column;
+  display:none;
+}
+.fs-header{
+  background:#fff;
+  border-bottom:1px solid var(--out);
+  padding:8px 16px;
+  display:flex;flex-direction:column;gap:6px;
+  flex-shrink:0;
+}
+.fs-header-row1{
+  display:flex;align-items:center;gap:8px;
+  min-height:36px;
+}
+.fs-header-row2{
+  display:flex;align-items:center;gap:8px;
+  flex-wrap:wrap;
+  padding-bottom:2px;
+}
+.fs-miss-row{
+  display:flex;align-items:center;gap:6px;
+  flex-wrap:wrap;font-size:12px;
+  color:var(--err);
+  min-height:20px;
+}
+.fs-body{
+  flex:1;
+  overflow:auto;          /* ← scroll horizontal + vertical */
+  position:relative;
+  background:#fff;
+}
+.fs-footer{
+  background:#fff;
+  border-top:1px solid var(--out);
+  padding:6px 16px;
+  display:flex;align-items:center;gap:16px;
+  font-size:12px;color:var(--on-sur-v);
+  flex-shrink:0;
+}
+.fs-title{
+  font-family:'Google Sans',sans-serif;
+  font-size:15px;font-weight:500;
+  color:var(--on-sur);
+  flex-shrink:0;
+}
 </style>
 </head>
 <body>
@@ -587,14 +637,16 @@ tbody tr:last-child td{border-bottom:none;}tbody tr:hover td{background:#f8f9fa;
 <!-- FULLSCREEN -->
 <div class="fs-overlay" id="fsOverlay" style="display:none">
   <div class="fs-header">
+    <!-- Linha 1: título + ações -->
     <div class="fs-header-row1">
-      <div class="fs-title" style="font-family:'Google Sans',sans-serif;font-size:15px;font-weight:500;flex-shrink:0">Preenchimento em Massa</div>
+      <span class="fs-title">📝 Preenchimento em Massa</span>
       <div style="flex:1"></div>
       <span style="font-size:11px;color:var(--on-sur-v)" id="fsInfo"></span>
-      <button class="btn btn-outlined btn-sm" onclick="bulkReset()">↺</button>
+      <button class="btn btn-outlined btn-sm" onclick="bulkReset()">↺ Desfazer</button>
       <button class="btn btn-filled btn-sm" onclick="bulkSave()">💾 Salvar</button>
-      <button class="btn-icon" onclick="closeFS()">✕</button>
+      <button class="btn-icon" onclick="closeFS()" title="Fechar">✕</button>
     </div>
+    <!-- Linha 2: filtros -->
     <div class="fs-header-row2">
       <select class="bulk-filter-sel" id="fsBfStatus" onchange="syncFSFilters()">
         <option value="">Todos os Status</option>
@@ -605,33 +657,33 @@ tbody tr:last-child td{border-bottom:none;}tbody tr:hover td{background:#f8f9fa;
       </select>
       <select class="bulk-filter-sel" id="fsBfCanal" onchange="syncFSFilters()">
         <option value="">Todos os Canais</option>
-        <option>Mercado Livre</option><option>Shopee</option><option>Amazon</option><option>Magalu</option><option>Cardex</option>
+        <option>Mercado Livre</option><option>Shopee</option>
+        <option>Amazon</option><option>Magalu</option><option>Cardex</option>
       </select>
       <select class="bulk-filter-sel" id="fsBfModal" onchange="syncFSFilters()">
         <option value="">Todas as Modalidades</option>
-        <option>Devolução</option><option>Cancelado</option><option>Não Entregue</option>
-        <option>Mensagem</option><option>Reclamação</option><option>Resolvido</option>
+        <option>Devolução</option><option>Cancelado</option>
+        <option>Não Entregue</option><option>Mensagem</option>
+        <option>Reclamação</option><option>Resolvido</option>
       </select>
-      <input class="bulk-filter-inp" id="fsBfSku" placeholder="SKU..." oninput="syncFSFilters()">
-      <button class="bulk-filter-clear" onclick="clearBulkFilters()">✕</button>
+      <input class="bulk-filter-inp" id="fsBfSku" placeholder="Filtrar SKU..." oninput="syncFSFilters()">
+      <button class="bulk-filter-clear" onclick="clearBulkFilters()">✕ Limpar</button>
       <span class="bulk-filter-count" id="fsBulkFilterCount">0</span>
     </div>
-    <div class="fs-miss-row" style="display:flex;align-items:center;gap:5px;flex-wrap:wrap">
-      <label style="font-size:11px;color:var(--err);font-weight:600">⚠</label>
+    <!-- Linha 3: campos em falta -->
+    <div class="fs-miss-row">
       <span id="fsMissChips"></span>
-      <span class="miss-counter" id="fsMissCounter">0</span>
-      <button class="btn btn-sm" style="background:#fff;border:1px solid var(--err);color:var(--err);border-radius:12px;padding:3px 9px;font-size:11px;cursor:pointer" onclick="clearMissFilter()">✕</button>
+      <span class="miss-counter" id="fsMissCounter" style="display:none">0</span>
     </div>
-
   </div>
+  <!-- Tabela com scroll -->
   <div class="fs-body" id="fsBody">
     <table class="bt"><thead id="fsHead"></thead><tbody id="fsBBody"></tbody></table>
   </div>
   <div class="fs-footer">
-    <span>Mostrando <span id="fsBfCount">0</span> de <span id="fsBfTotal">0</span></span>
+    <span>Mostrando <strong id="fsBfCount">0</strong> de <strong id="fsBfTotal">0</strong></span>
     <span>Alteradas: <strong id="fsChg">0</strong></span>
-  </div>
-</div>
+  </div></div>
 
 <!-- DIALOG -->
 <div class="dlg-ov" id="dlgOv">
@@ -1290,11 +1342,8 @@ const CS_BULK={'TRATATIVA ABERTA':'chip-ta','TRATATIVA ATRASADA':'chip-tat','ACO
 function getCellVal(ri,key){return(bulkChg[ri]&&bulkChg[ri][key]!==undefined)?bulkChg[ri][key]:(bulkOrig[ri][key]||'');}
 
 function mkIDCell(r,ri,c){
-  if(c.t==='ro'){
-    const val=r[c.k]||'';
-    const mc=getMiss(r).includes(c.k)?'miss-cell':'';
-    return `<td class="sec-id ${mc}" data-row="${ri}" data-col="${c.k}" onclick="selCell(this)" style="padding:3px 5px;white-space:nowrap;font-size:10px;color:var(--on-sur-v)">${val}<div class="fill-handle" onmousedown="startFill(event,${ri},'${c.k}')"></div></td>`;
-  }
+  // Todos os campos de Identificação agora são editáveis no bulk
+  // (incluindo campos fórmula — permite correção manual)
   return mkEditCell(r,ri,c,'sec-id');
 }
 function mkEditCell(r,ri,c,secCls){
@@ -1435,7 +1484,7 @@ function startFill(e,ri,key){
   if(fillVal===undefined||fillVal===null)fillVal='';
   const fsOpen=document.getElementById('fsOverlay').style.display==='flex';
   const scroller=fsOpen?document.getElementById('fsBody'):document.getElementById('bulkSheet');
-  const ZONE=50,SPEED=18;
+  const ZONE=60,SPEED=22;
   let fillTarget=ri;
 
   function clearHL(){
