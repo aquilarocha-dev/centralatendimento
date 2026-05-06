@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- KIDSY v2026-05-06 16:19:47 -->
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
@@ -460,7 +461,7 @@ tbody tr:last-child td{border-bottom:none;}tbody tr:hover td{background:#f8f9fa;
     <div class="month-chart-wrap"><canvas id="chartFin"></canvas></div>
   </div>
   <div class="month-chart-card">
-    <div class="dash-card-title">📅 Registros por Mês (últimos 12 meses)</div>
+    <div class="dash-card-title">📅 Registros por Mês (últimos 6 meses)</div>
     <div class="month-chart-wrap"><canvas id="chartMes"></canvas></div>
   </div>
 </div>
@@ -591,6 +592,7 @@ tbody tr:last-child td{border-bottom:none;}tbody tr:hover td{background:#f8f9fa;
     <span>Mostrando <strong id="fsBfCount">0</strong> de <strong id="fsBfTotal">0</strong></span>
     <span>Alteradas: <strong id="fsChg">0</strong></span>
   </div>
+</div>
 <!-- DIALOG -->
 <div class="dlg-ov" id="dlgOv">
   <div class="dlg">
@@ -602,21 +604,19 @@ tbody tr:last-child td{border-bottom:none;}tbody tr:hover td{background:#f8f9fa;
 <div class="snack" id="snack"></div>
 <script>
 const COL={
-  STATUS:0,MODALIDADE:1,ID_VENDA:2,NOME:3,CANAL:4,EMPR:5,MODELO:6,
-  DATA_VENDA:7,SKU:8,QT:9,RASTREIO:10,ID_BLING:11,DESC_STATUS:12,
-  NEC_NF_DEVOL:13,NF:14,NF_DEVOL:15,NF_DEVOL_EMISSAO:16,AUTOR:17,
-  TRATATIVA_ABERTA:18,
-  MOTIVO:19,DETALHAMENTO:20,OBS_RECLAM:21,
-  DATA_TRATATIVA:22,NUM_RECLAM:23,REPUTACAO:24,REEMBOLSADO:25,
-  DEVOLUCAO_ABERTA:26,NEC_PECAS:27,PECAS_ENVIADAS:28,OBS_PECAS:29,
-  REENVIO_RECEBIDO:30,CUSTO_ENVIO:31,PAGO_PLAT:32,VALOR_PAGO:33,
-  CUSTOS_TOTAL:34,TRATATIVA_FINALIZADA:35,OBS_RELEVANTES:36,
-  STATUS_FULL:37,CHEGOU_CARDEX:38,
-  DISPUTA_ABERTA:39,PLAT_DISPUTA:40,MOTIVO_DISPUTA:41,PROTOCOLO:42,
-  CREDITO:43,ID_TRANSACAO:44,REEMBOLSO_MKT:45,DISPUTA_FINALIZADA:46,
-  CREDITO_RECEBIDO_VALOR:47,CREDITO_RECEBIDO:48,OBS_DISPUTA:49,
-  RESULTADO_FIN:55,
-  IMPOSTO_RESGATADO:52
+  STATUS:0,MODALIDADE:1,ID_VENDA:2,NOME:3,CANAL:4,
+  EMPR:5,MODELO:6,DATA_VENDA:7,SKU:8,QT:9,
+  RASTREIO:10,NF:11,NF_DEVOL:12,AUTOR:13,
+  NF_DEVOL_EMISSAO:14,NEC_NF_DEVOL:15,MOTIVO:16,DETALHAMENTO:17,OBS_RECLAM:18,
+  DATA_TRATATIVA:19,DEVOLUCAO_ABERTA:20,NEC_PECAS:21,
+  PECAS_ENVIADAS:22,OBS_PECAS:23,REENVIO_RECEBIDO:24,
+  CUSTO_ENVIO:25,PAGO_PLAT:26,VALOR_PAGO:27,CUSTOS_TOTAL:28,
+  TRATATIVA_FINALIZADA:29,STATUS_FULL:30,CHEGOU_CARDEX:31,
+  DISPUTA_ABERTA:32,PLAT_DISPUTA:33,CREDITO:34,ID_TRANSACAO:35,
+  REEMBOLSO_MKT:36,DISPUTA_FINALIZADA:37,CREDITO_RECEBIDO_VALOR:38,
+  CREDITO_RECEBIDO:39,OBS_DISPUTA:40,
+  NF_TOTAL:41,VALOR_NF:42,IMPOSTO_RESGATADO:43,
+  CUSTOS_TOTAIS:44,REEMBOLSO:45,RESULTADO_FIN:46,STATUS2:47
 };
 const FORMULA_COLS=new Set([0,3,7,8,9,10,11,12]);
 const EDIT_COLS=Object.entries(COL).filter(([,i])=>!FORMULA_COLS.has(i)).map(([k,i])=>({key:k,idx:i}));
@@ -626,7 +626,7 @@ const IGNORADOS_BULK=['CONCLUÍDO','AGUARDANDO PRODUTO',''];
 const MOTIVOS=['','Envio atrasado','Atraso na entrega','Defeito','Arrependimento','Produto Errado','Falta de Peça','Não Recebido','Dificuldade com Manual','Qualidade Ruim','Produto Danificado','Caixa Danificada'];
 const MODALIDADES=['','Devolução','Cancelado','Não Entregue','Mensagem','Reclamação','Resolvido'];
 const DETALHAMENTOS=['','Roda','Suporte','Manual','Tecido','Mangueira','Ferramentas','Alça'];
-const OBRIG_KEYS=['ID_VENDA','CANAL','EMPR','MODELO','DEVOLUCAO_ABERTA','NEC_PECAS','DISPUTA_ABERTA','TRATATIVA_FINALIZADA'];
+const OBRIG_KEYS=['ID_VENDA','CANAL','EMPR','MODELO','DEVOLUCAO_ABERTA','DISPUTA_ABERTA'];
 
 function cN(s){s=s.toUpperCase();let n=0;for(let i=0;i<s.length;i++)n=n*26+(s.charCodeAt(i)-64);return n-1;}
 const BANCO_MAP={
@@ -651,58 +651,56 @@ let hiddenSections=new Set(); // 'id','trat','disp'
 // IDENTIFICAÇÃO: Status(ro), Modalidade, Nome(ro), Canal(ro), EMPR, Modelo,
 //                NF, NF_DEVOL, NF_DEVOL_EMISSAO, NEC_NF_DEVOL, AUTOR
 const ID_COLS=[
-  {k:'MODALIDADE',       l:'Modalidade',        t:'sel', o:MODALIDADES},
-  {k:'NOME',             l:'Nome',              t:'ro'},
-  {k:'CANAL',            l:'Canal De Venda',    t:'sel', o:['','Mercado Livre','Shopee','Amazon','Magalu','Cardex']},
-  {k:'EMPR',             l:'EMPR.',             t:'sel', o:['','JLD','DGL'], req:true},
-  {k:'MODELO',           l:'Modelo',            t:'sel', o:['','Full','Normal','Flex','Cardex'], req:true},
-  {k:'DATA_VENDA',       l:'Data da Venda',     t:'ro'},
-  {k:'SKU',              l:'SKU',               t:'ro'},
-  {k:'QT',               l:'QT',                t:'ro'},
-  {k:'RASTREIO',         l:'Rastreio',          t:'ro'},
-  {k:'ID_BLING',         l:'ID Bling',          t:'ro'},
-  {k:'DESC_STATUS',      l:'Desc. Status',      t:'ro'},
-  {k:'NEC_NF_DEVOL',     l:'Nec. NF Devol?',   t:'yn'},
-  {k:'NF',               l:'NF',                t:'txt'},
-  {k:'NF_DEVOL',         l:'NF DEVOL',          t:'txt'},
-  {k:'NF_DEVOL_EMISSAO', l:'NF DEVOL Emissão',  t:'txt'},
-  {k:'AUTOR',            l:'AUTOR',             t:'txt'},
+  {k:'MODALIDADE',l:'Modalidade',t:'sel',opts:['','Devolucao','Cancelado','Nao Entregue','Mensagem','Reclamacao','Resolvido']},
+  {k:'ID_VENDA',l:'ID Venda',t:'txt'},
+  {k:'NOME',l:'Nome',t:'txt'},
+  {k:'CANAL',l:'Canal',t:'sel',opts:['','Mercado Livre','Shopee','Amazon','Magalu','Cardex']},
+  {k:'EMPR',l:'EMPR.',t:'sel',opts:['','JLD','DGL']},
+  {k:'MODELO',l:'Modelo',t:'sel',opts:['','Full','Normal']},
+  {k:'DATA_VENDA',l:'Data Venda',t:'txt'},
+  {k:'SKU',l:'SKU',t:'txt'},
+  {k:'QT',l:'QT',t:'txt'},
+  {k:'RASTREIO',l:'Rastreio',t:'txt'},
+  {k:'NF',l:'NF',t:'txt'},
+  {k:'NF_DEVOL',l:'NF Devol.',t:'txt'},
+  {k:'AUTOR',l:'Autor',t:'ro'},
+  {k:'NF_DEVOL_EMISSAO',l:'NF Devol. Em.',t:'txt'},
+  {k:'NEC_NF_DEVOL',l:'Nec. NF Devol?',t:'sel',opts:['','SIM','NAO']},
 ];
 const TC=[
-  {k:'TRATATIVA_ABERTA',   l:'Tratativa Aberta?',  t:'sel', o:['','SIM','NÃO','Reaberta'], req:true},
-  {k:'MOTIVO',             l:'Motivo Reclamação',   t:'sel', o:MOTIVOS},
-  {k:'DETALHAMENTO',       l:'Detalhamento',        t:'sel', o:DETALHAMENTOS},
-  {k:'OBS_RECLAM',         l:'Obs. Reclamação',     t:'txt'},
-  {k:'DATA_TRATATIVA',     l:'DATA Tratativa',      t:'txt'},
-  {k:'NUM_RECLAM',         l:'Nº Recl. Cliente',    t:'txt'},
-  {k:'REPUTACAO',          l:'Impacto Reputação?',  t:'yn'},
-  {k:'REEMBOLSADO',        l:'Cliente Reembolsado?',t:'yn'},
-  {k:'DEVOLUCAO_ABERTA',   l:'Devol. Aberta?',      t:'yn', req:true},
-  {k:'NEC_PECAS',          l:'Nec. Peças?',         t:'yn', req:true},
-  {k:'PECAS_ENVIADAS',     l:'Peças Enviadas?',     t:'yn'},
-  {k:'OBS_PECAS',          l:'Obs. Peças',          t:'txt'},
-  {k:'REENVIO_RECEBIDO',   l:'Reenvio Recebido?',   t:'yn'},
-  {k:'CUSTO_ENVIO',        l:'Custo Envio',         t:'txt'},
-  {k:'PAGO_PLAT',          l:'Pago Plat/Cliente',   t:'txt'},
-  {k:'VALOR_PAGO',         l:'Valor Pago',          t:'txt'},
-  {k:'CUSTOS_TOTAL',       l:'Custos Total',        t:'txt'},
-  {k:'TRATATIVA_FINALIZADA',l:'Trat. Finalizada?',  t:'yn', req:true},
-  {k:'OBS_RELEVANTES',     l:'Obs. Relevantes',     t:'txt'},
-  {k:'STATUS_FULL',        l:'Status Full',         t:'txt'},
-  {k:'CHEGOU_CARDEX',      l:'Chegou Cardex?',      t:'yn'},
+  {k:'DATA_TRATATIVA',l:'Data Tratativa',t:'txt'},
+  {k:'MOTIVO',l:'Motivo',t:'txt'},
+  {k:'DETALHAMENTO',l:'Detalhamento',t:'txt'},
+  {k:'OBS_RECLAM',l:'Obs. Reclamacao',t:'txt'},
+  {k:'DEVOLUCAO_ABERTA',l:'Devolucao Aberta?',t:'sel',opts:['','SIM','NAO']},
+  {k:'NEC_PECAS',l:'Nec. Pecas?',t:'sel',opts:['','SIM','NAO']},
+  {k:'PECAS_ENVIADAS',l:'Pecas Enviadas?',t:'sel',opts:['','SIM','NAO']},
+  {k:'OBS_PECAS',l:'Obs. Pecas',t:'txt'},
+  {k:'REENVIO_RECEBIDO',l:'Reenvio Recebido?',t:'sel',opts:['','SIM','NAO']},
+  {k:'CUSTO_ENVIO',l:'Custo Envio',t:'txt'},
+  {k:'PAGO_PLAT',l:'Pago Plat?',t:'sel',opts:['','SIM','NAO']},
+  {k:'VALOR_PAGO',l:'Valor Pago',t:'txt'},
+  {k:'CUSTOS_TOTAL',l:'Custos Total',t:'txt'},
+  {k:'TRATATIVA_FINALIZADA',l:'Trat. Final?',t:'sel',opts:['','SIM','NAO']},
 ];
 const DC=[
-  {k:'DISPUTA_ABERTA',         l:'Disp. Aberta?',     t:'yn', req:true},
-  {k:'PLAT_DISPUTA',           l:'Plataforma',        t:'txt'},
-  {k:'MOTIVO_DISPUTA',         l:'Motivo Disputa',    t:'txt'},
-  {k:'PROTOCOLO',              l:'Protocolo',         t:'txt'},
-  {k:'CREDITO',                l:'R$ Crédito?',       t:'yn'},
-  {k:'ID_TRANSACAO',           l:'ID Transação',      t:'txt'},
-  {k:'REEMBOLSO_MKT',          l:'Reemb. Marketplace?',t:'yn'},
-  {k:'DISPUTA_FINALIZADA',     l:'Disp. Finalizada?', t:'yn'},
-  {k:'CREDITO_RECEBIDO_VALOR', l:'R$ Créd. Recebido', t:'txt'},
-  {k:'CREDITO_RECEBIDO',       l:'Crédito Recebido?', t:'yn'},
-  {k:'OBS_DISPUTA',            l:'Obs. Disputa',      t:'txt'},
+  {k:'STATUS_FULL',l:'Status Full',t:'txt'},
+  {k:'CHEGOU_CARDEX',l:'Chegou Cardex?',t:'sel',opts:['','SIM','NAO']},
+  {k:'DISPUTA_ABERTA',l:'Disputa Aberta?',t:'sel',opts:['','SIM','NAO']},
+  {k:'PLAT_DISPUTA',l:'Plat. Disputa',t:'txt'},
+  {k:'CREDITO',l:'R$ Credito?',t:'txt'},
+  {k:'ID_TRANSACAO',l:'ID Transacao',t:'txt'},
+  {k:'REEMBOLSO_MKT',l:'Reembolso Mkt?',t:'sel',opts:['','SIM','NAO']},
+  {k:'DISPUTA_FINALIZADA',l:'Disp. Final?',t:'sel',opts:['','SIM','NAO']},
+  {k:'CREDITO_RECEBIDO_VALOR',l:'R$ Cred. Rec.',t:'txt'},
+  {k:'CREDITO_RECEBIDO',l:'Cred. Recebido?',t:'sel',opts:['','SIM','NAO']},
+  {k:'OBS_DISPUTA',l:'Obs. Disputa',t:'txt'},
+  {k:'NF_TOTAL',l:'NFs Devol. Total',t:'txt'},
+  {k:'VALOR_NF',l:'Valor NF',t:'txt'},
+  {k:'IMPOSTO_RESGATADO',l:'Imposto Resgatado',t:'txt'},
+  {k:'CUSTOS_TOTAIS',l:'Custos Totais',t:'ro'},
+  {k:'REEMBOLSO',l:'Reembolso',t:'ro'},
+  {k:'RESULTADO_FIN',l:'Resultado Fin.',t:'ro'},
 ];
 
 window.addEventListener('beforeunload',e=>{
@@ -882,7 +880,7 @@ function renderDashboard(){
     const d=parseDate(r.DATA_VENDA);if(!d)return;
     const key=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
     if(!mesKeys12.includes(key))return;
-    finMesMap.custos[key]=(finMesMap.custos[key]||0)+pm(r.CUSTOS_TOTAL);
+    finMesMap.custos[key]=(finMesMap.custos[key]||0)+pm(r.CUSTOS_TOTAIS||r.CUSTOS_TOTAL);
     if(r.REEMBOLSO_MKT==='SIM')finMesMap.reembolso[key]=(finMesMap.reembolso[key]||0)+pm(r.CREDITO_RECEBIDO_VALOR);
     finMesMap.resultado[key]=(finMesMap.resultado[key]||0)+pm(r.RESULTADO_FIN||'0');
     finMesMap.imposto[key]=(finMesMap.imposto[key]||0)+pm(r.IMPOSTO_RESGATADO||'0');
@@ -893,8 +891,8 @@ function renderDashboard(){
     charts['chartFin']=new Chart(ctxFin,{type:'line',data:{labels:mesLabels12,datasets:[
       {label:'Custos',data:mesKeys12.map(k=>finMesMap.custos[k]||0),borderColor:'#d93025',backgroundColor:'rgba(217,48,37,0.08)',borderWidth:2,pointRadius:4,fill:true,tension:0.3},
       {label:'Reembolso Plat.',data:mesKeys12.map(k=>finMesMap.reembolso[k]||0),borderColor:'#1e8e3e',backgroundColor:'rgba(30,142,62,0.06)',borderWidth:2,pointRadius:4,fill:false,tension:0.3},
-      {label:'Resultado',data:mesKeys12.map(k=>finMesMap.resultado[k]||0),borderColor:'#1a73e8',backgroundColor:'rgba(26,115,232,0.06)',borderWidth:2,pointRadius:4,fill:false,tension:0.3,borderDash:[5,3]},
-      {label:'Imposto Recup.',data:mesKeys12.map(k=>finMesMap.imposto[k]||0),borderColor:'#7627bb',backgroundColor:'rgba(118,39,187,0.06)',borderWidth:2,pointRadius:4,fill:false,tension:0.3}
+      {label:'Imposto Recup.',data:mesKeys12.map(k=>finMesMap.imposto[k]||0),borderColor:'#7627bb',backgroundColor:'rgba(118,39,187,0.06)',borderWidth:2,pointRadius:4,fill:false,tension:0.3},
+      {label:'Resultado',data:mesKeys12.map(k=>finMesMap.resultado[k]||0),borderColor:'#1a73e8',backgroundColor:'rgba(26,115,232,0.06)',borderWidth:2,pointRadius:4,fill:false,tension:0.3,borderDash:[5,3]}
     ]},options:{responsive:true,maintainAspectRatio:false,layout:{padding:{top:8}},
       plugins:{legend:{display:true,position:'top',labels:{font:{size:10},boxWidth:10,padding:8}},tooltip:{callbacks:{label:c=>'R$ '+c.parsed.y.toFixed(2).replace('.',',')},bodyFont:{size:10}}},
       scales:{y:{beginAtZero:false,grid:{color:'#f1f3f4'},ticks:{font:{size:9},callback:v=>'R$'+v.toFixed(0)}},x:{grid:{display:false},ticks:{font:{size:9},maxRotation:0}}}}});
@@ -911,8 +909,8 @@ function renderDashboard(){
     finEl.innerHTML=
       '<div class="kpi kpi-err"><div class="kpi-lbl">Custos Total</div><div class="kpi-val" style="font-size:18px">R$ '+custoTotal.toFixed(2).replace('.',',')+'</div><div class="kpi-sub">todos os registros</div></div>'+
       '<div class="kpi kpi-ok"><div class="kpi-lbl">Reemb. da Plataforma</div><div class="kpi-val" style="font-size:18px">R$ '+reembolsoTotal.toFixed(2).replace('.',',')+'</div><div class="kpi-sub">recebido da plataforma</div></div>'+
-      '<div class="kpi kpi-pur"><div class="kpi-lbl">Resultado Financeiro</div><div class="kpi-val" style="font-size:18px">R$ '+resultadoFin.toFixed(2).replace('.',',')+'</div><div class="kpi-sub">crédito - custos</div></div>'+
-      '<div class="kpi" style="border-left:4px solid #7627bb"><div class="kpi-lbl">Imposto Recuperado</div><div class="kpi-val" style="font-size:18px;color:#7627bb">R$ '+impostoTotalKpi.toFixed(2).replace('.',',')+'</div><div class="kpi-sub">todos os registros</div></div>';
+      '<div class="kpi" style="border-left:4px solid #7627bb"><div class="kpi-lbl">Imposto Recuperado</div><div class="kpi-val" style="font-size:18px;color:#7627bb">R$ '+impostoTotalKpi.toFixed(2).replace('.',',')+'</div><div class="kpi-sub">todos os registros</div></div>'+
+      '<div class="kpi kpi-pur"><div class="kpi-lbl">Resultado Financeiro</div><div class="kpi-val" style="font-size:18px">R$ '+resultadoFin.toFixed(2).replace('.',',')+'</div><div class="kpi-sub">crédito - custos</div></div>';
   }
 }
 
@@ -945,15 +943,37 @@ function render(){
   document.getElementById('pag').innerHTML=p;
 }
 function goP(p){const tp=Math.ceil(filtered.length/PG)||1;if(p<1||p>tp)return;curPage=p;render();}
-function getMiss(r){const m=[];OBRIG_KEYS.forEach(f=>{if(!r[f])m.push(f);});if(['Devolução','Mensagem','Reclamação'].includes(r.MODALIDADE)&&!r.MOTIVO)m.push('MOTIVO');if(r.DISPUTA_ABERTA==='SIM'&&!r.DISPUTA_FINALIZADA)m.push('DISPUTA_FINALIZADA');if(r.DISPUTA_FINALIZADA==='SIM'&&!r.REEMBOLSO_MKT)m.push('REEMBOLSO_MKT');if(r.REEMBOLSO_MKT==='SIM'&&!r.CREDITO)m.push('CREDITO');return m;}
-const ML={ID_VENDA:'ID Venda',CANAL:'Canal',EMPR:'EMPR.',MODELO:'Modelo',DEVOLUCAO_ABERTA:'Devolução Aberta?',NEC_PECAS:'Nec. Peças?',DISPUTA_ABERTA:'Disputa Aberta?',TRATATIVA_FINALIZADA:'Tratativa Final?',MOTIVO:'Motivo Reclamação',DISPUTA_FINALIZADA:'Disputa Final?',REEMBOLSO_MKT:'Reembolso Mkt?',CREDITO:'R$ Crédito?',MODALIDADE:'Modalidade'};
+function getMiss(r){
+  const m=[];
+  OBRIG_KEYS.forEach(f=>{if(!r[f])m.push(f);});
+  // Motivo obrigatório para certas modalidades
+  if(['Devolução','Mensagem','Reclamação'].includes(r.MODALIDADE)&&!r.MOTIVO)m.push('MOTIVO');
+  // Se Tratativa Aberta (SIM ou Reaberta): NEC_PECAS e TRATATIVA_FINALIZADA obrigatórios
+  const tA=r.DEVOLUCAO_ABERTA==='SIM'||r.DEVOLUCAO_ABERTA==='Reaberta';
+  if(tA&&!r.NEC_PECAS)m.push('NEC_PECAS');
+  if(tA&&!r.TRATATIVA_FINALIZADA)m.push('TRATATIVA_FINALIZADA');
+  // Se Disputa Aberta (SIM): REEMBOLSO_MKT obrigatório
+  if(r.DISPUTA_ABERTA==='SIM'&&!r.REEMBOLSO_MKT)m.push('REEMBOLSO_MKT');
+  // Se Disputa Finalizada (SIM): DISPUTA_FINALIZADA obrigatório
+  if(r.DISPUTA_ABERTA==='SIM'&&!r.DISPUTA_FINALIZADA)m.push('DISPUTA_FINALIZADA');
+  return m;
+}
+const ML={
+  ID_VENDA:'ID Venda',CANAL:'Canal',EMPR:'EMPR.',MODELO:'Modelo',
+  DEVOLUCAO_ABERTA:'Devolucao Aberta?',
+  NEC_PECAS:'Nec. Pecas? (obrig. se Devolucao Aberta)',
+  DISPUTA_ABERTA:'Disputa Aberta?',
+  TRATATIVA_FINALIZADA:'Tratativa Finalizada? (obrig. se Devolucao Aberta)',
+  REEMBOLSO_MKT:'Reembolso Marketplace? (obrig. se Disputa Aberta)',
+  MOTIVO:'Motivo',NEC_NF_DEVOL:'Nec. NF Devol?'
+};
 
 // MODAL
 function openModal(rec){
   curRec=rec;const isNew=!rec;const r=rec||{};
   document.getElementById('dlgTit').textContent=isNew?'Novo Registro':'Editar Registro';
   document.getElementById('dlgSub').textContent=isNew?'Preencha os campos obrigatórios':'Linha '+r._row+' — '+r.ID_VENDA;
-  const miss=rec?getMiss(rec):[];const wMot=['Devolução','Mensagem','Reclamação'].includes(r.MODALIDADE);const dA=r.DISPUTA_ABERTA==='SIM';const pA=r.NEC_PECAS==='SIM';const mktA=r.REEMBOLSO_MKT==='SIM';const tA=r.TRATATIVA_ABERTA==='SIM'||r.TRATATIVA_ABERTA==='Reaberta';const dF=r.DISPUTA_FINALIZADA==='SIM';const rS=r.REEMBOLSO_MKT==='SIM';
+  const miss=rec?getMiss(rec):[];const wMot=['Devolução','Mensagem','Reclamação'].includes(r.MODALIDADE);const dA=r.DISPUTA_ABERTA==='SIM';const pA=r.NEC_PECAS==='SIM';const mktA=r.REEMBOLSO_MKT==='SIM';const tA=r.DEVOLUCAO_ABERTA==='SIM'||r.DEVOLUCAO_ABERTA==='Reaberta';const dF=r.DISPUTA_FINALIZADA==='SIM';const rS=r.REEMBOLSO_MKT==='SIM';
   const isErr=k=>!isNew&&miss.includes(k);
   const mH=miss.length&&!isNew?'<div class="alert-b a-err"><span>⚠</span><span><strong>Campos em falta:</strong> '+miss.map(f=>ML[f]||f).join(' • ')+'</span></div>':'';
   const aH=(r.NOME||r.SKU)?'<div class="alert-b a-ok"><span>✓</span><span>Campos fórmula preenchidos automaticamente.</span></div>':'';
@@ -1026,7 +1046,7 @@ function openModal(rec){
     fInp('OBS_DISPUTA','Obs. Disputa',r.OBS_DISPUTA),
     '</div>',
     '<div class="disp-extra fg3 '+(dA?'show ':'')+'" id="dX3" style="margin-top:8px">',
-    fYN('REEMBOLSO_MKT','Reembolso do Marketplace?',r.REEMBOLSO_MKT,false,false),
+    fYN('REEMBOLSO_MKT','Reembolso do Marketplace?',r.REEMBOLSO_MKT,dA,isErr('REEMBOLSO_MKT')),
     '</div>',
     '<div id="mktExtra" class="disp-extra '+(dA&&mktA?'show ':'')+'" style="margin-top:8px">',
     '<div class="fg3">',
@@ -1099,7 +1119,14 @@ async function autoFill(idVenda,canal){const m=BANCO_MAP[canal];if(!m)return;sna
 async function saveRecord(){
   const get=id=>{const el=document.getElementById('f_'+id);if(el)return el.value;for(const r of document.querySelectorAll('input[name="f_'+id+'"]'))if(r.checked)return r.value;return'';};
   const novos={};EDIT_COLS.forEach(({key})=>{novos[key]=get(key)||'';});
-  const miss=OBRIG_KEYS.filter(f=>!novos[f]);if(['Devolução','Mensagem','Reclamação'].includes(novos.MODALIDADE)&&!novos.MOTIVO)miss.push('MOTIVO');if(novos.DISPUTA_ABERTA==='SIM'&&!novos.DISPUTA_FINALIZADA)miss.push('DISPUTA_FINALIZADA');if(novos.DISPUTA_FINALIZADA==='SIM'&&!novos.REEMBOLSO_MKT)miss.push('REEMBOLSO_MKT');if(novos.REEMBOLSO_MKT==='SIM'&&!novos.CREDITO)miss.push('CREDITO');
+  novos.AUTOR='APP'; // Preenchido automaticamente pelo aplicativo
+  const miss=OBRIG_KEYS.filter(f=>!novos[f]);
+  if(['Devolução','Mensagem','Reclamação'].includes(novos.MODALIDADE)&&!novos.MOTIVO)miss.push('MOTIVO');
+  const tASave=novos.DEVOLUCAO_ABERTA==='SIM'||novos.DEVOLUCAO_ABERTA==='Reaberta';
+  if(tASave&&!novos.NEC_PECAS)miss.push('NEC_PECAS');
+  if(tASave&&!novos.TRATATIVA_FINALIZADA)miss.push('TRATATIVA_FINALIZADA');
+  if(novos.DISPUTA_ABERTA==='SIM'&&!novos.REEMBOLSO_MKT)miss.push('REEMBOLSO_MKT');
+  if(novos.DISPUTA_ABERTA==='SIM'&&!novos.DISPUTA_FINALIZADA)miss.push('DISPUTA_FINALIZADA');
   if(miss.length){snack('Preencha: '+miss.map(f=>ML[f]||f).join(', '));return;}
   const tkn=await getToken();if(!tkn)return;
   const isNew=!curRec;
@@ -1399,6 +1426,7 @@ function _renderAllRows(tbody){
   const visID=ID_COLS.filter(c=>!hiddenCols.has(c.k));
   const visTR=TC.filter(c=>!hiddenCols.has(c.k));
   const visDI=DC.filter(c=>!hiddenCols.has(c.k));
+  // Usar array de strings e innerHTML único para máxima performance
   const parts=[];
   bulkFiltered.forEach(i=>{
     const r=bulkOrig[i];
@@ -1426,7 +1454,7 @@ function selCell(el){
 }
 
 // ── FILL HANDLE ────────────────────────────────────────────────────────────────
-let fillSrc=null,fillKey=null,fillVal=null,fillScroll=null;
+let fillSrc=null,fillKey=null,fillVal=null,fillScroll=null,_fillDragging=false;
 
 function startFill(e,ri,key){
   e.preventDefault();e.stopPropagation();
@@ -1449,6 +1477,7 @@ function startFill(e,ri,key){
       if(td)td.classList.add('fill-range');
     }
   }
+  _fillDragging=true;
   applyHL();
 
   function onMove(ev){
@@ -1480,7 +1509,7 @@ function startFill(e,ri,key){
       const el=document.getElementById('b_'+ri2+'_'+key);if(el)el.value=fillVal||'';
       const row=document.getElementById('br_'+ri2);if(row)row.classList.add('chg');n++;
     }
-    fillSrc=null;fillTarget=null;
+    fillSrc=null;fillTarget=null;_fillDragging=false;
     if(n>0){updateBulkInfo();snack(n+' células preenchidas','success');}
   }
   document.addEventListener('mousemove',onMove);
@@ -1499,7 +1528,15 @@ function bulkReset(){bulkChg={};hiddenCols.clear();colSortState={};colFilters={}
 async function bulkSave(){
   const keys=Object.keys(bulkChg);if(!keys.length){snack('Nenhuma alteração');return;}
   const tkn=await getToken();if(!tkn)return;
-  const data=[];keys.forEach(i=>{const r=bulkOrig[i];Object.entries(bulkChg[i]).forEach(([key,val])=>{const idx=COL[key];if(idx===undefined||FORMULA_COLS.has(idx))return;data.push({range:cfg.sheetName+'!'+n2c(idx)+r._row,values:[[val]]});});});
+  const data=[];keys.forEach(i=>{
+    const r=bulkOrig[i];
+    bulkChg[i].AUTOR='APP';
+    Object.entries(bulkChg[i]).forEach(([key,val])=>{
+      const idx=COL[key];
+      if(idx===undefined||FORMULA_COLS.has(idx))return;
+      data.push({range:cfg.sheetName+'!'+n2c(idx)+r._row,values:[[val]]});
+    });
+  });
   if(!data.length){snack('Nenhum campo editável');return;}
   try{const res=await fetch('https://sheets.googleapis.com/v4/spreadsheets/'+cfg.sheetId+'/values:batchUpdate',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+tkn},body:JSON.stringify({valueInputOption:'USER_ENTERED',data})});if(!res.ok){const e=await res.json();throw new Error(e.error?.message||res.statusText);}snack(data.length+' célula(s) salvas!','success');
       // Save current filters before reload
@@ -1620,8 +1657,6 @@ document.addEventListener('keydown',e=>{
   if(e.key==='s'){bulkSave();e.preventDefault();}
 });
 function snack(msg,type){type=type||'';const t=document.getElementById('snack');t.textContent=msg;t.className='snack '+type+' show';setTimeout(()=>t.classList.remove('show'),3500);}
-function snack(msg,type){type=type||'';const t=document.getElementById('snack');t.textContent=msg;t.className='snack '+type+' show';setTimeout(()=>t.classList.remove('show'),3500);}
-
 </script>
 </body>
 </html>
