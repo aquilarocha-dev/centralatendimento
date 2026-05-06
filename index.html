@@ -642,7 +642,7 @@ let cfg={sheetId:localStorage.getItem('sheetId')||'',sheetName:localStorage.getI
 let allData=[],filtered=[],curRec=null,missOnly=false,curPage=1;
 let bulkOrig=[],bulkChg={},bulkFiltered=[];
 let dashData=[];const PG=20;let charts={};
-let hiddenCols=new Set(),missFilter=null,statusFilter=null,colSortState={},colFilters={};
+let hiddenCols=new Set(['NF_TOTAL','VALOR_NF','IMPOSTO_RESGATADO','CUSTOS_TOTAIS','REEMBOLSO','RESULTADO_FIN','NEC_NF_DEVOL','CUSTOS_TOTAL','STATUS2']),missFilter=null,statusFilter=null,colSortState={},colFilters={};
 let colWidths={}; // {key: widthPx}
 // Section visibility
 let hiddenSections=new Set(); // 'id','trat','disp'
@@ -682,10 +682,10 @@ const TC=[
   {k:'VALOR_PAGO',l:'Valor Pago',t:'txt'},
   {k:'CUSTOS_TOTAL',l:'Custos Total',t:'txt'},
   {k:'TRATATIVA_FINALIZADA',l:'Trat. Final?',t:'sel',opts:['','SIM','NAO']},
-];
-const DC=[
   {k:'STATUS_FULL',l:'Status Full',t:'txt'},
   {k:'CHEGOU_CARDEX',l:'Chegou Cardex?',t:'sel',opts:['','SIM','NAO']},
+];
+const DC=[
   {k:'DISPUTA_ABERTA',l:'Disputa Aberta?',t:'sel',opts:['','SIM','NAO']},
   {k:'PLAT_DISPUTA',l:'Plat. Disputa',t:'txt'},
   {k:'CREDITO',l:'R$ Credito?',t:'txt'},
@@ -1367,6 +1367,7 @@ function _setupVirtualScroll(tbody,sheet){
 }
 
 function _renderVirtual(tbody,sheet){
+  if(_fillDragging)return; // Pausa durante fill drag
   // Não re-renderizar se o input focado seria destruído pelo re-render
   const active=document.activeElement;
   if(active&&(active.tagName==='INPUT'||active.tagName==='SELECT')&&tbody.contains(active)){
@@ -1655,6 +1656,25 @@ document.addEventListener('keydown',e=>{
     e.preventDefault();
   }
   if(e.key==='s'){bulkSave();e.preventDefault();}
+});
+// Enter na célula do bulk = pular para célula abaixo
+document.addEventListener('keydown',function(e){
+  if(e.key!=='Enter')return;
+  const active=document.activeElement;
+  if(!active||!active.closest('.bt'))return;
+  const td=active.closest('td');
+  if(!td||!td.dataset.row||!td.dataset.col)return;
+  e.preventDefault();
+  const curRow=parseInt(td.dataset.row);
+  const key=td.dataset.col;
+  const fi=bulkFiltered.indexOf(curRow);
+  if(fi<0||fi>=bulkFiltered.length-1)return;
+  const nextRow=bulkFiltered[fi+1];
+  const nextTd=document.querySelector('.bt td[data-row="'+nextRow+'"][data-col="'+key+'"]');
+  if(nextTd){
+    const inp=nextTd.querySelector('input,select');
+    if(inp){inp.focus();if(inp.select)inp.select();}
+  }
 });
 function snack(msg,type){type=type||'';const t=document.getElementById('snack');t.textContent=msg;t.className='snack '+type+' show';setTimeout(()=>t.classList.remove('show'),3500);}
 </script>
