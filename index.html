@@ -395,13 +395,10 @@ tbody tr:last-child td{border-bottom:none;}tbody tr:hover td{background:#f8f9fa;
 .fsec-body{overflow:hidden;transition:max-height .3s ease,opacity .25s ease;max-height:2000px;}
 .fsec.collapsed .fsec-body{max-height:0!important;opacity:0;}
 
-.fsec-collapse-btn:hover{background:rgba(0,0,0,.08);}
+
 .fsec.collapsed 
-.fsec-tit-row{
-  display:flex;align-items:center;
-  margin-bottom:10px;
-}
-.fsec-tit-row .fsec-tit{margin-bottom:0;flex:1;}
+
+
 
 .sc.sc-active{outline:2px solid var(--pri);outline-offset:2px;}
 
@@ -410,51 +407,67 @@ tbody tr:last-child td{border-bottom:none;}tbody tr:hover td{background:#f8f9fa;
 
 /* ── Campos obrigatórios no popup ────────────────────────────────── */
 
-.req-fld label,
-.dlg .req-fld label,
 
 
-/* ── Botão de colapso da seção ──────────────────────────────────── */
-.fsec-collapse-btn{
-  background:#f1f3f4;
-  border:1px solid #dadce0;
-  cursor:pointer;
-  font-size:14px;
-  color:#5f6368;
-  padding:4px 12px;
-  border-radius:16px;
-  margin-left:auto;
-  transition:background .15s, color .15s;
-  flex-shrink:0;
-  font-weight:500;
-  line-height:1.4;
-  min-width:40px;
-  text-align:center;
-}
-.fsec-collapse-btn:hover{
-  background:#e8eaed;
-  color:#202124;
-}
-.fsec.collapsed .fsec-collapse-btn{
-  background:#e8f0fe;
-  color:#1a73e8;
-  border-color:#1a73e8;
-}
+.fsec.collapsed 
 
 
 
 /* Campos obrigatórios — sem alterar tamanho, só visual */
-.reqb {
-  box-shadow: 0 0 0 2px #b91c1c !important;
-  border-radius: 6px !important;
-  background: #fff5f5 !important;
-}
-.fld.req-fld > label:first-of-type {
+
+
+
+/* Campos obrigatórios — mesma estética, só borda e cor diferente */
+.req-fld > label:first-of-type {
   color: #b91c1c !important;
   font-weight: 700 !important;
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: .4px;
+}
+.req-fld .mdi,
+.req-fld select.mdi {
+  border-color: #b91c1c !important;
+}
+.req-fld .rg {
+  outline: 2px solid #b91c1c;
+  border-radius: 7px;
+  padding: 4px;
+}
+
+/* ── Seção colapsável — botão à esquerda ───────────────────────── */
+.fsec-tit-row {
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin-bottom:10px;
+}
+.fsec-tit-row .fsec-tit {
+  margin-bottom:0;
+  flex:1;
+}
+.fsec-collapse-btn {
+  order:-1;
+  background:none;
+  border:1px solid var(--out);
+  cursor:pointer;
+  font-size:13px;
+  color:var(--on-sur-v);
+  width:26px;
+  height:26px;
+  border-radius:6px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-shrink:0;
+  transition:background .15s, color .15s, transform .2s;
+  padding:0;
+}
+.fsec-collapse-btn:hover {
+  background:var(--sur-v);
+  color:var(--on-sur);
+}
+.fsec.collapsed .fsec-collapse-btn {
+  transform:rotate(-90deg);
+  color:var(--pri);
+  border-color:var(--pri);
 }
 </style>
 </head>
@@ -689,13 +702,13 @@ const COL={
   NF_DEVOL_EMISSAO:14,NEC_NF_DEVOL:15,MOTIVO:16,DETALHAMENTO:17,OBS_RECLAM:18,
   DATA_TRATATIVA:19,DEVOLUCAO_ABERTA:20,NEC_PECAS:21,
   PECAS_ENVIADAS:22,OBS_PECAS:23,REENVIO_RECEBIDO:24,
-  CUSTO_ENVIO:25,PAGO_PLAT:26,VALOR_PAGO:27,CUSTOS_TOTAL:28,
-  TRATATIVA_FINALIZADA:29,STATUS_FULL:30,CHEGOU_CARDEX:31,
-  DISPUTA_ABERTA:32,PLAT_DISPUTA:33,CREDITO:34,ID_TRANSACAO:35,
-  REEMBOLSO_MKT:36,DISPUTA_FINALIZADA:37,CREDITO_RECEBIDO_VALOR:38,
-  CREDITO_RECEBIDO:39,OBS_DISPUTA:40,
-  NF_TOTAL:41,VALOR_NF:42,IMPOSTO_RESGATADO:43,
-  CUSTOS_TOTAIS:44,REEMBOLSO:45,RESULTADO_FIN:46,STATUS2:47
+  CUSTO_ENVIO:25,VALOR_PAGO:26,CUSTOS_TOTAL:27,
+  TRATATIVA_FINALIZADA:28,STATUS_FULL:29,CHEGOU_CARDEX:30,
+  DISPUTA_ABERTA:31,PLAT_DISPUTA:32,CREDITO:33,ID_TRANSACAO:34,
+  REEMBOLSO_MKT:35,DISPUTA_FINALIZADA:36,CREDITO_RECEBIDO_VALOR:37,
+  CREDITO_RECEBIDO:38,OBS_DISPUTA:39,
+  NF_TOTAL:40,VALOR_NF:41,IMPOSTO_RESGATADO:42,
+  CUSTOS_TOTAIS:43,REEMBOLSO:44,RESULTADO_FIN:45,STATUS2:46
 };
 const FORMULA_COLS=new Set([0,3,7,8,9,10,11,12]);
 const EDIT_COLS=Object.entries(COL).filter(([,i])=>!FORMULA_COLS.has(i)).map(([k,i])=>({key:k,idx:i}));
@@ -1076,6 +1089,7 @@ const ML={
   DISPUTA_ABERTA:'Disputa Aberta?',
   TRATATIVA_FINALIZADA:'Tratativa Finalizada? (obrig. se Devolucao Aberta)',
   REEMBOLSO_MKT:'Reembolso Marketplace? (obrig. se Disputa Aberta)',
+  DISPUTA_FINALIZADA:'Disputa Finalizada? (obrig. se Disputa Aberta)',
   MOTIVO:'Motivo',NEC_NF_DEVOL:'Nec. NF Devol?'
 };
 
@@ -1094,7 +1108,7 @@ function openModal(rec){
     '<div class="fsec fsec-id"><div class="fsec-tit">🗂 Modalidade</div><div class="fg3">',
     fSel('MODALIDADE','Modalidade',r.MODALIDADE,MODALIDADES,false,isErr('MODALIDADE')),
     '</div></div>',
-    '<div class="fsec fsec-id"><div class="fsec-tit-row"><div class="fsec-tit">📦 Identificação</div><button class="fsec-collapse-btn" onclick="this.closest(\'div.fsec\').classList.toggle(\'collapsed\')">▾</button></div><div class="fsec-body">',
+    '<div class="fsec fsec-id"><div class="fsec-tit-row"><button class="fsec-collapse-btn" onclick="this.closest(\'div.fsec\').classList.toggle(\'collapsed\')">▾</button><div class="fsec-tit">📦 Identificação</div></div><div class="fsec-body">',
     '<div class="fg">',
     fInp('ID_VENDA','ID Venda',r.ID_VENDA,'text',rS,false,false,isNew),
     fSel('CANAL','Canal',r.CANAL,['','Mercado Livre','Shopee','Amazon','Magalu','Cardex'],rS,isErr('CANAL')),
@@ -1121,7 +1135,7 @@ function openModal(rec){
     '</div>',
     '</div>',
     '</div></div>',
-    '<div class="fsec fsec-trat"><div class="fsec-tit-row"><div class="fsec-tit">📋 Tratativa</div><button class="fsec-collapse-btn" onclick="this.closest(\'div.fsec\').classList.toggle(\'collapsed\')">▾</button></div><div class="fsec-body">',
+    '<div class="fsec fsec-trat"><div class="fsec-tit-row"><button class="fsec-collapse-btn" onclick="this.closest(\'div.fsec\').classList.toggle(\'collapsed\')">▾</button><div class="fsec-tit">📋 Tratativa</div></div><div class="fsec-body">',
     '<div class="fg" style="align-items:flex-start">',
     fRadio3('DEVOLUCAO_ABERTA','Tratativa Aberta?',r.DEVOLUCAO_ABERTA,true,isErr('DEVOLUCAO_ABERTA')),
     fYN('DEVOLUCAO_ABERTA_B','Aberto o processo de devolução?',r.DEVOLUCAO_ABERTA,true,isErr('DEVOLUCAO_ABERTA')),
@@ -1153,29 +1167,27 @@ function openModal(rec){
     '</div>',
     '</div>',
     '</div></div>',
-    '<div class="fsec fsec-disp"><div class="fsec-tit-row"><div class="fsec-tit">⚖️ Disputa</div><button class="fsec-collapse-btn" onclick="this.closest(\'div.fsec\').classList.toggle(\'collapsed\')">▾</button></div><div class="fsec-body">',
+    '<div class="fsec fsec-disp"><div class="fsec-tit-row"><button class="fsec-collapse-btn" onclick="this.closest(\'div.fsec\').classList.toggle(\'collapsed\')">▾</button><div class="fsec-tit">⚖️ Disputa</div></div><div class="fsec-body">',
     '<div class="fg3" id="dBase">',
     fYN('DISPUTA_ABERTA','Disputa Aberta?',r.DISPUTA_ABERTA,true,isErr('DISPUTA_ABERTA')),
     '</div>',
-    '<div class="disp-extra fg '+(dA?'show ':'')+'" id="dX2" style="margin-top:8px">',
-    '<div class="fg3">',
+    '<div class="disp-extra fg3 '+(dA?'show ':'')+'" id="dX2" style="margin-top:8px">',
     fInp('PLAT_DISPUTA','Plataforma',r.PLAT_DISPUTA),
-    fInp('ID_TRANSACAO','ID Transação',r.ID_TRANSACAO),
-    fInp('CREDITO','R$ Crédito?',r.CREDITO),
-    '<div class="fld"><label>Obs. Disputa</label><textarea id="f_OBS_DISPUTA" class="mdi" rows="3" style="resize:vertical;min-height:70px;width:100%;box-sizing:border-box">'+(r.OBS_DISPUTA||'')+'</textarea></div>',
-    '</div>',
+    fInp('OBS_DISPUTA','Obs. Disputa',r.OBS_DISPUTA),
     '</div>',
     '<div class="disp-extra fg3 '+(dA?'show ':'')+'" id="dX3" style="margin-top:8px">',
     fYN('REEMBOLSO_MKT','Reembolso do Marketplace?',r.REEMBOLSO_MKT,dA,isErr('REEMBOLSO_MKT')),
     '</div>',
     '<div id="mktExtra" class="disp-extra '+(dA&&mktA?'show ':'')+'" style="margin-top:8px">',
     '<div class="fg3">',
+    fInp('ID_TRANSACAO','ID Transação',r.ID_TRANSACAO),
+    fInp('CREDITO','R$ Crédito?',r.CREDITO),
     fInp('CREDITO_RECEBIDO_VALOR','R$ Créd. Rec.',r.CREDITO_RECEBIDO_VALOR),
     fSel('CREDITO_RECEBIDO','Crédito Recebido?',r.CREDITO_RECEBIDO,['','SIM','NÃO']),
     '</div>',
     '</div>',
     '<div class="disp-extra fg3 '+(dA?'show ':'')+'" id="dX1" style="margin-top:8px">',
-    fYN('DISPUTA_FINALIZADA','Disputa Finalizada?',r.DISPUTA_FINALIZADA,false,false),
+    fYN('DISPUTA_FINALIZADA','Disputa Finalizada?',r.DISPUTA_FINALIZADA,dA,isErr('DISPUTA_FINALIZADA')),
     '</div>',
     '</div></div></div>',
   ].join('');
@@ -1191,35 +1203,20 @@ function openModal(rec){
     const dAv=document.querySelector('input[name="f_DISPUTA_ABERTA"]:checked')?.value||'';
     const isDA=dAv==='SIM';
 
-    // Campos dependentes de Tratativa Aberta
-    ['NEC_PECAS','TRATATIVA_FINALIZADA','DEVOLUCAO_ABERTA_B'].forEach(fid=>{
-      // O container pode ser identificado pelo input/radio dentro dele
+    function setReq(fid, active){
       const el=document.getElementById('f_'+fid+'_SIM')
-               ||document.getElementById('f_'+fid+'_SIM')
+               ||document.getElementById('f_'+fid)
                ||document.querySelector('[name="f_'+fid+'"]');
       if(!el)return;
       const fld=el.closest('.fld');
       if(!fld)return;
-      if(isTA){
-        fld.classList.add('reqb','req-fld');
-      } else {
-        fld.classList.remove('reqb','req-fld');
-      }
-    });
+      fld.classList.toggle('req-fld', active);
+    }
 
-    // Campos dependentes de Disputa Aberta
-    ['REEMBOLSO_MKT'].forEach(fid=>{
-      const el=document.getElementById('f_'+fid+'_SIM')
-               ||document.querySelector('[name="f_'+fid+'"]');
-      if(!el)return;
-      const fld=el.closest('.fld');
-      if(!fld)return;
-      if(isDA){
-        fld.classList.add('reqb','req-fld');
-      } else {
-        fld.classList.remove('reqb','req-fld');
-      }
-    });
+    // Dependentes de Tratativa Aberta
+    ['NEC_PECAS','TRATATIVA_FINALIZADA','DEVOLUCAO_ABERTA_B'].forEach(f=>setReq(f,isTA));
+    // Dependentes de Disputa Aberta
+    ['REEMBOLSO_MKT','DISPUTA_FINALIZADA'].forEach(f=>setReq(f,isDA));
   }
   // Wire DEVOLUCAO_ABERTA (Tratativa Aberta?) toggle
   document.querySelectorAll('input[name="f_DEVOLUCAO_ABERTA"]').forEach(radio=>{
@@ -1248,8 +1245,10 @@ function openModal(rec){
   // Wire REEMBOLSO_MKT toggle
   document.querySelectorAll('input[name="f_REEMBOLSO_MKT"]').forEach(radio=>{
     radio.addEventListener('change',()=>{
-      const v=document.querySelector('input[name="f_REEMBOLSO_MKT"]:checked')?.value||'';
-      document.getElementById('mktExtra')?.classList.toggle('show',v==='SIM');
+      const mkt=document.querySelector('input[name="f_REEMBOLSO_MKT"]:checked')?.value==='SIM';
+      const da=document.querySelector('input[name="f_DISPUTA_ABERTA"]:checked')?.value==='SIM';
+      document.getElementById('mktExtra')?.classList.toggle('show',da&&mkt);
+      updateReqVisual();
     });
   });
   document.querySelectorAll('input[name="f_DISPUTA_ABERTA"]').forEach(radio=>{radio.addEventListener('change',()=>{const sim=document.querySelector('input[name="f_DISPUTA_ABERTA"]:checked')?.value==='SIM';['dX1','dX2','dX3'].forEach(id=>document.getElementById(id)?.classList.toggle('show',sim));updateReqVisual();});});
@@ -1292,6 +1291,7 @@ async function saveRecord(){
   if(tASave&&!novos.NEC_PECAS)miss.push('NEC_PECAS');
   if(tASave&&!novos.TRATATIVA_FINALIZADA)miss.push('TRATATIVA_FINALIZADA');
   if(novos.DISPUTA_ABERTA==='SIM'&&!novos.REEMBOLSO_MKT)miss.push('REEMBOLSO_MKT');
+  if(novos.DISPUTA_ABERTA==='SIM'&&!novos.DISPUTA_FINALIZADA)miss.push('DISPUTA_FINALIZADA');
   if(novos.DISPUTA_ABERTA==='SIM'&&!novos.DISPUTA_FINALIZADA)miss.push('DISPUTA_FINALIZADA');
   if(miss.length){snack('Preencha: '+miss.map(f=>ML[f]||f).join(', '));return;}
   const tkn=await getToken();if(!tkn)return;
@@ -1624,11 +1624,14 @@ function startFill(e,ri,key){
   if(fillVal===undefined||fillVal===null)fillVal='';
   const fsOpen=document.getElementById('fsOverlay').style.display==='flex';
   const scroller=fsOpen?document.getElementById('fsBody'):document.getElementById('bulkSheet');
+  const tbody=fsOpen?document.getElementById('fsBBody'):document.getElementById('bBody');
   const ZONE=50,SPEED=18;
   let fillTarget=ri;
   _fillDragging=true;
 
-  function clearHL(){document.querySelectorAll('.bt td.fill-range').forEach(td=>td.classList.remove('fill-range'));}
+  function clearHL(){
+    document.querySelectorAll('.bt td.fill-range').forEach(td=>td.classList.remove('fill-range'));
+  }
   function applyHL(){
     clearHL();
     const fi0=bulkFiltered.indexOf(fillSrc),fi1=bulkFiltered.indexOf(fillTarget);
@@ -1639,16 +1642,21 @@ function startFill(e,ri,key){
       if(td)td.classList.add('fill-range');
     }
   }
-  function renderAndHL(){
-    const tbody=fsOpen?document.getElementById('fsBBody'):document.getElementById('bBody');
-    if(tbody&&bulkFiltered.length>80){
-      _fillDragging=false;
-      _renderVirtual(tbody,scroller);
-      _fillDragging=true;
-    }
+
+  // Renderiza novas linhas sem parar o drag — mantém _fillDragging=true
+  function renderWindow(){
+    if(!tbody)return;
+    // Usar _renderVirtual temporariamente com _fillDragging=false
+    // MAS só re-renderizar linhas que estão na viewport
+    _fillDragging=false;
+    _renderVirtual(tbody,scroller);
+    _fillDragging=true;
+    // Reaplicar highlight depois do render
     applyHL();
   }
+
   applyHL();
+
   function update(ev){
     const els=document.elementsFromPoint(ev.clientX,ev.clientY);
     const td=els.find(el=>el.tagName==='TD'&&el.dataset&&el.dataset.col===key);
@@ -1656,30 +1664,47 @@ function startFill(e,ri,key){
     const row=parseInt(td.dataset.row);
     if(!isNaN(row)&&row!==fillTarget){fillTarget=row;applyHL();}
   }
+
   function onMove(ev){
     if(fillScroll){clearInterval(fillScroll);fillScroll=null;}
     const box=scroller.getBoundingClientRect();
-    if(ev.clientY>box.bottom-ZONE)      fillScroll=setInterval(()=>{scroller.scrollTop+=SPEED;renderAndHL();},60);
-    else if(ev.clientY<box.top+ZONE)    fillScroll=setInterval(()=>{scroller.scrollTop-=SPEED;renderAndHL();},60);
-    else if(ev.clientX>box.right-ZONE)  fillScroll=setInterval(()=>{scroller.scrollLeft+=SPEED;renderAndHL();},60);
-    else if(ev.clientX<box.left+ZONE)   fillScroll=setInterval(()=>{scroller.scrollLeft-=SPEED;renderAndHL();},60);
+    if(ev.clientY>box.bottom-ZONE)
+      fillScroll=setInterval(()=>{scroller.scrollTop+=SPEED;renderWindow();},50);
+    else if(ev.clientY<box.top+ZONE)
+      fillScroll=setInterval(()=>{scroller.scrollTop-=SPEED;renderWindow();},50);
+    else if(ev.clientX>box.right-ZONE)
+      fillScroll=setInterval(()=>{scroller.scrollLeft+=SPEED;renderWindow();},50);
+    else if(ev.clientX<box.left+ZONE)
+      fillScroll=setInterval(()=>{scroller.scrollLeft-=SPEED;renderWindow();},50);
     update(ev);
   }
+
   function onUp(){
     if(fillScroll){clearInterval(fillScroll);fillScroll=null;}
-    document.removeEventListener('mousemove',onMove);document.removeEventListener('mouseup',onUp);
+    document.removeEventListener('mousemove',onMove);
+    document.removeEventListener('mouseup',onUp);
     clearHL();
+    _fillDragging=false;
     const fi0=bulkFiltered.indexOf(fillSrc),fi1=bulkFiltered.indexOf(fillTarget);
-    if(fi0<0||fi1<0){fillSrc=null;_fillDragging=false;return;}
+    if(fi0<0||fi1<0){fillSrc=null;return;}
     const from=Math.min(fi0,fi1),to=Math.max(fi0,fi1);let n=0;
     for(let fi=from;fi<=to;fi++){
       const ri2=bulkFiltered[fi];if(ri2===fillSrc)continue;
       bChg(ri2,key,fillVal);
-      const el=document.getElementById('b_'+ri2+'_'+key);if(el)el.value=fillVal||'';
-      const row=document.getElementById('br_'+ri2);if(row)row.classList.add('chg');n++;
+      // Atualizar célula no DOM se existir
+      const el=document.getElementById('b_'+ri2+'_'+key);
+      if(el)el.value=fillVal||'';
+      const row=document.getElementById('br_'+ri2);
+      if(row)row.classList.add('chg');
+      n++;
     }
-    fillSrc=null;fillTarget=null;_fillDragging=false;
-    if(n>0){updateBulkInfo();snack(n+' celulas preenchidas','success');}
+    fillSrc=null;fillTarget=null;
+    if(n>0){
+      updateBulkInfo();
+      // Forçar re-render para mostrar modificações
+      if(tbody)_renderVirtual(tbody,scroller);
+      snack(n+' celulas preenchidas','success');
+    }
   }
   document.addEventListener('mousemove',onMove);
   document.addEventListener('mouseup',onUp);
