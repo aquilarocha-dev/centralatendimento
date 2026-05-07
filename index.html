@@ -433,42 +433,36 @@ tbody tr:last-child td{border-bottom:none;}tbody tr:hover td{background:#f8f9fa;
 }
 
 /* ── Seção colapsável — botão à esquerda ───────────────────────── */
-.fsec-tit-row {
-  display:flex;
-  align-items:center;
-  gap:8px;
-  margin-bottom:10px;
-}
-.fsec-tit-row .fsec-tit {
-  margin-bottom:0;
-  flex:1;
-}
-.fsec-collapse-btn {
-  order:-1;
-  background:none;
-  border:1px solid var(--out);
-  cursor:pointer;
-  font-size:13px;
-  color:var(--on-sur-v);
-  width:26px;
-  height:26px;
-  border-radius:6px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
+
+
+
+
+.fsec.collapsed 
+
+/* ── Botão colapso — direita ──────────────────────────── */
+
+
+.fsec-collapse-btn{
+  order:2;
+  background:none;border:1px solid var(--out);
+  cursor:pointer;font-size:13px;color:var(--on-sur-v);
+  width:26px;height:26px;border-radius:6px;
+  display:flex;align-items:center;justify-content:center;
   flex-shrink:0;
-  transition:background .15s, color .15s, transform .2s;
-  padding:0;
+  transition:background .15s,color .15s,transform .2s;
+  padding:0;line-height:1;
 }
-.fsec-collapse-btn:hover {
-  background:var(--sur-v);
-  color:var(--on-sur);
-}
-.fsec.collapsed .fsec-collapse-btn {
-  transform:rotate(-90deg);
-  color:var(--pri);
-  border-color:var(--pri);
-}
+.fsec-collapse-btn:hover{background:var(--sur-v);color:var(--on-sur);}
+.fsec.collapsed .fsec-collapse-btn{transform:rotate(-90deg);color:var(--pri);border-color:var(--pri);}
+
+/* ── Obrigatórios — só cor e borda, sem alterar tamanho ── */
+.req-fld>label:first-of-type{color:#b91c1c!important;font-weight:700!important;}
+.req-fld .mdi{border-color:#b91c1c!important;}
+.req-fld select.mdi{border-color:#b91c1c!important;}
+.req-fld .rg{border:2px solid #b91c1c;border-radius:7px;padding:4px;}
+
+.fsec-tit-row{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
+.fsec-tit-row .fsec-tit{flex:1;margin-bottom:0;}
 </style>
 </head>
 <body>
@@ -866,7 +860,7 @@ function renderDashboard(){
 
   // ── TOP MOTIVOS (usa allData — todos os registros históricos) ────────────
   const mm={};
-  allData.filter(r=>r.MOTIVO&&r.MOTIVO.trim()).forEach(r=>{mm[r.MOTIVO]=(mm[r.MOTIVO]||0)+1;});
+  dashData.filter(r=>r.MOTIVO&&r.MOTIVO.trim()).forEach(r=>{mm[r.MOTIVO]=(mm[r.MOTIVO]||0)+1;});
   const mt=Object.entries(mm).sort((a,b)=>b[1]-a[1]).slice(0,8);
 
   // Destruir charts anteriores
@@ -985,11 +979,11 @@ function renderDashboard(){
 
   function parseMoney(v){return parseFloat((v||'').replace(/[R$\s]/g,'').replace(/\./g,'').replace(',','.'))||0;}
   const custoTotal=allData.reduce((s,r)=>s+parseMoney(r.CUSTOS_TOTAL),0);
-  const reembolsoTotal=allData.filter(r=>r.REEMBOLSO_MKT==='SIM').reduce((s,r)=>s+parseMoney(r.CREDITO_RECEBIDO_VALOR),0);
-  const resultadoFin=allData.reduce((s,r)=>s+parseMoney(r.CREDITO_RECEBIDO_VALOR),0)-custoTotal;
+  const reembolsoTotal=allData.reduce((s,r)=>s+parseMoney(r.REEMBOLSO||'0'),0);
+  const resultadoFin=allData.reduce((s,r)=>s+parseMoney(r.RESULTADO_FIN||'0'),0);
   const finEl=document.getElementById('finKpiRow');
   function parseMoney2(v){return parseFloat((v||'').replace(/[R$\s]/g,'').replace(/\./g,'').replace(',','.'))||0;}
-  const impostoTotalKpi=allData.reduce((s,r)=>s+parseMoney2(r.IMPOSTO_RESGATADO||'0'),0);
+  const impostoTotalKpi=allData.reduce((s,r)=>s+parseMoney(r.IMPOSTO_RESGATADO||'0'),0);
   if(finEl){
     finEl.innerHTML=
       '<div class="kpi kpi-err"><div class="kpi-lbl">Custos Total</div><div class="kpi-val" style="font-size:18px">R$ '+custoTotal.toFixed(2).replace('.',',')+'</div><div class="kpi-sub">todos os registros</div></div>'+
@@ -1849,6 +1843,45 @@ document.addEventListener('keydown',e=>{
     e.preventDefault();
   }
   if(e.key==='s'){bulkSave();e.preventDefault();}
+  // Delete/Backspace — limpar célula selecionada
+  if(e.key==='Delete'||e.key==='Backspace'){
+    const selTd=document.querySelector('.bt td.sel');
+    if(selTd&&document.activeElement!==selTd.querySelector('input,select')){
+      const rri=parseInt(selTd.dataset.row);const kk=selTd.dataset.col;
+      if(!isNaN(rri)&&kk){bChg(rri,kk,'');const el=document.getElementById('b_'+rri+'_'+kk);if(el)el.value='';}
+      e.preventDefault();
+    }
+  }
+  // Ctrl+Z — desfazer (bulkReset)
+  if(e.key==='z'){bulkReset();e.preventDefault();}
+  // Ctrl+A — selecionar coluna inteira
+  if(e.key==='a'){
+    const selTd=document.querySelector('.bt td.sel');
+    if(selTd){
+      const kk=selTd.dataset.col;
+      document.querySelectorAll('.bt td.sel-range').forEach(t=>t.classList.remove('sel-range'));
+      bulkFiltered.forEach(ri=>{
+        const td=document.querySelector('.bt td[data-row="'+ri+'"][data-col="'+kk+'"]');
+        if(td)td.classList.add('sel-range');
+      });
+      showKbdToast('Coluna selecionada ('+bulkFiltered.length+' células)');
+    }
+    e.preventDefault();
+  }
+  // Ctrl+Shift+Arrow — seleção de range
+  if(e.shiftKey&&(e.key==='ArrowDown'||e.key==='ArrowUp')){
+    const selTd=document.querySelector('.bt td.sel');
+    if(!selTd)return;
+    const curR=parseInt(selTd.dataset.row);const kk=selTd.dataset.col;
+    const curFi=bulkFiltered.indexOf(curR);
+    const step=e.key==='ArrowDown'?1:-1;
+    const nextFi=Math.max(0,Math.min(bulkFiltered.length-1,curFi+step));
+    const nextR=bulkFiltered[nextFi];
+    // Toggle sel-range no próximo td
+    const nextTd=document.querySelector('.bt td[data-row="'+nextR+'"][data-col="'+kk+'"]');
+    if(nextTd)nextTd.classList.toggle('sel-range');
+    e.preventDefault();
+  }
 });
 // Enter na célula do bulk = pular para célula abaixo
 document.addEventListener('keydown',function(e){
