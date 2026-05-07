@@ -105,7 +105,8 @@ tbody tr:last-child td{border-bottom:none;}tbody tr:hover td{background:#f8f9fa;
 .fg4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;}
 .fld{display:flex;flex-direction:column;gap:3px;}
 .fld label{font-size:10px;font-weight:500;color:var(--on-sur-v);text-transform:uppercase;letter-spacing:.4px;}
-.fld.req-fld label{color:var(--err);font-weight:700;}
+
+.fld
 .mdi{background:var(--sur-v);border:1px solid var(--out);border-radius:7px;padding:7px 10px;font-size:12px;color:var(--on-sur);transition:border-color .2s;width:100%;outline:none;}
 .mdi:focus{border-color:var(--pri);background:var(--sur);}
 .mdi.err{border-color:var(--err)!important;background:#fff9f9;}
@@ -115,7 +116,7 @@ tbody tr:last-child td{border-bottom:none;}tbody tr:hover td{background:#f8f9fa;
 .ro input{display:none;}
 .ro label{padding:4px 11px;border:1px solid var(--out);border-radius:18px;cursor:pointer;font-size:11px;color:var(--on-sur-v);transition:all .15s;}
 .ro input:checked+label{border-color:var(--pri);color:var(--pri);background:var(--pri-c);}
-.fld.reqb{border:1px solid var(--err);border-radius:7px;padding:6px;}
+.fld
 .alert-b{border-radius:7px;padding:8px 11px;font-size:11px;margin-bottom:10px;display:flex;align-items:flex-start;gap:6px;}
 .a-err{background:var(--err-c);color:var(--err);border:1px solid #f28b82;}
 .a-ok{background:var(--ok-c);color:var(--ok);border:1px solid #81c995;}
@@ -242,10 +243,10 @@ tbody tr:last-child td{border-bottom:none;}tbody tr:hover td{background:#f8f9fa;
 /* ── Texto dos controles ──────────────────────────────────────────── */
 .th-top{display:flex;align-items:center;gap:2px;}
 .th-label{font-size:10px;font-weight:600;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.req-lbl{font-weight:700;text-decoration:underline dotted;}
-.bt thead th.sec-id   .req-lbl{color:#dc2626;}
-.bt thead th.sec-trat .req-lbl{color:#1e40af;}
-.bt thead th.sec-disp .req-lbl{color:#9a3412;}
+
+.bt thead th.sec-id   
+.bt thead th.sec-trat 
+.bt thead th.sec-disp 
 .th-controls{display:flex;gap:1px;flex-shrink:0;}
 .th-btn{background:none;border:none;cursor:pointer;font-size:10px;padding:1px 3px;border-radius:3px;line-height:1;opacity:.75;color:inherit;transition:opacity .15s;}
 .th-btn:hover{opacity:1;background:rgba(0,0,0,.1);}
@@ -377,6 +378,84 @@ tbody tr:last-child td{border-bottom:none;}tbody tr:hover td{background:#f8f9fa;
 .dlg-hdr-inner{flex:1;min-width:0;}
 .dlg-x{flex-shrink:0;background:none;border:none;cursor:pointer;font-size:20px;line-height:1;color:var(--on-sur-v);width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:background .15s,color .15s;margin-top:2px;}
 .dlg-x:hover{background:var(--err-c);color:var(--err);}
+
+/* ── Obrigatórios — popup ──────────────────────────────────────────── */
+
+.fld
+
+
+/* ── Obrigatórios — bulk TH ───────────────────────────────────────── */
+.req-lbl{color:#b91c1c!important;font-weight:700;}
+.bt thead th.th-req{background:#fff1f2!important;}
+.bt thead th.th-req .th-sec{background:#b91c1c!important;}
+.bt thead th.th-req .th-label{color:#b91c1c!important;font-weight:700;}
+.bt thead th.th-req .th-label::after{content:" ✱";font-size:9px;color:#b91c1c;}
+
+/* ── Seção colapsável do popup ─────────────────────────────────────── */
+.fsec-body{overflow:hidden;transition:max-height .3s ease,opacity .25s ease;max-height:2000px;}
+.fsec.collapsed .fsec-body{max-height:0!important;opacity:0;}
+
+.fsec-collapse-btn:hover{background:rgba(0,0,0,.08);}
+.fsec.collapsed 
+.fsec-tit-row{
+  display:flex;align-items:center;
+  margin-bottom:10px;
+}
+.fsec-tit-row .fsec-tit{margin-bottom:0;flex:1;}
+
+.sc.sc-active{outline:2px solid var(--pri);outline-offset:2px;}
+
+
+
+
+/* ── Campos obrigatórios no popup ────────────────────────────────── */
+
+.req-fld label,
+.dlg .req-fld label,
+
+
+/* ── Botão de colapso da seção ──────────────────────────────────── */
+.fsec-collapse-btn{
+  background:#f1f3f4;
+  border:1px solid #dadce0;
+  cursor:pointer;
+  font-size:14px;
+  color:#5f6368;
+  padding:4px 12px;
+  border-radius:16px;
+  margin-left:auto;
+  transition:background .15s, color .15s;
+  flex-shrink:0;
+  font-weight:500;
+  line-height:1.4;
+  min-width:40px;
+  text-align:center;
+}
+.fsec-collapse-btn:hover{
+  background:#e8eaed;
+  color:#202124;
+}
+.fsec.collapsed .fsec-collapse-btn{
+  background:#e8f0fe;
+  color:#1a73e8;
+  border-color:#1a73e8;
+}
+
+
+
+/* Campos obrigatórios — sem alterar tamanho, só visual */
+.reqb {
+  box-shadow: 0 0 0 2px #b91c1c !important;
+  border-radius: 6px !important;
+  background: #fff5f5 !important;
+}
+.fld.req-fld > label:first-of-type {
+  color: #b91c1c !important;
+  font-weight: 700 !important;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: .4px;
+}
 </style>
 </head>
 <body>
@@ -652,11 +731,11 @@ let hiddenSections=new Set(); // 'id','trat','disp'
 //                NF, NF_DEVOL, NF_DEVOL_EMISSAO, NEC_NF_DEVOL, AUTOR
 const ID_COLS=[
   {k:'MODALIDADE',l:'Modalidade',t:'sel',opts:['','Devolucao','Cancelado','Nao Entregue','Mensagem','Reclamacao','Resolvido']},
-  {k:'ID_VENDA',l:'ID Venda',t:'txt'},
+  {k:'ID_VENDA',l:'ID Venda',t:'txt',req:true},
   {k:'NOME',l:'Nome',t:'txt'},
-  {k:'CANAL',l:'Canal',t:'sel',opts:['','Mercado Livre','Shopee','Amazon','Magalu','Cardex']},
-  {k:'EMPR',l:'EMPR.',t:'sel',opts:['','JLD','DGL']},
-  {k:'MODELO',l:'Modelo',t:'sel',opts:['','Full','Normal']},
+  {k:'CANAL',l:'Canal',t:'sel',req:true,opts:['','Mercado Livre','Shopee','Amazon','Magalu','Cardex']},
+  {k:'EMPR',l:'EMPR.',t:'sel',req:true,opts:['','JLD','DGL']},
+  {k:'MODELO',l:'Modelo',t:'sel',req:true,opts:['','Full','Normal']},
   {k:'DATA_VENDA',l:'Data Venda',t:'txt'},
   {k:'SKU',l:'SKU',t:'txt'},
   {k:'QT',l:'QT',t:'txt'},
@@ -665,42 +744,35 @@ const ID_COLS=[
   {k:'NF_DEVOL',l:'NF Devol.',t:'txt'},
   {k:'AUTOR',l:'Autor',t:'ro'},
   {k:'NF_DEVOL_EMISSAO',l:'NF Devol. Em.',t:'txt'},
-  {k:'NEC_NF_DEVOL',l:'Nec. NF Devol?',t:'sel',opts:['','SIM','NAO']},
 ];
 const TC=[
-  {k:'DATA_TRATATIVA',l:'Data Tratativa',t:'txt'},
-  {k:'MOTIVO',l:'Motivo',t:'txt'},
-  {k:'DETALHAMENTO',l:'Detalhamento',t:'txt'},
+  {k:'NEC_NF_DEVOL',l:'Nec. NF Devol?',t:'sel',opts:['','SIM','NAO']},
+  {k:'MOTIVO',l:'Motivo',t:'sel',opts:['','Envio atrasado','Atraso na entrega','Defeito','Arrependimento','Produto Errado','Falta de Peca','Nao Recebido','Dificuldade com Manual','Qualidade Ruim','Produto Danificado']},
+  {k:'DETALHAMENTO',l:'Detalhamento',t:'sel',opts:['','Roda','Suporte','Manual','Tecido','Mangueira','Ferramentas','Alca']},
   {k:'OBS_RECLAM',l:'Obs. Reclamacao',t:'txt'},
-  {k:'DEVOLUCAO_ABERTA',l:'Devolucao Aberta?',t:'sel',opts:['','SIM','NAO']},
-  {k:'NEC_PECAS',l:'Nec. Pecas?',t:'sel',opts:['','SIM','NAO']},
+  {k:'DATA_TRATATIVA',l:'Data Tratativa',t:'txt'},
+  {k:'DEVOLUCAO_ABERTA',l:'Trat. Aberta?',t:'sel',req:true,opts:['','SIM','NAO','Reaberta']},
+  {k:'NEC_PECAS',l:'Nec. Pecas?',t:'sel',req:true,opts:['','SIM','NAO']},
   {k:'PECAS_ENVIADAS',l:'Pecas Enviadas?',t:'sel',opts:['','SIM','NAO']},
   {k:'OBS_PECAS',l:'Obs. Pecas',t:'txt'},
   {k:'REENVIO_RECEBIDO',l:'Reenvio Recebido?',t:'sel',opts:['','SIM','NAO']},
   {k:'CUSTO_ENVIO',l:'Custo Envio',t:'txt'},
-  {k:'PAGO_PLAT',l:'Pago Plat?',t:'sel',opts:['','SIM','NAO']},
   {k:'VALOR_PAGO',l:'Valor Pago',t:'txt'},
   {k:'CUSTOS_TOTAL',l:'Custos Total',t:'txt'},
-  {k:'TRATATIVA_FINALIZADA',l:'Trat. Final?',t:'sel',opts:['','SIM','NAO']},
+  {k:'TRATATIVA_FINALIZADA',l:'Trat. Final?',t:'sel',req:true,opts:['','SIM','NAO']},
   {k:'STATUS_FULL',l:'Status Full',t:'txt'},
   {k:'CHEGOU_CARDEX',l:'Chegou Cardex?',t:'sel',opts:['','SIM','NAO']},
 ];
 const DC=[
-  {k:'DISPUTA_ABERTA',l:'Disputa Aberta?',t:'sel',opts:['','SIM','NAO']},
+  {k:'DISPUTA_ABERTA',l:'Disputa Aberta?',t:'sel',req:true,opts:['','SIM','NAO']},
   {k:'PLAT_DISPUTA',l:'Plat. Disputa',t:'txt'},
   {k:'CREDITO',l:'R$ Credito?',t:'txt'},
   {k:'ID_TRANSACAO',l:'ID Transacao',t:'txt'},
-  {k:'REEMBOLSO_MKT',l:'Reembolso Mkt?',t:'sel',opts:['','SIM','NAO']},
+  {k:'REEMBOLSO_MKT',l:'Reembolso Mkt?',t:'sel',req:true,opts:['','SIM','NAO']},
   {k:'DISPUTA_FINALIZADA',l:'Disp. Final?',t:'sel',opts:['','SIM','NAO']},
   {k:'CREDITO_RECEBIDO_VALOR',l:'R$ Cred. Rec.',t:'txt'},
   {k:'CREDITO_RECEBIDO',l:'Cred. Recebido?',t:'sel',opts:['','SIM','NAO']},
   {k:'OBS_DISPUTA',l:'Obs. Disputa',t:'txt'},
-  {k:'NF_TOTAL',l:'NFs Devol. Total',t:'txt'},
-  {k:'VALOR_NF',l:'Valor NF',t:'txt'},
-  {k:'IMPOSTO_RESGATADO',l:'Imposto Resgatado',t:'txt'},
-  {k:'CUSTOS_TOTAIS',l:'Custos Totais',t:'ro'},
-  {k:'REEMBOLSO',l:'Reembolso',t:'ro'},
-  {k:'RESULTADO_FIN',l:'Resultado Fin.',t:'ro'},
 ];
 
 window.addEventListener('beforeunload',e=>{
@@ -917,7 +989,45 @@ function renderDashboard(){
 
 // PAGE 1
 const SL=[{k:'TRATATIVA ATRASADA',c:'sc-err',l:'ATRASADA'},{k:'TRATATIVA ABERTA',c:'sc-warn',l:'ABERTA'},{k:'ACOMPANHAR DISPUTA',c:'sc-pur',l:'DISPUTA'},{k:'ACOMPANHAR ENVIO',c:'sc-info',l:'ENVIO'},{k:'POSSÍVEL EXTRAVIO',c:'sc-err',l:'EXTRAVIO'},{k:'AGUARDANDO REEMBOLSO',c:'sc-ok2',l:'REEMBOLSO'},{k:'EM ATRASO',c:'sc-err',l:'EM ATRASO'},{k:'A ENVIAR',c:'sc-ok2',l:'A ENVIAR'}];
-function renderSummary(){const ativos=allData.filter(r=>!IGNORADOS_BULK.includes(r.STATUS));let h='<div class="sc sc-total" onclick="clearF()"><div class="sc-lbl">Total Ativos</div><div class="sc-cnt">'+ativos.length+'</div></div>';SL.forEach(s=>{const n=ativos.filter(r=>r.STATUS===s.k).length;if(!n)return;h+='<div class="sc '+s.c+'" onclick="setSt(\''+s.k+'\')"><div class="sc-lbl">'+s.l+'</div><div class="sc-cnt">'+n+'</div></div>';});document.getElementById('summaryRow').innerHTML=h;}
+function renderSummary(){
+  // Se há filtro ativo, mostrar apenas status do filtro atual
+  const sf=document.getElementById('fStatus')?.value||'';
+  const cf=document.getElementById('fCanal')?.value||'';
+  const hasFilter=sf||cf;
+  // Base: se filtro ativo usa filtered[], senão usa allData (excluindo bulk-ignorados)
+  const base=hasFilter
+    ?filtered
+    :allData.filter(r=>!IGNORADOS_BULK.includes(r.STATUS));
+  const total=hasFilter?filtered.length:allData.filter(r=>!IGNORADOS_BULK.includes(r.STATUS)).length;
+  let h='<div class="sc sc-total" onclick="clearF()">';
+  if(hasFilter){
+    h+='<div class="sc-lbl">Filtrado</div>';
+  } else {
+    h+='<div class="sc-lbl">Total Ativos</div>';
+  }
+  h+='<div class="sc-cnt">'+base.length+'</div></div>';
+  // Agrupar por status
+  const statusCount={};
+  base.forEach(r=>{if(r.STATUS)statusCount[r.STATUS]=(statusCount[r.STATUS]||0)+1;});
+  SL.forEach(s=>{
+    const n=statusCount[s.k]||0;
+    if(!n)return;
+    h+='<div class="sc '+s.c+(sf===s.k?' sc-active':'')+' " onclick="setSt(\''+s.k+'\')">';
+    h+='<div class="sc-lbl">'+s.l+'</div>';
+    h+='<div class="sc-cnt">'+n+'</div></div>';
+  });
+  // Status não mapeados no SL (ex: CONCLUÍDO quando filtrado)
+  if(hasFilter){
+    Object.entries(statusCount).forEach(([s,n])=>{
+      if(!SL.find(sl=>sl.k===s)&&n>0){
+        h+='<div class="sc" onclick="setSt(\''+s+'\')">';
+        h+='<div class="sc-lbl">'+s+'</div>';
+        h+='<div class="sc-cnt">'+n+'</div></div>';
+      }
+    });
+  }
+  document.getElementById('summaryRow').innerHTML=h;
+}
 function setSt(s){document.getElementById('fStatus').value=s;missOnly=false;document.getElementById('btnMiss').classList.remove('on');curPage=1;render();}
 function setMiss(v){missOnly=v;document.getElementById('btnMiss').classList.toggle('on',v);curPage=1;render();}
 function toggleMiss(){setMiss(!missOnly);}
@@ -941,6 +1051,7 @@ function render(){
   for(let i=1;i<=tp;i++){if(tp<=7||i===1||i===tp||Math.abs(i-curPage)<=1)p+='<button class="pgb '+(i===curPage?'on':'')+'" onclick="goP('+i+')">'+i+'</button>';else if(Math.abs(i-curPage)===2)p+='<button class="pgb" disabled>…</button>';}
   p+='<button class="pgb" onclick="goP('+(curPage+1)+')" '+(curPage===tp?'disabled':'')+'>›</button>';
   document.getElementById('pag').innerHTML=p;
+  renderSummary();
 }
 function goP(p){const tp=Math.ceil(filtered.length/PG)||1;if(p<1||p>tp)return;curPage=p;render();}
 function getMiss(r){
@@ -983,88 +1094,143 @@ function openModal(rec){
     '<div class="fsec fsec-id"><div class="fsec-tit">🗂 Modalidade</div><div class="fg3">',
     fSel('MODALIDADE','Modalidade',r.MODALIDADE,MODALIDADES,false,isErr('MODALIDADE')),
     '</div></div>',
-    '<div class="fsec fsec-id"><div class="fsec-tit">📦 Identificação</div><div class="fg">',
-    fInp('ID_VENDA','ID Venda',r.ID_VENDA,'text',true,isNew?'Digite o ID...':'',false,isNew),
-    fSel('CANAL','Canal',r.CANAL,['','Mercado Livre','Shopee','Amazon','Magalu','Cardex'],true,isErr('CANAL')),
-    fSel('EMPR','EMPR.',r.EMPR,['','JLD','DGL'],true,isErr('EMPR')),
-    fSel('MODELO','Modelo',r.MODELO,['','Full','Normal','Flex','Cardex'],true,isErr('MODELO')),
-    '</div><div class="fg4" style="margin-top:8px">',
-    fRO('NOME','Nome (f)',r.NOME),fRO('DATA_VENDA','Data (f)',r.DATA_VENDA),fRO('SKU','SKU (f)',r.SKU),fRO('QT','QT (f)',r.QT),
-    '</div><div class="fg3" style="margin-top:8px">',
-    fRO('RASTREIO','Rastreio (f)',r.RASTREIO),fRO('ID_BLING','ID Bling (f)',r.ID_BLING),fRO('DESC_STATUS','Desc. Status (f)',r.DESC_STATUS),
-    '</div><div class="fg" style="margin-top:8px">',
-    fInp('AUTOR','Autor',r.AUTOR),fInp('NEC_NF_DEVOL','Nec. NF Devol?',r.NEC_NF_DEVOL),
-    fInp('NF','NF',r.NF),fInp('NF_DEVOL','NF DEVOL',r.NF_DEVOL),fInp('NF_DEVOL_EMISSAO','NF DEVOL Em.',r.NF_DEVOL_EMISSAO),
-    '</div></div>',
-    '<div class="fsec fsec-trat"><div class="fsec-tit">📋 Tratativa</div>',
-    '<div class="fg" style="margin-bottom:8px">',
-    fRadio3('TRATATIVA_ABERTA','Tratativa Aberta?',r.TRATATIVA_ABERTA,true,isErr('TRATATIVA_ABERTA')),
-    fYN('DEVOLUCAO_ABERTA','Devolução Aberta?',r.DEVOLUCAO_ABERTA,true,isErr('DEVOLUCAO_ABERTA')),
-    '</div>',
-    '<div id="tratExtra" class="'+(tA?'trat-extra show':'trat-extra')+'">',
+    '<div class="fsec fsec-id"><div class="fsec-tit-row"><div class="fsec-tit">📦 Identificação</div><button class="fsec-collapse-btn" onclick="this.closest(\'div.fsec\').classList.toggle(\'collapsed\')">▾</button></div><div class="fsec-body">',
     '<div class="fg">',
-    fInp('DATA_TRATATIVA','DATA Tratativa',r.DATA_TRATATIVA,'text',false,'DD/MM/AAAA'),
-    fInp('NUM_RECLAM','Nº Reclamação',r.NUM_RECLAM),
-    fSel('MOTIVO','Motivo Reclamação',r.MOTIVO,MOTIVOS,wMot,isErr('MOTIVO')),
+    fInp('ID_VENDA','ID Venda',r.ID_VENDA,'text',rS,false,false,isNew),
+    fSel('CANAL','Canal',r.CANAL,['','Mercado Livre','Shopee','Amazon','Magalu','Cardex'],rS,isErr('CANAL')),
+    fSel('EMPR','EMPR.',r.EMPR,['','JLD','DGL'],rS,isErr('EMPR')),
+    fSel('MODELO','Modelo',r.MODELO,['','Full','Normal'],rS,isErr('MODELO')),
+    '</div>',
+    '<div class="fg3">',
+    fInp('NOME','Nome',r.NOME),
+    fInp('DATA_VENDA','Data Venda',r.DATA_VENDA),
+    fInp('SKU','SKU',r.SKU),
+    fInp('QT','QT',r.QT),
+    '</div>',
+    '<div class="fg3">',
+    fInp('RASTREIO','Rastreio',r.RASTREIO),
+    fInp('NF','NF',r.NF),
+    fInp('NF_DEVOL','NF Devol.',r.NF_DEVOL),
+    '<div class="fld"><label>Autor</label><div class="inp" style="background:#f8f9fa;color:#5f6368;padding:6px 10px;border-radius:6px;border:1px solid var(--out-v);font-size:13px">'+(r.AUTOR||'APP')+'</div></div>',
+    '</div>',
+    '<div class="fsec-subsec" style="margin-top:14px;padding:10px;background:#f0fdf4;border-radius:8px;border:1px solid #bbf7d0">',
+    '<div style="font-size:11px;font-weight:700;color:#15803d;margin-bottom:8px">🏭 Full/Estoque</div>',
+    '<div class="fg3">',
+    fSel('STATUS_FULL','Status Full',r.STATUS_FULL,['','OK Estoque Full','Aguardando Retirada','Em Troca']),
+    fSel('CHEGOU_CARDEX','Chegou Cardex?',r.CHEGOU_CARDEX,['','SIM','NÃO']),
+    '</div>',
+    '</div>',
+    '</div></div>',
+    '<div class="fsec fsec-trat"><div class="fsec-tit-row"><div class="fsec-tit">📋 Tratativa</div><button class="fsec-collapse-btn" onclick="this.closest(\'div.fsec\').classList.toggle(\'collapsed\')">▾</button></div><div class="fsec-body">',
+    '<div class="fg" style="align-items:flex-start">',
+    fRadio3('DEVOLUCAO_ABERTA','Tratativa Aberta?',r.DEVOLUCAO_ABERTA,true,isErr('DEVOLUCAO_ABERTA')),
+    fYN('DEVOLUCAO_ABERTA_B','Aberto o processo de devolução?',r.DEVOLUCAO_ABERTA,true,isErr('DEVOLUCAO_ABERTA')),
+    '</div>',
+    '<div class="trat-extra '+(tA?'show ':'')+' " id="tratExtra" style="margin-top:10px">',
+    '<div class="fg3">',
+    fInp('DATA_TRATATIVA','Data Tratativa',r.DATA_TRATATIVA),
+    fSel('MOTIVO','Motivo',r.MOTIVO,MOTIVOS),
     fSel('DETALHAMENTO','Detalhamento',r.DETALHAMENTO,DETALHAMENTOS),
     fInp('OBS_RECLAM','Obs. Reclamação',r.OBS_RECLAM),
-    fInp('OBS_RELEVANTES','Obs. Relevantes',r.OBS_RELEVANTES),
     '</div>',
-    '<div class="fg3" style="margin-top:8px">',
-    fYN('REPUTACAO','Impacto Reputação?',r.REPUTACAO),
-    fYN('REEMBOLSADO','Cliente Reembolsado?',r.REEMBOLSADO),
+    '<div class="fg3">',
+    fInp('CUSTO_ENVIO','Custo Envio',r.CUSTO_ENVIO),
+    fInp('VALOR_PAGO','Valor Pago',r.VALOR_PAGO),
+    fInp('CUSTOS_TOTAL','Custos Total',r.CUSTOS_TOTAL),
     '</div>',
-    '<div class="fg3" style="margin-top:8px">',
-    fInpMoney('PAGO_PLAT','Pago Plat/Cliente',r.PAGO_PLAT),
-    fInpMoney('VALOR_PAGO','Valor Pago',r.VALOR_PAGO),
-    fInpMoney('CUSTOS_TOTAL','Custos Total',r.CUSTOS_TOTAL),
-    '</div>',
-    '<div class="fg3" style="margin-top:8px">',
+    '<div class="fg3">',
     fYN('NEC_PECAS','Nec. Enviar Peças?',r.NEC_PECAS,tA,isErr('NEC_PECAS')),
     '</div>',
-    '<div id="pecasExtra" class="'+(pA?'trat-extra show':'trat-extra')+'">',
-    '<div class="fg3" style="margin-top:8px">',
-    fYN('PECAS_ENVIADAS','Peças Enviadas?',r.PECAS_ENVIADAS),
-    fYN('REENVIO_RECEBIDO','Reenvio Recebido?',r.REENVIO_RECEBIDO),
-    '</div>',
-    '<div class="fg" style="margin-top:8px">',
+    '<div class="trat-extra '+(tA&&pA?'show ':'')+' " id="pecasExtra" style="margin-top:8px">',
+    '<div class="fg3">',
+    fSel('PECAS_ENVIADAS','Peças Enviadas?',r.PECAS_ENVIADAS,['','SIM','NÃO']),
+    fSel('REENVIO_RECEBIDO','Reenvio Recebido?',r.REENVIO_RECEBIDO,['','SIM','NÃO']),
     fInp('OBS_PECAS','Obs. Peças',r.OBS_PECAS),
-    fInp('CUSTO_ENVIO','Custo Envio',r.CUSTO_ENVIO),
-    '</div></div>',
-    '<div class="fg3" style="margin-top:8px">',
+    '</div>',
+    '</div>',
+    '<div class="fg3" style="margin-top:10px">',
     fYN('TRATATIVA_FINALIZADA','Tratativa Finalizada?',r.TRATATIVA_FINALIZADA,tA,isErr('TRATATIVA_FINALIZADA')),
     '</div>',
+    '</div>',
     '</div></div>',
-    '<div class="fsec fsec-disp"><div class="fsec-tit">⚖️ Disputa</div>',
+    '<div class="fsec fsec-disp"><div class="fsec-tit-row"><div class="fsec-tit">⚖️ Disputa</div><button class="fsec-collapse-btn" onclick="this.closest(\'div.fsec\').classList.toggle(\'collapsed\')">▾</button></div><div class="fsec-body">',
     '<div class="fg3" id="dBase">',
     fYN('DISPUTA_ABERTA','Disputa Aberta?',r.DISPUTA_ABERTA,true,isErr('DISPUTA_ABERTA')),
     '</div>',
     '<div class="disp-extra fg '+(dA?'show ':'')+'" id="dX2" style="margin-top:8px">',
+    '<div class="fg3">',
     fInp('PLAT_DISPUTA','Plataforma',r.PLAT_DISPUTA),
-    fInp('MOTIVO_DISPUTA','Motivo Disputa',r.MOTIVO_DISPUTA),
-    fInp('PROTOCOLO','Protocolo',r.PROTOCOLO),
-    fInp('OBS_DISPUTA','Obs. Disputa',r.OBS_DISPUTA),
+    fInp('ID_TRANSACAO','ID Transação',r.ID_TRANSACAO),
+    fInp('CREDITO','R$ Crédito?',r.CREDITO),
+    '<div class="fld"><label>Obs. Disputa</label><textarea id="f_OBS_DISPUTA" class="mdi" rows="3" style="resize:vertical;min-height:70px;width:100%;box-sizing:border-box">'+(r.OBS_DISPUTA||'')+'</textarea></div>',
+    '</div>',
     '</div>',
     '<div class="disp-extra fg3 '+(dA?'show ':'')+'" id="dX3" style="margin-top:8px">',
     fYN('REEMBOLSO_MKT','Reembolso do Marketplace?',r.REEMBOLSO_MKT,dA,isErr('REEMBOLSO_MKT')),
     '</div>',
     '<div id="mktExtra" class="disp-extra '+(dA&&mktA?'show ':'')+'" style="margin-top:8px">',
     '<div class="fg3">',
-    fInp('ID_TRANSACAO','ID Transação',r.ID_TRANSACAO),
     fInp('CREDITO_RECEBIDO_VALOR','R$ Créd. Rec.',r.CREDITO_RECEBIDO_VALOR),
-    fYN('CREDITO_RECEBIDO','Crédito Recebido?',r.CREDITO_RECEBIDO),
-    '</div></div>',
-    '<div class="disp-extra fg3 '+(dA?'show ':'')+'" id="dX1" style="margin-top:8px">',
-    fYN('DISPUTA_FINALIZADA','Disputa Finalizada?',r.DISPUTA_FINALIZADA,true,isErr('DISPUTA_FINALIZADA')),
+    fSel('CREDITO_RECEBIDO','Crédito Recebido?',r.CREDITO_RECEBIDO,['','SIM','NÃO']),
     '</div>',
-    '</div></div>',
-    '<div class="fsec fsec-id"><div class="fsec-tit">🏭 Full/Estoque</div><div class="fg3">',
-    fInp('STATUS_FULL','Status Full',r.STATUS_FULL),
-    fYN('CHEGOU_CARDEX','Chegou Cardex?',r.CHEGOU_CARDEX),
-    '</div></div>'
+    '</div>',
+    '<div class="disp-extra fg3 '+(dA?'show ':'')+'" id="dX1" style="margin-top:8px">',
+    fYN('DISPUTA_FINALIZADA','Disputa Finalizada?',r.DISPUTA_FINALIZADA,false,false),
+    '</div>',
+    '</div></div></div>',
   ].join('');
   document.getElementById('dlgOv').classList.add('open');
+  // Aplicar estética de campos obrigatórios baseado nos valores atuais
+  setTimeout(updateReqVisual, 0);
   // Wire TRATATIVA_ABERTA toggle
+
+  // ── Atualiza estética de campos obrigatórios em tempo real ──────────
+  function updateReqVisual(){
+    const tAv=document.querySelector('input[name="f_DEVOLUCAO_ABERTA"]:checked')?.value||'';
+    const isTA=tAv==='SIM'||tAv==='Reaberta';
+    const dAv=document.querySelector('input[name="f_DISPUTA_ABERTA"]:checked')?.value||'';
+    const isDA=dAv==='SIM';
+
+    // Campos dependentes de Tratativa Aberta
+    ['NEC_PECAS','TRATATIVA_FINALIZADA','DEVOLUCAO_ABERTA_B'].forEach(fid=>{
+      // O container pode ser identificado pelo input/radio dentro dele
+      const el=document.getElementById('f_'+fid+'_SIM')
+               ||document.getElementById('f_'+fid+'_SIM')
+               ||document.querySelector('[name="f_'+fid+'"]');
+      if(!el)return;
+      const fld=el.closest('.fld');
+      if(!fld)return;
+      if(isTA){
+        fld.classList.add('reqb','req-fld');
+      } else {
+        fld.classList.remove('reqb','req-fld');
+      }
+    });
+
+    // Campos dependentes de Disputa Aberta
+    ['REEMBOLSO_MKT'].forEach(fid=>{
+      const el=document.getElementById('f_'+fid+'_SIM')
+               ||document.querySelector('[name="f_'+fid+'"]');
+      if(!el)return;
+      const fld=el.closest('.fld');
+      if(!fld)return;
+      if(isDA){
+        fld.classList.add('reqb','req-fld');
+      } else {
+        fld.classList.remove('reqb','req-fld');
+      }
+    });
+  }
+  // Wire DEVOLUCAO_ABERTA (Tratativa Aberta?) toggle
+  document.querySelectorAll('input[name="f_DEVOLUCAO_ABERTA"]').forEach(radio=>{
+    radio.addEventListener('change',()=>{
+      const v=document.querySelector('input[name="f_DEVOLUCAO_ABERTA"]:checked')?.value||'';
+      const isTA=v==='SIM'||v==='Reaberta';
+      document.getElementById('tratExtra')?.classList.toggle('show',isTA);
+      if(!isTA)document.getElementById('pecasExtra')?.classList.remove('show');
+      updateReqVisual();
+    });
+  });
   document.getElementById('f_NEC_PECAS_SIM')?.addEventListener('change',()=>{
     document.getElementById('pecasExtra')?.classList.add('show');
   });
@@ -1086,7 +1252,7 @@ function openModal(rec){
       document.getElementById('mktExtra')?.classList.toggle('show',v==='SIM');
     });
   });
-  document.querySelectorAll('input[name="f_DISPUTA_ABERTA"]').forEach(radio=>{radio.addEventListener('change',()=>{const sim=document.querySelector('input[name="f_DISPUTA_ABERTA"]:checked')?.value==='SIM';['dX1','dX2','dX3'].forEach(id=>document.getElementById(id)?.classList.toggle('show',sim));});});
+  document.querySelectorAll('input[name="f_DISPUTA_ABERTA"]').forEach(radio=>{radio.addEventListener('change',()=>{const sim=document.querySelector('input[name="f_DISPUTA_ABERTA"]:checked')?.value==='SIM';['dX1','dX2','dX3'].forEach(id=>document.getElementById(id)?.classList.toggle('show',sim));updateReqVisual();});});
   if(isNew){
     const idEl=document.getElementById('f_ID_VENDA');
     if(idEl){
@@ -1097,7 +1263,7 @@ function openModal(rec){
 }
 function fInp(id,lbl,val,type,req,ph,ro,isNew){type=type||'text';req=req||false;ph=ph||'';ro=ro||false;isNew=isNew||false;const e=req&&!val&&!isNew?'err':'';const rc=req?'req-fld':'';return '<div class="fld '+rc+'"><label>'+lbl+'</label><input type="'+type+'" id="f_'+id+'" class="mdi '+e+(ro?' af':'')+'" value="'+(val||'').replace(/"/g,'&quot;')+'" placeholder="'+ph+'"'+(ro?' readonly':'')+'></div>';}
 function fRO(id,lbl,val){return '<div class="fld"><label>'+lbl+'</label><input type="text" id="f_'+id+'" class="mdi '+(val?'af':'')+'" value="'+(val||'').replace(/"/g,'&quot;')+'" readonly></div>';}
-function fSel(id,lbl,val,opts,req,fe){req=req||false;fe=fe||false;const e=(req&&!val)||fe?'err':'';const rc=req?'req-fld':'';const o=opts.map(v=>'<option value="'+v+'" '+(val===v?'selected':'')+'>'+(v||'— Selecione —')+'</option>').join('');return '<div class="fld '+rc+'"><label>'+lbl+'</label><select id="f_'+id+'" class="mdi '+e+'">'+o+'</select></div>';}
+function fSel(id,lbl,val,opts,req,fe){req=req||false;fe=fe||false;const e=(req&&!val)||fe?'err':'';const rc=req?'req-fld':'';const dot=req?'<span style="color:#b91c1c;font-size:11px;margin-left:3px">●</span>':'';const o=opts.map(v=>'<option value="'+v+'" '+(val===v?'selected':'')+'>'+(v||'— Selecione —')+'</option>').join('');return '<div class="fld '+rc+'"><label>'+lbl+dot+'</label><select id="f_'+id+'" class="mdi '+e+'">'+o+'</select></div>';}
 function fInpMoney(id,lbl,val){
   const num=parseFloat((val||"").replace(/[R$\s.]/g,"").replace(",","."))||0;
   const style=num<0?"background:#fef2f2;border-color:var(--err);":"";
@@ -1107,9 +1273,9 @@ function fRadio3(id,lbl,val,req,fe){
   req=req||false;fe=fe||false;
   const b=(req&&!val)||fe?'reqb':'';const rc=req?'req-fld':'';
   const mk=(v,l)=>'<div class="ro"><input type="radio" name="f_'+id+'" id="f_'+id+'_'+v+'" value="'+v+'" '+(val===v?'checked':'')+' ><label for="f_'+id+'_'+v+'">'+l+'</label></div>';
-  return '<div class="fld '+b+' '+rc+'"><label>'+lbl+(req?'<span class="req" style="color:var(--err);font-size:10px">●</span>':'')+'</label><div class="rg">'+mk('SIM','SIM')+mk('NÃO','NÃO')+mk('Reaberta','Reaberta')+'</div></div>';
+  return '<div class="fld '+b+' '+rc+'"><label>'+lbl+(req?'<span style="color:#b91c1c;font-size:11px;margin-left:3px">●</span>':'')+'</label><div class="rg">'+mk('SIM','SIM')+mk('NÃO','NÃO')+mk('Reaberta','Reaberta')+'</div></div>';
 }
-function fYN(id,lbl,val,req,fe){req=req||false;fe=fe||false;const b=(req&&!val)||fe?'reqb':'';const rc=req?'req-fld':'';const mk=(v,l)=>'<div class="ro"><input type="radio" name="f_'+id+'" id="f_'+id+'_'+v+'" value="'+v+'" '+(val===v?'checked':'')+' ><label for="f_'+id+'_'+v+'">'+l+'</label></div>';return '<div class="fld '+b+' '+rc+'"><label>'+lbl+'</label><div class="rg">'+mk('SIM','SIM')+mk('NÃO','NÃO')+'</div></div>';}
+function fYN(id,lbl,val,req,fe){req=req||false;fe=fe||false;const b=(req&&!val)||fe?'reqb':'';const rc=req?'req-fld':'';const dot=req?'<span style="color:#b91c1c;font-size:11px;margin-left:3px">●</span>':'';const mk=(v,l)=>'<div class="ro"><input type="radio" name="f_'+id+'" id="f_'+id+'_'+v+'" value="'+v+'" '+(val===v?'checked':'')+' ><label for="f_'+id+'_'+v+'">'+l+'</label></div>';return '<div class="fld '+b+' '+rc+'"><label>'+lbl+dot+'</label><div class="rg">'+mk('SIM','SIM')+mk('NÃO','NÃO')+'</div></div>';}
 function closeDlg(){document.getElementById('dlgOv').classList.remove('open');curRec=null;}
 
 const bancoCache={};
@@ -1222,23 +1388,18 @@ function buildBulkHead(thead){
   const visDI=DC.filter(c=>!hiddenCols.has(c.k));
 
   function mkTh(c,secCls){
+    const reqCls=c.req?' th-req':'';
     const lCls='th-label'+(c.req?' req-lbl':'');
     const fv=colFilters[c.k]||'';
     const cw=colWidths[c.k]?('width:'+colWidths[c.k]+'px;'):'';
     const hideBtn='<button class="th-btn" onclick="hideCol(\''+c.k+'\')" title="Ocultar">✕</button>';
-    return '<th class="'+secCls+'" data-colkey="'+c.k+'" style="'+cw+'">'
+    return '<th class="'+secCls+reqCls+'" data-colkey="'+c.k+'" style="'+cw+'">'
       +'<div class="th-col">'
-        +'<div class="th-top">'
-          +'<span class="'+lCls+'" title="'+c.l+'">'+c.l+'</span>'
-          +'<div class="th-controls">'
-            +hideBtn
-            +'<button class="th-btn" onclick="setSortDir(\''+c.k+'\',\'asc\')">↑</button>'
-            +'<button class="th-btn" onclick="setSortDir(\''+c.k+'\',\'desc\')">↓</button>'
-          +'</div>'
+        +'<div class="th-top"><span class="'+lCls+'">'+c.l+'</span>'
+          +'<div class="th-controls">'+hideBtn+'</div>'
         +'</div>'
-        +'<input class="th-filter" placeholder="Filtrar..." value="'+fv+'" oninput="colFilter(\''+c.k+'\',this.value)">'
+        +'<input class="th-filter" placeholder="..." value="'+fv+'" oninput="colFilter(\''+c.k+'\',this.value)">'
       +'</div>'
-      +'<div class="col-resizer" onmousedown="startResize(event,\''+c.k+'\')" title="Redimensionar"></div>'
       +'</th>';
   }
 
@@ -1461,11 +1622,11 @@ function startFill(e,ri,key){
   e.preventDefault();e.stopPropagation();
   fillSrc=ri;fillKey=key;fillVal=getCellVal(ri,key);
   if(fillVal===undefined||fillVal===null)fillVal='';
-  // Determine scroll container
   const fsOpen=document.getElementById('fsOverlay').style.display==='flex';
   const scroller=fsOpen?document.getElementById('fsBody'):document.getElementById('bulkSheet');
   const ZONE=50,SPEED=18;
   let fillTarget=ri;
+  _fillDragging=true;
 
   function clearHL(){document.querySelectorAll('.bt td.fill-range').forEach(td=>td.classList.remove('fill-range'));}
   function applyHL(){
@@ -1478,18 +1639,16 @@ function startFill(e,ri,key){
       if(td)td.classList.add('fill-range');
     }
   }
-  _fillDragging=true;
-  applyHL();
-
-  function onMove(ev){
-    if(fillScroll){clearInterval(fillScroll);fillScroll=null;}
-    const box=scroller.getBoundingClientRect();
-    if(ev.clientY>box.bottom-ZONE)      fillScroll=setInterval(()=>{scroller.scrollTop+=SPEED;update(ev);},16);
-    else if(ev.clientY<box.top+ZONE)    fillScroll=setInterval(()=>{scroller.scrollTop-=SPEED;update(ev);},16);
-    else if(ev.clientX>box.right-ZONE)  fillScroll=setInterval(()=>{scroller.scrollLeft+=SPEED;update(ev);},16);
-    else if(ev.clientX<box.left+ZONE)   fillScroll=setInterval(()=>{scroller.scrollLeft-=SPEED;update(ev);},16);
-    update(ev);
+  function renderAndHL(){
+    const tbody=fsOpen?document.getElementById('fsBBody'):document.getElementById('bBody');
+    if(tbody&&bulkFiltered.length>80){
+      _fillDragging=false;
+      _renderVirtual(tbody,scroller);
+      _fillDragging=true;
+    }
+    applyHL();
   }
+  applyHL();
   function update(ev){
     const els=document.elementsFromPoint(ev.clientX,ev.clientY);
     const td=els.find(el=>el.tagName==='TD'&&el.dataset&&el.dataset.col===key);
@@ -1497,12 +1656,21 @@ function startFill(e,ri,key){
     const row=parseInt(td.dataset.row);
     if(!isNaN(row)&&row!==fillTarget){fillTarget=row;applyHL();}
   }
+  function onMove(ev){
+    if(fillScroll){clearInterval(fillScroll);fillScroll=null;}
+    const box=scroller.getBoundingClientRect();
+    if(ev.clientY>box.bottom-ZONE)      fillScroll=setInterval(()=>{scroller.scrollTop+=SPEED;renderAndHL();},60);
+    else if(ev.clientY<box.top+ZONE)    fillScroll=setInterval(()=>{scroller.scrollTop-=SPEED;renderAndHL();},60);
+    else if(ev.clientX>box.right-ZONE)  fillScroll=setInterval(()=>{scroller.scrollLeft+=SPEED;renderAndHL();},60);
+    else if(ev.clientX<box.left+ZONE)   fillScroll=setInterval(()=>{scroller.scrollLeft-=SPEED;renderAndHL();},60);
+    update(ev);
+  }
   function onUp(){
     if(fillScroll){clearInterval(fillScroll);fillScroll=null;}
     document.removeEventListener('mousemove',onMove);document.removeEventListener('mouseup',onUp);
     clearHL();
     const fi0=bulkFiltered.indexOf(fillSrc),fi1=bulkFiltered.indexOf(fillTarget);
-    if(fi0<0||fi1<0){fillSrc=null;return;}
+    if(fi0<0||fi1<0){fillSrc=null;_fillDragging=false;return;}
     const from=Math.min(fi0,fi1),to=Math.max(fi0,fi1);let n=0;
     for(let fi=from;fi<=to;fi++){
       const ri2=bulkFiltered[fi];if(ri2===fillSrc)continue;
@@ -1511,7 +1679,7 @@ function startFill(e,ri,key){
       const row=document.getElementById('br_'+ri2);if(row)row.classList.add('chg');n++;
     }
     fillSrc=null;fillTarget=null;_fillDragging=false;
-    if(n>0){updateBulkInfo();snack(n+' células preenchidas','success');}
+    if(n>0){updateBulkInfo();snack(n+' celulas preenchidas','success');}
   }
   document.addEventListener('mousemove',onMove);
   document.addEventListener('mouseup',onUp);
